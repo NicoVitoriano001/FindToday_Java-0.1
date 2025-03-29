@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_200">#00BCD4</color>
+    <color name="blue_500">#191750</color> #CABEÇALHO
+    <color name="blue_700">#191520</color> #SUPERIOR DO RELOGIO
+    <color name="teal_200">#191967</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="vermelho">#EB6E6E</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Cores básicas do tema Material Design -->
+    <color name="colorPrimary">#3F51B5</color>       <!-- Azul Indigo -->
+    <color name="colorPrimaryDark">#303F9F</color>    <!-- Azul mais escuro -->
+    <color name="colorAccent">#FF4081</color>         <!-- Rosa -->
+</resources>

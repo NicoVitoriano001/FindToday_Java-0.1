@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"> <!-- Espaçamento interno para cada item da lista -->
+
+    <TextView
+        android:id="@+id/valorDespTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Valor Despesa"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tipoDespTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tipo Despesa"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/fontDespTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fonte Despesa"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/despDescrTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Descrição Despesa"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/dataDespTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Data Despesa"
+        android:textSize="16sp" />
+
+</LinearLayout>
