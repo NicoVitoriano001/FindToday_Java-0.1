@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- <color name="blue_200">#0000CD</color> -->
+    <color name="blue_200">#2196F3</color> # fonte principal valor dos positivos
+    <color name="green_200">#02F40B</color> # fonte principal valor dos positivos
+    <color name="blue_500">#191750</color> # CABEÇALHO
+    <color name="blue_700">#191520</color> # SUPERIOR DO RELOGIO
+    <color name="teal_200">#191967</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#E2DFDF</color>
+    <color name="vermelho">#ED8484</color>  # 24.03.25 fonte prnicipal valor negativo
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+</resources>

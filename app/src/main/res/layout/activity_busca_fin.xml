@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BuscarFinActivity">
+
+    <!-- LinearLayout para o conteúdo existente -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- EditTexts e Button -->
+        <EditText
+            android:id="@+id/idEdtValorDespBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Valor Buscar"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/idEdtTipoDespBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Tipo Buscar"
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/idEdtFontDespBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Fonte Buscar"
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/idEdtDespDescrBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Descrição Buscar"
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/idEdtDataDespBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Data e Hora Buscar"
+            android:imeOptions="actionDone"
+            android:inputType="datetime" />
+
+        <Button
+            android:id="@+id/idBtnBuscarDesp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:text="Buscar"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <!-- Floating Action Button posicionado no canto inferior direito -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/idFABvoltardaBusca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/abc_vector_test"
+        app:tint="@color/white" />
+</FrameLayout>

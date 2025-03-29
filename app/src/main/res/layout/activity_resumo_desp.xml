@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ResumoDespActivity">
+
+    <!-- Layout horizontal para os EditTexts de Ano e Mês -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- EditText para Ano -->
+        <EditText
+            android:id="@+id/idEdtAno"
+            android:inputType="number"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Ano" />
+
+        <!-- EditText para Mês -->
+        <EditText
+            android:id="@+id/idEdtMes"
+            android:inputType="number"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Mês"
+            android:imeOptions="actionNext"
+            android:singleLine="true" />
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/idBtnFazerResumo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:text="Resumo"
+        android:textAllCaps="false" />
+
+</LinearLayout>
