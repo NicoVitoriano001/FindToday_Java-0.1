@@ -44,6 +44,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
                     resultados.add((FinModal) parcelable);
                 }
             }
+
             adapter.submitList(resultados);
             // Calcular a soma dos valores
             double total = 0;
@@ -81,6 +82,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
             }
         });
 
+        //botao flutuante retornar
         FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
         fabReturn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +91,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
             }
         });
 
+        //botao flutuante retornar para home
         FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
         fabReturnHome.setOnClickListener(new View.OnClickListener() {
             @Override
