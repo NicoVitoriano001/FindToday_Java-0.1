@@ -58,7 +58,7 @@ public class BuscarFinActivity extends AppCompatActivity {
                                             .show();
                                 } else {
                                     // Se houver resultados, abrir a próxima atividade
-                                    Intent intent = new Intent(BuscarFinActivity.this, ResultadoBuscaActivity.class);
+                                    Intent intent = new Intent(BuscarFinActivity.this, ResultBuscaActivity.class);
                                     intent.putExtra("resultados", new ArrayList<>(finModals));
                                     startActivity(intent);
                                 }
