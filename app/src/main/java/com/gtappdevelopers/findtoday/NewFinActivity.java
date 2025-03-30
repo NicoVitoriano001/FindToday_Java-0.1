@@ -19,7 +19,7 @@ import android.widget.DatePicker;
 public class NewFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
     private Spinner tipoDespEdt, fontDespEdt;
-    private Button FinBtnSave, FinBtnConsult;
+    private Button FinBtnSave;
     public static final String EXTRA_ID = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID";
     public static final String EXTRA_VALOR_DESP = "com.gtappdevelopers.gfgroomdatabase.EXTRA_VALOR_DESP";
     public static final String EXTRA_TIPO_DESP = "com.gtappdevelopers.gfgroomdatabase.EXTRA_TIPO_DESP";
