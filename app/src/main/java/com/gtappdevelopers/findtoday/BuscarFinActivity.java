@@ -21,7 +21,7 @@ public class BuscarFinActivity extends AppCompatActivity {
     public static final String EXTRA_DURATION_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_DURATION_BUSCA";
     private Dao dao;
     private EditText valorDespEdtBusca, tipoDespEdtBusca, fontDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
-    private Button FinBtnSaveBusca;
+    private Button FinBtnBusca;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +34,9 @@ public class BuscarFinActivity extends AppCompatActivity {
         fontDespEdtBusca = findViewById(R.id.idEdtFontDespBuscar);
         despDescrEdtBusca = findViewById(R.id.idEdtDespDescrBuscar);
         dataDespEdtBusca = findViewById(R.id.idEdtDataDespBuscar);
-        FinBtnSaveBusca = findViewById(R.id.idBtnBuscarDesp);
+        FinBtnBusca = findViewById(R.id.idBtnBuscarDesp);
 
-        FinBtnSaveBusca.setOnClickListener(new View.OnClickListener() {
+        FinBtnBusca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String valorDesp = valorDespEdtBusca.getText().toString();
