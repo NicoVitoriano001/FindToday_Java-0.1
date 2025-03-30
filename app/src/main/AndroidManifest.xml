@@ -14,7 +14,6 @@
         <activity android:name=".NewFinActivity"></activity>
         <activity android:name=".ResultadoBuscaActivity"></activity>
         <activity android:name=".ResumoDespActivity"></activity>
-        <activity android:name=".ResumoDialogFragment"></activity>
 
         <activity android:name=".MainActivity">
             <intent-filter>
