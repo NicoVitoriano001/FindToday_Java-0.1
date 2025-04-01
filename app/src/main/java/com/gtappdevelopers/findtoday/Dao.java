@@ -36,12 +36,21 @@ public interface Dao {
 
     LiveData<List<FinModal>> getallDesp();
 
+    // dataDesp não está formato ISO 8601 (YYYY-MM-DD), SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1): Esta parte da consulta extrai a substring depois do espaço
+    @Query("SELECT * FROM fin_table WHERE valorDesp LIKE '%' || :valorDesp || '%' " +
+            "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
+            "AND fontDesp LIKE '%' || :fontDesp || '%' " +
+            "AND despDescr LIKE '%' || :despDescr || '%' " +
+            "AND dataDesp LIKE '%' || :dataDesp || '%' " +
+            "ORDER BY SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1) DESC")
+    LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp);
+
+    /*
     @Query("SELECT * FROM fin_table WHERE valorDesp LIKE '%' || :valorDesp || '%' " +
             "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
             "AND fontDesp LIKE '%' || :fontDesp || '%' " +
             "AND despDescr LIKE '%' || :despDescr || '%' " +
             "AND dataDesp LIKE '%' || :dataDesp || '%' ORDER BY dataDesp DESC")
-
     LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp);
     /*
 
