@@ -15,7 +15,6 @@ public class ResumoDespActivity extends AppCompatActivity {
     private EditText anoEditText;
     private EditText mesEditText;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +73,7 @@ public class ResumoDespActivity extends AppCompatActivity {
                 return;
             }
 
-            ResumoDialogFragment dialog = ResumoDialogFragment.newInstance(dados);
+            ResumoDespDialogFragment dialog = ResumoDespDialogFragment.newInstance(dados);
 
             // Configuração para ocupar a maior parte da tela
             dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);

@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.TextView;
-public class ResultadoBuscaActivity extends AppCompatActivity {
+public class ResultBuscaActivity extends AppCompatActivity {
     private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
@@ -24,7 +24,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resultado_busca_rv);
+        setContentView(R.layout.activity_result_busca_rv);
 
         // Inicializar o TextView para o total
         totalTextView = findViewById(R.id.idTVTotal);
@@ -72,7 +72,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultadoBuscaActivity.this, NewFinActivity.class);
+                Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
@@ -97,7 +97,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
         fabReturnHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ResultadoBuscaActivity.this, MainActivity.class);
+                Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -125,7 +125,7 @@ public class ResultadoBuscaActivity extends AppCompatActivity {
                 //finish();
 
                 // Inicie a MainActivity após a conclusão da edição
-                //Intent intent = new Intent(ResultadoBuscaActivity.this, MainActivity.class);
+                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 //startActivity(intent);
             }
         }

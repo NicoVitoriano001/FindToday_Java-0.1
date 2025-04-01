@@ -12,7 +12,7 @@
         android:theme="@style/Theme.GFGRoomDatabase">
         <activity android:name=".BuscarFinActivity"></activity>
         <activity android:name=".NewFinActivity"></activity>
-        <activity android:name=".ResultadoBuscaActivity"></activity>
+        <activity android:name=".ResultBuscaActivity"></activity>
         <activity android:name=".ResumoDespActivity"></activity>
 
         <activity android:name=".MainActivity">
