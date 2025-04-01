@@ -28,6 +28,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
         // Inicializar o TextView para o total
         totalTextView = findViewById(R.id.idTVTotal);
+
         // Inicializar RecyclerView
         idRVRetorno = findViewById(R.id.idRVRetorno);
         adapter = new FinRVAdapter();
