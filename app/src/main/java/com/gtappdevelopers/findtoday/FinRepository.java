@@ -2,6 +2,8 @@ package com.gtappdevelopers.findtoday;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SimpleSQLiteQuery;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,4 +50,10 @@ public class FinRepository {
     public LiveData<List<FinModal>> getDespesasPorAnoEMes(String ano, String mes) {
         return dao.buscaPorAnoEMes(ano, mes);
     }
+
+    public LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
+        SimpleSQLiteQuery query = ViewModal.QueryBuilder.buildSearchQuery(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+        return dao.buscaDesp(query);
+    }
+
 }

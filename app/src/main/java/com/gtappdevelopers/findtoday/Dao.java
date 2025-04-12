@@ -6,10 +6,17 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import java.util.List;
+import androidx.room.RawQuery;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 @androidx.room.Dao
 
+
 public interface Dao {
+
+    @RawQuery(observedEntities = FinModal.class)
+    LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
+
     @Insert
     void insert(FinModal model);
 
@@ -43,17 +50,6 @@ public interface Dao {
             "ORDER BY SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1) DESC")
     LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp);
 
-    /*
-    @Query("SELECT * FROM fin_table WHERE valorDesp LIKE '%' || :valorDesp || '%' " +
-            "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
-            "AND fontDesp LIKE '%' || :fontDesp || '%' " +
-            "AND despDescr LIKE '%' || :despDescr || '%' " +
-            "AND dataDesp LIKE '%' || :dataDesp || '%' ORDER BY dataDesp DESC")
-    LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp);
-    /*
-
-//MODIFCADO EM 20.MAR.25
-     */
     @Query("SELECT * FROM fin_table " +
             "WHERE SUBSTR(dataDesp, 6, 4) = :ano " +       // Ano (posições 6-9)
             "AND SUBSTR(dataDesp, 11, 2) = :mes " +        // Mês
