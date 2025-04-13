@@ -16,113 +16,130 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
     private Context context;
-    private static final String TAG = "DatabaseBackupManager";
+    private static final String TAG = "DatabaseBackup";
+    private static final String DB_NAME = "fin_db.db";
+    private static final String BACKUP_FOLDER = "FIND_TODAY";
 
     public DatabaseBackupManager(Context context) {
         this.context = context;
     }
 
     public void performBackup() {
-        // Verifica se a permissão de escrita no armazenamento externo foi concedida
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions((MainActivity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions((MainActivity) context,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         } else {
-            // Exibe um diálogo de confirmação antes de realizar o backup
-            String dataHora = getDataHoraAtual();
-            String nomeArquivoBKP = "fin_database_" + dataHora + ".db";
-
-            // Novo caminho para a pasta FIND_TODAY dentro de Downloads
-            File dstDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FIND_TODAY");
-            if (!dstDir.exists()) {
-                boolean dirCreated = dstDir.mkdirs();
-                Log.d(TAG, "Pasta FIND_TODAY criada? " + dirCreated);
-            }
-
-            File dst = new File(dstDir, nomeArquivoBKP);
-            String mensagem = "Deseja fazer backup do banco de dados?\n\n" +
-                    "Local: " + dst.getParent() + "\n" +
-                    "Nome do arquivo: " + nomeArquivoBKP;
-
-            new AlertDialog.Builder(context)
-                    .setTitle("Confirmar Backup")
-                    .setMessage(mensagem)
-                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean backupSuccess = backupDatabase();
-                            if (backupSuccess) {
-                                Toast.makeText(context, "Backup concluído em: " + dst.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(context, "Falha ao realizar backup.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    })
-                    .setNegativeButton("Não", null)
-                    .show();
+            showBackupConfirmationDialog();
         }
     }
 
-    private boolean backupDatabase() {
-        // Caminho de origem - agora em /Download/FIND_TODAY/
-        File srcDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FIND_TODAY");
-        File src = new File(srcDir, "fin_database.db");
+    private void showBackupConfirmationDialog() {
+        String dataHora = getDataHoraAtual();
+        String nomeArquivoBKP = "fin_db_" + dataHora + ".db";
 
-        if (!src.exists()) {
-            Log.e(TAG, "Arquivo de origem não encontrado: " + src.getAbsolutePath());
+        // Caminho para /Download/FIND_TODAY/
+        File backupDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
+        File backupFile = new File(backupDir, nomeArquivoBKP);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Confirmar Backup")
+                .setMessage("Deseja fazer backup do banco de dados?\n\n" +
+                        "Local: " + backupDir.getAbsolutePath() + "\n" + // /storage/emulated/0/Download/FIND_TODAY
+                        "Nome: " + nomeArquivoBKP)
+                .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private void executeBackup(File backupFile) {
+        try {
+            // 1. Fecha a conexão com o banco de dados
+            if (FinDatabase.getInstance(context) != null) {
+                FinDatabase.getInstance(context).close();
+            }
+
+            // 2. Sincroniza WAL com o banco principal
+            performWalCheckpoint();
+
+            // 3. Faz o backup do arquivo
+            if (copyDatabaseFile(backupFile)) {
+                Toast.makeText(context,
+                        "Backup salvo em: " + "\n" + backupFile.getAbsolutePath(),
+                        Toast.LENGTH_LONG).show();
+                Log.d(TAG, "Backup realizado com sucesso: " + backupFile.length() + " bytes");
+            } else {
+                Toast.makeText(context,
+                        "Falha ao criar arquivo de backup",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Erro durante backup: " + e.getMessage());
+            Toast.makeText(context,
+                    "Erro durante backup: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean performWalCheckpoint() {
+        SQLiteDatabase db = null;
+        try {
+            File dbFile = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER + "/" + DB_NAME);
+
+            db = SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+            // Executa checkpoint FULL para sincronizar WAL
+            db.execSQL("PRAGMA wal_checkpoint(FULL)");
+
+            // Verifica o resultado
+            db.rawQuery("PRAGMA wal_checkpoint(FULL)", null).close();
+            Log.d(TAG, "Checkpoint WAL executado com sucesso");
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Falha no checkpoint WAL: " + e.getMessage());
+            return false;
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+
+    private boolean copyDatabaseFile(File backupFile) {
+        File srcFile = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER + "/" + DB_NAME);
+
+        // Garante que o diretório de backup existe
+        File backupDir = backupFile.getParentFile();
+        if (!backupDir.exists() && !backupDir.mkdirs()) {
+            Log.e(TAG, "Falha ao criar diretório: " + backupDir.getAbsolutePath());
             return false;
         }
 
-        String dataHora = getDataHoraAtual();
-        String nomeArquivoBKP = "fin_database_" + dataHora + ".db";
-        File dstDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FIND_TODAY");
-        File dst = new File(dstDir, nomeArquivoBKP);
+        try (FileChannel inChannel = new FileInputStream(srcFile).getChannel();
+             FileChannel outChannel = new FileOutputStream(backupFile).getChannel()) {
 
-        try {
-            // Verifica se a pasta de destino existe
-            if (!dstDir.exists()) {
-                boolean dirCreated = dstDir.mkdirs();
-                Log.d(TAG, "Pasta de backup criada? " + dirCreated);
-            }
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            return true;
 
-            Log.d(TAG, "Iniciando backup de: " + src.getAbsolutePath());
-            Log.d(TAG, "Para: " + dst.getAbsolutePath());
-
-            FileInputStream inputStream = new FileInputStream(src);
-            FileOutputStream outputStream = new FileOutputStream(dst);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
-            }
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
-
-            // Verifica se o arquivo foi criado
-            if (dst.exists()) {
-                Log.d(TAG, "Backup criado com sucesso. Tamanho: " + dst.length() + " bytes");
-                return true;
-            } else {
-                Log.e(TAG, "Backup falhou - arquivo não criado");
-                return false;
-            }
         } catch (IOException e) {
-            Log.e(TAG, "Erro durante backup: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Erro ao copiar arquivo: " + e.getMessage());
             return false;
         }
     }
 
     private String getDataHoraAtual() {
-        LocalDateTime dataHoraAtual = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-        return dataHoraAtual.format(formatter);
+        return LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     }
 
     public void handlePermissionResult(int requestCode, int[] grantResults) {
@@ -130,7 +147,9 @@ public class DatabaseBackupManager {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 performBackup();
             } else {
-                Toast.makeText(context, "Permissão negada. Backup não pode ser realizado.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        "Permissão negada - backup não realizado",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
