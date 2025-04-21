@@ -87,7 +87,7 @@ public class NewFinActivity extends AppCompatActivity {
 
     private void setupSpinners() {
         // Configurando o Spinner para Tipo de Despesa
-        String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPREST", "INVEST","LAZER","OUTR", "TRANSP","SAUDE"};
+        String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);
         tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoDespEdt.setAdapter(tipoAdapter);

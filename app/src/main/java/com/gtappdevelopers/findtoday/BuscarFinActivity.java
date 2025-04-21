@@ -75,8 +75,7 @@ public class BuscarFinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish(); // Encerra a atividade atual e retorna à atividade anterior
-            }
-          }
-        );
+                }
+          });
     }
 }
