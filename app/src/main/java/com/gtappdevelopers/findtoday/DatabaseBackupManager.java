@@ -24,7 +24,7 @@ public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
     private Context context;
     private static final String TAG = "DatabaseBackup";
-    private static final String DB_NAME = "fin_db.db";
+    private static final String DB_NAME = "finDB.db";
     private static final String BACKUP_FOLDER = "FIND_TODAY";
 
     public DatabaseBackupManager(Context context) {
@@ -43,7 +43,7 @@ public class DatabaseBackupManager {
 
     private void showBackupConfirmationDialog() {
         String dataHora = getDataHoraAtual();
-        String nomeArquivoBKP = "fin_db_" + dataHora + ".db";
+        String nomeArquivoBKP = "finDB_" + dataHora + ".db";
 
         // Caminho para /Download/FIND_TODAY/
         File backupDir = new File(Environment.getExternalStoragePublicDirectory(
