@@ -1,10 +1,14 @@
 package com.gtappdevelopers.findtoday;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -133,6 +137,47 @@ public class ResultBuscaActivity extends AppCompatActivity {
                 Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
+        // ------ ADICIONE ESTE CÓDIGO ------ //
+        // Configurar o ItemTouchHelper para swipe (exclusão)
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, // Não suporta drag-and-drop
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Suporta swipe para ambos os lados
+        ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false; // Não permite reordenar itens
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                FinModal itemToDelete = adapter.getDespAt(position);
+
+                // Diálogo de confirmação
+                new AlertDialog.Builder(ResultBuscaActivity.this)
+                        .setTitle("Confirmar Exclusão")
+                        .setMessage("Você tem certeza que deseja deletar este registro?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            viewmodal.delete(itemToDelete);
+                            Toast.makeText(ResultBuscaActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            // Atualiza a lista após exclusão (opcional)
+                            resultados.remove(position);
+                            adapter.notifyItemRemoved(position);
+                        })
+                        .setNegativeButton("Não", (dialog, which) -> {
+                            adapter.notifyItemChanged(position); // Cancela o swipe
+                            Toast.makeText(ResultBuscaActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            }
+        }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
+        // ------ FIM DO CÓDIGO ADICIONADO ------ //
+
+
+
 
     } // Fim ON CREATE
 

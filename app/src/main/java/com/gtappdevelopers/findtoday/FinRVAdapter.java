@@ -71,7 +71,7 @@ public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder>
     }
 
     public FinModal getDespAt(int position) {
-        return getItem(position);
+        return getItem(position); // Ou sua lógica para obter o item
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
