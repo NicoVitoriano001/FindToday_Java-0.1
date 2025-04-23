@@ -3,11 +3,10 @@ package com.gtappdevelopers.findtoday;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -26,7 +25,6 @@ public class DatabaseBackupManager {
     private static final String TAG = "DatabaseBackup";
     private static final String DB_NAME = "finDB.db";
     private static final String BACKUP_FOLDER = "FIND_TODAY";
-
     public DatabaseBackupManager(Context context) {
         this.context = context;
     }
@@ -45,9 +43,10 @@ public class DatabaseBackupManager {
         String dataHora = getDataHoraAtual();
         String nomeArquivoBKP = "finDB_" + dataHora + ".db";
 
-        // Caminho para /Download/FIND_TODAY/
+        // Caminho para /Download/FIND_TODAY/    /storage/emulated/0/Download/FIND_TODAY
         File backupDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
+
         File backupFile = new File(backupDir, nomeArquivoBKP);
 
         new AlertDialog.Builder(context)
@@ -62,27 +61,27 @@ public class DatabaseBackupManager {
 
     private void executeBackup(File backupFile) {
         try {
-            // 1. Fecha a conexão com o banco de dados
+            // Fecha a conexão com o banco de dados
             if (FinDatabase.getInstance(context) != null) {
                 FinDatabase.getInstance(context).close();
             }
 
-            // 2. Sincroniza WAL com o banco principal
+            // Sincroniza WAL com o banco principal
             performWalCheckpoint();
 
-            // 3. Faz o backup do arquivo
+            // Faz o backup do arquivo
             if (copyDatabaseFile(backupFile)) {
                 Toast.makeText(context,
                         "Backup salvo em: " + "\n" + backupFile.getAbsolutePath(),
                         Toast.LENGTH_LONG).show();
-                Log.d(TAG, "Backup realizado com sucesso: " + backupFile.length() + " bytes");
+                //Log.d(TAG, "Backup realizado com sucesso: " + backupFile.length() + " bytes");
             } else {
                 Toast.makeText(context,
                         "Falha ao criar arquivo de backup",
                         Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Erro durante backup: " + e.getMessage());
+            //Log.e(TAG, "Erro durante backup: " + e.getMessage());
             Toast.makeText(context,
                     "Erro durante backup: " + e.getMessage(),
                     Toast.LENGTH_LONG).show();
@@ -92,20 +91,17 @@ public class DatabaseBackupManager {
     private boolean performWalCheckpoint() {
         SQLiteDatabase db = null;
         try {
-            File dbFile = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER + "/" + DB_NAME);
+            // Acessa o arquivo ORIGINAL do banco de dados
+            File dbFile = context.getDatabasePath(DB_NAME);
 
             db = SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
             // Executa checkpoint FULL para sincronizar WAL
             db.execSQL("PRAGMA wal_checkpoint(FULL)");
-
-            // Verifica o resultado
-            db.rawQuery("PRAGMA wal_checkpoint(FULL)", null).close();
-            Log.d(TAG, "Checkpoint WAL executado com sucesso");
+            //Log.d(TAG, "Checkpoint WAL executado com sucesso");
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "Falha no checkpoint WAL: " + e.getMessage());
+            //Log.e(TAG, "Falha no checkpoint WAL: " + e.getMessage());
             return false;
         } finally {
             if (db != null) {
@@ -114,28 +110,44 @@ public class DatabaseBackupManager {
         }
     }
 
+
     private boolean copyDatabaseFile(File backupFile) {
+        // Obtém o arquivo ORIGINAL do banco de dados
+        //File srcFile = context.getDatabasePath(DB_NAME);
         File srcFile = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER + "/" + DB_NAME);
+        // Verifica se o arquivo original existe
+        if (!srcFile.exists()) {
+            //Log.e(TAG, "Arquivo do banco de dados não encontrado: " + srcFile.getAbsolutePath());
+            Toast.makeText(context, "Banco de dados original não encontrado", Toast.LENGTH_LONG).show();
+            return false;
+        }
 
         // Garante que o diretório de backup existe
-        File backupDir = backupFile.getParentFile();
-        if (!backupDir.exists() && !backupDir.mkdirs()) {
-            Log.e(TAG, "Falha ao criar diretório: " + backupDir.getAbsolutePath());
-            return false;
+        //File backupDir = backupFile.getParentFile();
+        File backupDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
+        if (!backupDir.exists()) {
+            if (!backupDir.mkdirs()) {
+                //Log.e(TAG, "Falha ao criar diretório: " + backupDir.getAbsolutePath());
+                Toast.makeText(context, "Não foi possível criar a pasta FIND_TODAY", Toast.LENGTH_LONG).show();
+                return false;
+            }
         }
 
         try (FileChannel inChannel = new FileInputStream(srcFile).getChannel();
              FileChannel outChannel = new FileOutputStream(backupFile).getChannel()) {
 
             inChannel.transferTo(0, inChannel.size(), outChannel);
+            //Log.d(TAG, "Backup criado com sucesso: " + backupFile.length() + " bytes");
             return true;
 
         } catch (IOException e) {
-            Log.e(TAG, "Erro ao copiar arquivo: " + e.getMessage());
+            //Log.e(TAG, "Erro ao copiar arquivo: " + e.getMessage());
             return false;
         }
     }
+
 
     private String getDataHoraAtual() {
         return LocalDateTime.now()
