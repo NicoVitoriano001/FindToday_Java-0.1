@@ -5,27 +5,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BuscarFinActivity">
+    tools:context=".ResultBuscaActivity">
 
+    <!-- Total Créditos -->
     <TextView
-        android:id="@+id/idTVTotal"
+        android:id="@+id/idTVCredito"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Total: $ 0.00"
-        android:textSize="18sp" /> <!-- Texto padrão -->
+        android:text="Créditos: $ 0.00"
+        android:textSize="16sp"/>
+
+    <!-- Total Despesas -->
+    <TextView
+        android:id="@+id/idTVDespesa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/idTVCredito"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Despesas: $ 0.00"
+        android:textSize="16sp"/>
+
+    <!-- Saldo -->
+    <TextView
+        android:id="@+id/idTVSaldo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/idTVDespesa"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Saldo: $ 0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/idRVRetorno"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/idTVTotal" /> <!-- Coloca o RecyclerView abaixo do TextView -->
+        android:layout_below="@id/idTVSaldo"
+        android:layout_marginTop="16dp"/>
 
+    <!-- Botões flutuantes (mantidos como no original) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/idFABresultadoConsultReturn"
         android:layout_width="wrap_content"
@@ -35,7 +58,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/abc_vector_test"
-        app:tint="@color/white" />
+        app:tint="@color/white"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/idFABresultadoConsultReturnHome"
@@ -46,5 +69,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_home"
-        app:tint="@color/white" />
+        app:tint="@color/white"/>
+
 </RelativeLayout>

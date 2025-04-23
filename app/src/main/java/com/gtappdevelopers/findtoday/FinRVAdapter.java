@@ -64,14 +64,14 @@ public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder>
             holder.valorDespTV.setTypeface(null, Typeface.BOLD);
         }
         else {
-            holder.valorDespTV.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.vermelho));
+            holder.valorDespTV.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.laranja));
             holder.valorDespTV.setTypeface(null, Typeface.BOLD);
         }
 
     }
 
     public FinModal getDespAt(int position) {
-        return getItem(position);
+        return getItem(position); // Ou sua lógica para obter o item
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

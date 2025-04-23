@@ -1,10 +1,14 @@
 package com.gtappdevelopers.findtoday;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,15 +23,18 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
-    private TextView totalTextView;
+    private TextView creditoTextView, despesaTextView, saldoTextView;
+    private List<FinModal> resultados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_busca_rv);
 
-        // Inicializar o TextView para o total
-        totalTextView = findViewById(R.id.idTVTotal);
+        // Inicializar os TextViews
+        creditoTextView = findViewById(R.id.idTVCredito);
+        despesaTextView = findViewById(R.id.idTVDespesa);
+        saldoTextView = findViewById(R.id.idTVSaldo);
 
         // Inicializar RecyclerView
         idRVRetorno = findViewById(R.id.idRVRetorno);
@@ -37,7 +44,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
         viewmodal = new ViewModelProvider(this).get(ViewModal.class); // Inicializar viewmodal
 
         ArrayList<Parcelable> parcelableList = getIntent().getParcelableArrayListExtra("resultados");
-        List<FinModal> resultados = new ArrayList<>();
+        resultados = new ArrayList<>();
 
         if (parcelableList != null) {
             for (Parcelable parcelable : parcelableList) {
@@ -48,26 +55,30 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
             adapter.submitList(resultados);
             // Calcular a soma dos valores
-            double total = 0;
+            double totalCredito = 0;
+            double totalDespesa = 0;
+
             for (FinModal item : resultados) {
-                double valor = Double.parseDouble(item.getValorDesp()); // Supondo que valorDesp é uma String
+                double valor = Double.parseDouble(item.getValorDesp());
 
-                // Verifica se tipoDesp é igual a "-"
-                if ("-".equals(item.getTipoDesp())) {
-                    continue; // Desconsidera este item
-                }
+                if ("-".equals(item.getTipoDesp())) continue;
 
-                // Verifica se tipoDesp é igual a "CRED"
                 if ("CRED".equals(item.getTipoDesp())) {
-                    total += valor; // Adiciona se tipoDesp for CRED
+                    totalCredito += valor;
                 } else {
-                    total -= valor; // Subtrai se tipoDesp não for CRED
+                    totalDespesa += valor;
                 }
             }
-            DecimalFormat df = new DecimalFormat("#,##0.00"); // Define o formato para valores com duas casas decimais
-            String formattedTotal = df.format(total); // Formata o total
-            totalTextView.setText("Total: $ " + formattedTotal); // Atualiza o TextView com o total formatado
+
+            double saldo = totalCredito - totalDespesa;
+
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+
+            creditoTextView.setText("Créditos: $ " + df.format(totalCredito));
+            despesaTextView.setText("Despesas: $ " + df.format(totalDespesa));
+            saldoTextView.setText("Saldo: $ " + df.format(saldo));
         }
+
 
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
@@ -102,7 +113,96 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         });
 
+
+
+        // REVISAR Adicione no onCreate:
+        creditoTextView.setOnClickListener(v -> {
+            List<FinModal> listaFiltrada = filtrarCreditos(); // SEM argumento
+            if (!listaFiltrada.isEmpty()) {
+                Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaCredActivity.class);
+                intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Nenhum crédito encontrado>>", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        despesaTextView.setOnClickListener(v -> {
+            List<FinModal> listaFiltrada = filtrarDespesas(); // SEM argumento
+            if (!listaFiltrada.isEmpty()) {
+                Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaDespActivity.class);
+                intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+        // ------ ADICIONE ESTE CÓDIGO ------ //
+        // Configurar o ItemTouchHelper para swipe (exclusão)
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, // Não suporta drag-and-drop
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Suporta swipe para ambos os lados
+        ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false; // Não permite reordenar itens
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                FinModal itemToDelete = adapter.getDespAt(position);
+
+                // Diálogo de confirmação
+                new AlertDialog.Builder(ResultBuscaActivity.this)
+                        .setTitle("Confirmar Exclusão")
+                        .setMessage("Você tem certeza que deseja deletar este registro?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            viewmodal.delete(itemToDelete);
+                            Toast.makeText(ResultBuscaActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            // Atualiza a lista após exclusão (opcional)
+                            resultados.remove(position);
+                            adapter.notifyItemRemoved(position);
+                        })
+                        .setNegativeButton("Não", (dialog, which) -> {
+                            adapter.notifyItemChanged(position); // Cancela o swipe
+                            Toast.makeText(ResultBuscaActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            }
+        }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
+        // ------ FIM DO CÓDIGO ADICIONADO ------ //
+
+
+
+
+    } // Fim ON CREATE
+
+    // Métodos auxiliares para filtrar // Métodos de filtro (fora do onCreate):
+    private List<FinModal> filtrarCreditos() {
+        List<FinModal> filtrada = new ArrayList<>();
+        for (FinModal item : resultados) {
+            if ("CRED".equals(item.getTipoDesp())) {
+                filtrada.add(item);
+            }
+        }
+        return filtrada;
     }
+    private List<FinModal> filtrarDespesas() {
+        List<FinModal> filtrada = new ArrayList<>();
+        for (FinModal item : resultados) {
+            String tipo = item.getTipoDesp();
+            if (tipo != null && !tipo.equals("CRED") && !tipo.equals("-")) {
+                filtrada.add(item);
+            }
+        }
+        return filtrada;
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -130,5 +230,4 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         }
     }
-
 }
