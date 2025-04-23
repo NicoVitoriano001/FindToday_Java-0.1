@@ -36,7 +36,6 @@
             android:singleLine="true" />
     </LinearLayout>
 
-
     <Button
         android:id="@+id/idBtnFazerResumo"
         android:layout_width="match_parent"

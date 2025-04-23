@@ -54,6 +54,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
 
             adapter.submitList(resultados);
+
             // Calcular a soma dos valores
             double totalCredito = 0;
             double totalDespesa = 0;
@@ -78,7 +79,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
             despesaTextView.setText("Despesas: $ " + df.format(totalDespesa));
             saldoTextView.setText("Saldo: $ " + df.format(saldo));
         }
-
 
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override

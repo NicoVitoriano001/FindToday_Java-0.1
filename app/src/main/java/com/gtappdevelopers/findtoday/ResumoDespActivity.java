@@ -1,7 +1,7 @@
 package com.gtappdevelopers.findtoday;
 
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -26,6 +26,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         // Inicializa as views (correção dos erros "Cannot resolve symbol")
         anoEditText = findViewById(R.id.idEdtAno);
         mesEditText = findViewById(R.id.idEdtMes);
+
         Button resumoButton = findViewById(R.id.idBtnFazerResumo);
 
         resumoButton.setOnClickListener(v -> {
@@ -33,7 +34,7 @@ public class ResumoDespActivity extends AppCompatActivity {
                 String ano = anoEditText.getText().toString().trim();
                 String mes = mesEditText.getText().toString().trim();
 
-                // Cópia modificável para uso no Observer
+                // se mês for com 1 dig, preenche zeroa esquerda
                 final String mesFinal = mes.length() == 1 ? "0" + mes : mes;
 
                 if (ano.isEmpty() || mesFinal.isEmpty()) {
@@ -42,30 +43,28 @@ public class ResumoDespActivity extends AppCompatActivity {
                 }
 
                 finDatabase.Dao().buscaPorAnoEMes(ano, mesFinal)
-                        .observe(this, finModals -> {
-                            if (isFinishing() || isDestroyed()) return;
-
-                            if (finModals != null && !finModals.isEmpty()) {
-                                showResultDialog(finModals);
-                            } else {
-                                showToast("Nenhum dado encontrado para " + mesFinal + "/" + ano);
-                            }
-                        });
+                            .observe(this, finModals -> {
+                                if (isFinishing() || isDestroyed()) return;
+                                if (finModals != null && !finModals.isEmpty()) {
+                                       showResultDialog(finModals);
+                                } else {
+                                       showToast("Nenhum dado encontrado para " + mesFinal + "/" + ano);
+                                }
+                            });
 
             } catch (Exception e) {
-                Log.e("ResumoDesp", "Erro na busca", e);
+                //Log.e("ResumoDesp", "Erro na busca", e);
                 showToast("Erro na busca: " + e.getMessage());
             }
         });
 
     }
 
-    // Adicionando o método showToast que estava faltando
+    // Adicionando o metodo showToast que estava faltando
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    // Adicionando o método showResultDialog que estava faltando
     private void showResultDialog(List<FinModal> dados) {
         try {
             if (dados == null || dados.isEmpty()) {
@@ -81,7 +80,7 @@ public class ResumoDespActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "ResultadosDespesasDialog");
 
         } catch (Exception e) {
-            Log.e("ResumoDesp", "Erro ao mostrar diálogo", e);
+            //Log.e("ResumoDesp", "Erro ao mostrar diálogo", e);
             showToast("Erro ao exibir resultados: " + e.getMessage());
         }
     }
