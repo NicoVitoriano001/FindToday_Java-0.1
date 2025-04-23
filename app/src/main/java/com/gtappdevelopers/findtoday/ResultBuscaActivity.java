@@ -32,7 +32,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
         despesaTextView = findViewById(R.id.idTVDespesa);
         saldoTextView = findViewById(R.id.idTVSaldo);
 
-         // Inicializar RecyclerView
+        // Inicializar RecyclerView
         idRVRetorno = findViewById(R.id.idRVRetorno);
         adapter = new FinRVAdapter();
         idRVRetorno.setLayoutManager(new LinearLayoutManager(this));
@@ -111,7 +111,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
 
 
-        // Adicione no onCreate:
+        // REVISAR Adicione no onCreate:
         creditoTextView.setOnClickListener(v -> {
             List<FinModal> listaFiltrada = filtrarCreditos(); // SEM argumento
             if (!listaFiltrada.isEmpty()) {
@@ -134,7 +134,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         });
 
-    } // Fim ONCREATE
+    } // Fim ON CREATE
 
     // Métodos auxiliares para filtrar // Métodos de filtro (fora do onCreate):
     private List<FinModal> filtrarCreditos() {
@@ -146,7 +146,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
         }
         return filtrada;
     }
-
     private List<FinModal> filtrarDespesas() {
         List<FinModal> filtrada = new ArrayList<>();
         for (FinModal item : resultados) {
@@ -186,5 +185,4 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         }
     }
-
 }
