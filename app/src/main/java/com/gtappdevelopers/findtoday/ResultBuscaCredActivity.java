@@ -4,6 +4,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.DecimalFormat;
@@ -31,11 +33,12 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         // Obter dados da Intent
         ArrayList<FinModal> resultados = getIntent().getParcelableArrayListExtra("resultadosFiltrados");
 
-        // Filtro adicional para garantir apenas CRED
+        // Usar o método filtrarCreditos desta classe
         List<FinModal> listaFiltrada = filtrarCreditos(resultados);
 
         if (listaFiltrada != null && !listaFiltrada.isEmpty()) {
             adapter.submitList(listaFiltrada);
+            // Usar o método calcularTotal desta classe
             double total = calcularTotal(listaFiltrada);
             DecimalFormat df = new DecimalFormat("#,##0.00");
             totalTextView.setText("Total Créditos: $ " + df.format(total));
@@ -45,7 +48,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         }
     }
 
-    // Filtra apenas itens do tipo CRED
+    // Método para filtrar créditos (versão para esta atividade)
     private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
         List<FinModal> filtrada = new ArrayList<>();
         if (listaOriginal != null) {
@@ -58,16 +61,18 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         return filtrada;
     }
 
-    // Calcula o total com tratamento de erros
+    // Método para calcular o total
     private double calcularTotal(List<FinModal> lista) {
         double total = 0;
         for (FinModal item : lista) {
             try {
                 total += Double.parseDouble(item.getValorDesp());
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Valor inválido: " + item.getValorDesp(), Toast.LENGTH_SHORT).show();
+                Log.e("CALCULO", "Valor inválido: " + item.getValorDesp(), e);
             }
         }
         return total;
     }
+
+
 }

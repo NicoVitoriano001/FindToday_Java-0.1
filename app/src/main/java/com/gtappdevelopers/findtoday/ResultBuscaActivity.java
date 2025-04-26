@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
@@ -120,13 +121,25 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
         // REVISAR Adicione no onCreate:
         creditoTextView.setOnClickListener(v -> {
-            List<FinModal> listaFiltrada = filtrarCreditos(); // SEM argumento
+            List<FinModal> listaFiltrada = filtrarCreditos();
             if (!listaFiltrada.isEmpty()) {
-                Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaCredActivity.class);
-                intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaCredActivity.class);
+                    intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
+
+                    // Adicione logs para depuração
+                    Log.d("DEBUG", "Iniciando ResultBuscaCredActivity com " + listaFiltrada.size() + " itens");
+                    for (FinModal item : listaFiltrada) {
+                        Log.d("DEBUG", "Item: " + item.getTipoDesp() + " - " + item.getValorDesp());
+                    }
+
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e("ERROR", "Falha ao iniciar ResultBuscaCredActivity", e);
+                    Toast.makeText(this, "Erro ao exibir créditos", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, "Nenhum crédito encontrado>>", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nenhum crédito encontrado", Toast.LENGTH_SHORT).show();
             }
         });
 

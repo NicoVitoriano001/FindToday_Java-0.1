@@ -12,11 +12,7 @@ import java.util.Locale;
 public class FinModal implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String valorDesp;
-    private String tipoDesp;
-    private String fontDesp;
-    private String despDescr;
-    private String dataDesp;
+    private String valorDesp, tipoDesp, fontDesp, despDescr, dataDesp;
 
     public FinModal(String valorDesp, String tipoDesp, String fontDesp,  String despDescr, String dataDesp) {
         this.valorDesp = valorDesp;
@@ -69,11 +65,13 @@ public class FinModal implements Parcelable {
     public static final Creator<FinModal> CREATOR = new Creator<FinModal>() {
         @Override
         public FinModal createFromParcel(Parcel in) {
+
             return new FinModal(in);
         }
 
         @Override
         public FinModal[] newArray(int size) {
+
             return new FinModal[size];
         }
     };
