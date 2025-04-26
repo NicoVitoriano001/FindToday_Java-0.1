@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BuscarFinActivity extends AppCompatActivity {
-    public static final String EXTRA_ID_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID_BUSCA";
-    public static final String EXTRA_VALOR_DESP_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_VALOR_DESP_BUSCA";
-    public static final String EXTRA_TIPO_DESP_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_TIPO_DESP_BUSCA";
-    public static final String EXTRA_FONT_DESP_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_FONT_DESP_BUSCA";
-    public static final String EXTRA_DESCR_DESP_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_DESP_DESCR";
-    public static final String EXTRA_DURATION_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_DURATION_BUSCA";
+
+    public static final String EXTRA_ID_BUSCA = "EXTRA_ID_BUSCA";
+    //public static final String EXTRA_ID_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID_BUSCA";
+    public static final String EXTRA_VALOR_DESP_BUSCA = "EXTRA_VALOR_DESP_BUSCA";
+    public static final String EXTRA_TIPO_DESP_BUSCA = "EXTRA_TIPO_DESP_BUSCA";
+    public static final String EXTRA_FONT_DESP_BUSCA = "EXTRA_FONT_DESP_BUSCA";
+    public static final String EXTRA_DESCR_DESP_BUSCA = "EXTRA_DESP_DESCR";
+    public static final String EXTRA_DURATION_BUSCA = "EXTRA_DURATION_BUSCA";
     private Dao dao;
     private EditText valorDespEdtBusca, tipoDespEdtBusca, fontDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
     private Button FinBtnBusca;
@@ -26,9 +28,11 @@ public class BuscarFinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_busca_fin);
 
         dao = FinDatabase.getInstance(this).Dao();
+
         valorDespEdtBusca = findViewById(R.id.idEdtValorDespBuscar);
         tipoDespEdtBusca = findViewById(R.id.idEdtTipoDespBuscar);
         fontDespEdtBusca = findViewById(R.id.idEdtFontDespBuscar);

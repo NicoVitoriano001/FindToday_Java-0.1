@@ -1,7 +1,6 @@
 package com.gtappdevelopers.findtoday;
 
 import android.os.Bundle;
-//import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,8 +11,7 @@ import java.util.List;
 
 public class ResumoDespActivity extends AppCompatActivity {
     private FinDatabase finDatabase;
-    private EditText anoEditText;
-    private EditText mesEditText;
+    private EditText anoEditText, mesEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +21,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         // Inicializa o banco de dados
         finDatabase = FinDatabase.getInstance(getApplicationContext());
 
-        // Inicializa as views (correção dos erros "Cannot resolve symbol")
+        // Inicializa as views
         anoEditText = findViewById(R.id.idEdtAno);
         mesEditText = findViewById(R.id.idEdtMes);
 

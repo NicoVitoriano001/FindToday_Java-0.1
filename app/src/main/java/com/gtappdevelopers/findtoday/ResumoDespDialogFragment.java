@@ -7,9 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-
 import androidx.fragment.app.DialogFragment;
-
 import java.util.ArrayList;
 import java.util.List;
 

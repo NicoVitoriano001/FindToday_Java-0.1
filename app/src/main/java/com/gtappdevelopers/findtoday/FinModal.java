@@ -4,7 +4,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import java.util.Locale;
 
 @Entity(tableName = "fin_table")
@@ -12,11 +11,7 @@ import java.util.Locale;
 public class FinModal implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String valorDesp;
-    private String tipoDesp;
-    private String fontDesp;
-    private String despDescr;
-    private String dataDesp;
+    private String valorDesp, tipoDesp, fontDesp, despDescr, dataDesp;
 
     public FinModal(String valorDesp, String tipoDesp, String fontDesp,  String despDescr, String dataDesp) {
         this.valorDesp = valorDesp;
