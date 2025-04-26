@@ -26,4 +26,27 @@
         android:layout_below="@id/idTVTotal"
         android:layout_marginTop="16dp"/>
 
+    <!-- Botões flutuantes (mantidos como no original) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/idFABresultadoConsultReturn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/abc_vector_test"
+        app:tint="@color/white"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/idFABresultadoConsultReturnHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_home"
+        app:tint="@color/white"/>
+
 </RelativeLayout>

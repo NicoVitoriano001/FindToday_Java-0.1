@@ -4,7 +4,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import java.util.Locale;
 
 @Entity(tableName = "fin_table")
@@ -65,13 +64,11 @@ public class FinModal implements Parcelable {
     public static final Creator<FinModal> CREATOR = new Creator<FinModal>() {
         @Override
         public FinModal createFromParcel(Parcel in) {
-
             return new FinModal(in);
         }
 
         @Override
         public FinModal[] newArray(int size) {
-
             return new FinModal[size];
         }
     };
