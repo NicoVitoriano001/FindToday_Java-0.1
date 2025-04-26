@@ -7,18 +7,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import android.widget.TextView;
+
 public class ResultBuscaActivity extends AppCompatActivity {
     private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
@@ -100,6 +100,9 @@ public class ResultBuscaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish(); // Encerra a atividade atual e retorna à atividade anterior
+              //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
+              //  startActivity(intent);
+
             }
         });
 

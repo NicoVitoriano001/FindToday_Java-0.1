@@ -7,7 +7,7 @@
         android:title="Settings" />
     <item
         android:id="@+id/nav_resumo_desp"
-        android:title="Resumo de Despesas" /> <!-- Novo item adicionado -->
+        android:title="Resumo de Despesas" />
 
     <item
         android:id="@+id/nav_nova_desp"

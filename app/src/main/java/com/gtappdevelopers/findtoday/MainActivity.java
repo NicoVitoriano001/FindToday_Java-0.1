@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem; // Import necessário
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         drawerLayout.closeDrawer(GravityCompat.START); // Fecha o drawer após a seleção
                         return true;
-                    case R.id.nav_nova_desp: // Novo caso para Nova Despesa
+                    case R.id.nav_nova_desp:
                         Intent intentNovaDesp = new Intent(MainActivity.this, NewFinActivity.class);
                         startActivity(intentNovaDesp);
                         drawerLayout.closeDrawer(GravityCompat.START);
