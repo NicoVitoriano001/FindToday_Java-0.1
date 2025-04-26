@@ -81,10 +81,10 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         fabReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Criar um intent de resultado para forçar atualização
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
                 finish(); // Encerra a atividade atual e retorna à atividade anterior
-                //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
-                //  startActivity(intent);
-
             }
         });
 
