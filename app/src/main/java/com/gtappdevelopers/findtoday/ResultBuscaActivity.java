@@ -117,9 +117,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // REVISAR Adicione no onCreate:
         creditoTextView.setOnClickListener(v -> {
             List<FinModal> listaFiltrada = filtrarCreditos();
             if (!listaFiltrada.isEmpty()) {
@@ -144,7 +141,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
         });
 
         despesaTextView.setOnClickListener(v -> {
-            List<FinModal> listaFiltrada = filtrarDespesas(); // SEM argumento
+            List<FinModal> listaFiltrada = filtrarDespesas();
             if (!listaFiltrada.isEmpty()) {
                 Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaDespActivity.class);
                 intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
@@ -155,9 +152,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
         });
 
 
-
-        // ------ ADICIONE ESTE CÓDIGO ------ //
-        // Configurar o ItemTouchHelper para swipe (exclusão)
+       // Configurar o ItemTouchHelper para swipe (exclusão)
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, // Não suporta drag-and-drop
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Suporta swipe para ambos os lados
@@ -190,10 +185,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
                         .show();
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
-        // ------ FIM DO CÓDIGO ADICIONADO ------ //
-
-
-
 
     } // Fim ON CREATE
 
@@ -217,8 +208,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
         }
         return filtrada;
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

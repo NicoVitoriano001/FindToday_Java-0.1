@@ -16,9 +16,6 @@
         <activity android:name=".ResumoDespActivity"></activity>
         <activity android:name=".ResultBuscaCredActivity"></activity>
         <activity android:name=".ResultBuscaDespActivity"></activity>
-
-
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

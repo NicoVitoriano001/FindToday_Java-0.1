@@ -4,7 +4,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,12 +32,12 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         // Obter dados da Intent
         ArrayList<FinModal> resultados = getIntent().getParcelableArrayListExtra("resultadosFiltrados");
 
-        // Usar o método filtrarCreditos desta classe
+        // Usar o metodo filtrarCreditos desta classe
         List<FinModal> listaFiltrada = filtrarCreditos(resultados);
 
         if (listaFiltrada != null && !listaFiltrada.isEmpty()) {
             adapter.submitList(listaFiltrada);
-            // Usar o método calcularTotal desta classe
+            // Usar o metodo calcularTotal desta classe
             double total = calcularTotal(listaFiltrada);
             DecimalFormat df = new DecimalFormat("#,##0.00");
             totalTextView.setText("Total Créditos: $ " + df.format(total));
@@ -48,7 +47,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         }
     }
 
-    // Método para filtrar créditos (versão para esta atividade)
+    // Metodo para filtrar créditos (versão para esta atividade)
     private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
         List<FinModal> filtrada = new ArrayList<>();
         if (listaOriginal != null) {
@@ -61,7 +60,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         return filtrada;
     }
 
-    // Método para calcular o total
+    // Metodo para calcular o total
     private double calcularTotal(List<FinModal> lista) {
         double total = 0;
         for (FinModal item : lista) {
@@ -73,6 +72,5 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         }
         return total;
     }
-
 
 }
