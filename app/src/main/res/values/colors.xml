@@ -3,11 +3,11 @@
     <color name="blue_200">#00BCD4</color>
     <color name="blue_500">#191750</color> #CABEÇALHO
     <color name="blue_700">#191520</color> #SUPERIOR DO RELOGIO
-    <color name="green_200">#02F40B</color> # fonte principal valor dos positivos
+    <color name="green_200">#02F40B</color> # 24.03.25 cor principal valor dos positivos
     <color name="teal_200">#191967</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="vermelho">#EB6E6E</color>
+    <color name="vermelho">#ED8484</color>  # 24.03.25 cor prnicipal valor negativo
     <color name="laranja">#FF7700</color>
     <color name="white">#FFFFFFFF</color>
     <!-- Cores básicas do tema Material Design -->
