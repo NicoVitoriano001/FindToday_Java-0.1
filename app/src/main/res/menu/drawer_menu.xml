@@ -3,9 +3,6 @@
         android:id="@+id/nav_home"
         android:title="Home" />
     <item
-        android:id="@+id/nav_settings"
-        android:title="Settings" />
-    <item
         android:id="@+id/nav_resumo_desp"
         android:title="Resumo de Despesas" />
 
@@ -16,5 +13,9 @@
     <item
         android:id="@+id/nav_fazer_bkp"
         android:title="Fazer Backup" />
+
+    <item
+        android:id="@+id/nav_syncDB"
+        android:title="Sync DB" />
 </menu>
 

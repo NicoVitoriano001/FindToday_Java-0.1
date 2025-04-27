@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
         // Configurando o listener de clique no item do NavigationView
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -63,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case R.id.nav_fazer_bkp:
-                        databaseBackupManager.performBackup(); // Chama o método de backup
+                        databaseBackupManager.performBackup(); // Chama o metodo de backup
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    case R.id.nav_syncDB:
+                        databaseBackupManager.performBackup(); // Chama o metodo de backup
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     default:

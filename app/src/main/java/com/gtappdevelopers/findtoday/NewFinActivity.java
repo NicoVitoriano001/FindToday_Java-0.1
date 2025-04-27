@@ -45,6 +45,7 @@ public class NewFinActivity extends AppCompatActivity {
         dataDespEdt = findViewById(R.id.idEdtDataDesp);
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
      //   FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
+
      //   Configurando os Spinners
         setupSpinners();
 

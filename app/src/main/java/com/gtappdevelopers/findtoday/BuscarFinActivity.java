@@ -89,8 +89,6 @@ public class BuscarFinActivity extends AppCompatActivity {
           });
     }
 
-
-    // spinners
     private void setupSpinners() {
         // Configurando o Spinner para Tipo de Despesa
         String[] tiposDespesa = {"","-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
