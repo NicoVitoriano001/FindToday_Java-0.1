@@ -22,25 +22,21 @@
             android:hint="Valor Buscar"
             android:inputType="numberDecimal" />
 
-        <EditText
+        <!-- Substituído por Spinner -->
+        <Spinner
             android:id="@+id/idEdtTipoDespBuscar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="Tipo Buscar"
-            android:imeOptions="actionNext"
-            android:inputType="textCapCharacters"
-            android:singleLine="true" />
+            android:hint="Tipo Buscar" />
 
-        <EditText
+        <!-- Substituído por Spinner -->
+        <Spinner
             android:id="@+id/idEdtFontDespBuscar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="Fonte Buscar"
-            android:imeOptions="actionNext"
-            android:inputType="textCapCharacters"
-            android:singleLine="true" />
+            android:hint="Fonte Buscar" />
 
         <EditText
             android:id="@+id/idEdtDespDescrBuscar"

@@ -18,7 +18,7 @@ import android.widget.DatePicker;
 
 public class NewFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
-    private Spinner tipoDespEdt, fontDespEdt;
+    private Spinner tipoDespEdt, fontDespEdt;// Declarado como Spinner
     private Button FinBtnSave;
     public static final String EXTRA_ID = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID";
     public static final String EXTRA_VALOR_DESP = "com.gtappdevelopers.gfgroomdatabase.EXTRA_VALOR_DESP";

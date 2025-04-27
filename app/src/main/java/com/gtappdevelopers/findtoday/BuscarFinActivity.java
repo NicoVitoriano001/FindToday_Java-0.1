@@ -6,14 +6,18 @@ import androidx.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BuscarFinActivity extends AppCompatActivity {
-
+    private EditText valorDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
+    private Spinner tipoDespEdtBusca, fontDespEdtBusca; // Declarado como Spinner
+    private Button FinBtnBusca;
     public static final String EXTRA_ID_BUSCA = "EXTRA_ID_BUSCA";
     //public static final String EXTRA_ID_BUSCA = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID_BUSCA";
     public static final String EXTRA_VALOR_DESP_BUSCA = "EXTRA_VALOR_DESP_BUSCA";
@@ -22,8 +26,6 @@ public class BuscarFinActivity extends AppCompatActivity {
     public static final String EXTRA_DESCR_DESP_BUSCA = "EXTRA_DESP_DESCR";
     public static final String EXTRA_DURATION_BUSCA = "EXTRA_DURATION_BUSCA";
     private Dao dao;
-    private EditText valorDespEdtBusca, tipoDespEdtBusca, fontDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
-    private Button FinBtnBusca;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,16 @@ public class BuscarFinActivity extends AppCompatActivity {
         dataDespEdtBusca = findViewById(R.id.idEdtDataDespBuscar);
         FinBtnBusca = findViewById(R.id.idBtnBuscarDesp);
 
+        setupSpinners();
+
         FinBtnBusca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String valorDesp = valorDespEdtBusca.getText().toString();
-                String tipoDesp = tipoDespEdtBusca.getText().toString();
-                String fontDesp = fontDespEdtBusca.getText().toString();
+                String tipoDesp = tipoDespEdtBusca.getSelectedItem().toString();
+                String fontDesp = fontDespEdtBusca.getSelectedItem().toString();
+               // String tipoDesp = tipoDespEdtBusca.getText().toString();
+               // String fontDesp = fontDespEdtBusca.getText().toString();
                 String despDescr = despDescrEdtBusca.getText().toString();
                 String dataDesp = dataDespEdtBusca.getText().toString();
 
@@ -82,4 +88,23 @@ public class BuscarFinActivity extends AppCompatActivity {
                 }
           });
     }
+
+
+    // spinners
+    private void setupSpinners() {
+        // Configurando o Spinner para Tipo de Despesa
+        String[] tiposDespesa = {"","-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tipoDespEdtBusca.setAdapter(tipoAdapter);
+
+        // Configurando o Spinner para Fonte de Despesa
+        String[] fontesDespesa = {"","-","ALELO","BB","BRA","BTG","CASH", "CEF1","CEF2","NU", "MP", "STDER","OUTR"};
+        ArrayAdapter<String> fontAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fontesDespesa);
+        fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fontDespEdtBusca.setAdapter(fontAdapter);
+    }
 }
+
+
+
