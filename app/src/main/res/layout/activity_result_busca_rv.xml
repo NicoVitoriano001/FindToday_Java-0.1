@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:textColor="@color/green_200"
         android:text="Créditos: $ 0.00"
         android:textSize="16sp"/>
 
@@ -27,6 +28,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:text="Despesas: $ 0.00"
+        android:textColor="@color/vermelho"
         android:textSize="16sp"/>
 
     <!-- Saldo -->
