@@ -185,10 +185,9 @@ public class ResultBuscaActivity extends AppCompatActivity {
                         .show();
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
-
     } // Fim ON CREATE
 
-    // Métodos auxiliares para filtrar // Métodos de filtro (fora do onCreate):
+    // Métodos auxiliares para filtrar, métodos de filtro (fora do onCreate):
     private List<FinModal> filtrarCreditos() {
         List<FinModal> filtrada = new ArrayList<>();
         for (FinModal item : resultados) {

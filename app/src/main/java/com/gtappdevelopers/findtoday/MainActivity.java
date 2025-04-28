@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         }).attachToRecyclerView(FinRV);
-        // FIM CONFIRMA EXCLUSÃO
+        // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
 
         // Configurando o listener de clique no item do RecyclerView
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {

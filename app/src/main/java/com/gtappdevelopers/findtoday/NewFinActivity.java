@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -44,7 +43,7 @@ public class NewFinActivity extends AppCompatActivity {
         despDescrEdt = findViewById(R.id.idEdtDespDescr);
         dataDespEdt = findViewById(R.id.idEdtDataDesp);
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
-     //   FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
+     // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
 
      //   Configurando os Spinners
         setupSpinners();
@@ -133,7 +132,6 @@ public class NewFinActivity extends AppCompatActivity {
                     }
                 },
                 year, month, day);
-
         // Mostrar o DatePickerDialog
         datePickerDialog.show();
     }
@@ -157,5 +155,3 @@ public class NewFinActivity extends AppCompatActivity {
     }
 
 }
-
-

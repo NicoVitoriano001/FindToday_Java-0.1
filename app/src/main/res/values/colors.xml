@@ -11,7 +11,7 @@
     <color name="laranja">#FF7700</color>
     <color name="white">#FFFFFFFF</color>
     <!-- Cores básicas do tema Material Design -->
-    <color name="colorPrimary">#3F51B5</color>       <!-- Azul Indigo -->
-    <color name="colorPrimaryDark">#303F9F</color>    <!-- Azul mais escuro -->
-    <color name="colorAccent">#FF4081</color>         <!-- Rosa -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>
