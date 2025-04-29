@@ -1,4 +1,4 @@
-package com.gtappdevelopers.findtoday;
+package com.app.fintoday;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

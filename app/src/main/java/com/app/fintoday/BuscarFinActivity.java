@@ -1,4 +1,4 @@
-package com.gtappdevelopers.findtoday;
+package com.app.fintoday;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.app.fintoday.R;
+
 import java.util.ArrayList;
 import java.util.List;
 

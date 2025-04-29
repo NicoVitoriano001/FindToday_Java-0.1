@@ -1,4 +1,4 @@
-package com.gtappdevelopers.findtoday;
+package com.app.fintoday;
 
 import android.app.AlertDialog;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.gtappdevelopers.findtoday;
+package com.app.fintoday;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
     private DrawerLayout drawerLayout;
-    private com.gtappdevelopers.findtoday.DatabaseBackupManager databaseBackupManager;
+    private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
 
 
     @Override
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         // Inicialize o databaseBackupManager
-        databaseBackupManager = new com.gtappdevelopers.findtoday.DatabaseBackupManager(this);
+        databaseBackupManager = new com.app.fintoday.DatabaseBackupManager(this);
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
