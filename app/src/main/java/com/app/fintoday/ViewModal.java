@@ -23,33 +23,25 @@ public class ViewModal extends AndroidViewModel {
         allDesp = repository.getallDesp();
     }
 
-    // Método para inserir uma nova despesa
     public void insert(FinModal model) {
         repository.insert(model);
     }
-
-    // Método para atualizar uma despesa existente
     public void update(FinModal model) {
         repository.update(model);
     }
-
-    // Método para deletar uma despesa específica
     public void delete(FinModal model) {
         repository.delete(model);
     }
-
-    // Método para deletar todas as despesas
     public void deleteallDesp() {
         repository.deleteallDesp();
     }
-
-    // Método para obter todas as despesas
     public LiveData<List<FinModal>> getallDesp() {
         return allDesp;
     }
-
-    // Método adicional para buscar despesas por ano e mês
-    public LiveData<List<FinModal>> getDespesasPorAnoEMes(String ano, String mes) {
+    public LiveData<List<FinModal>> getDespesasPorAnoEMes(
+            String ano,
+            String mes)
+    {
         return repository.getDespesasPorAnoEMes(ano, mes);
     }
 
@@ -57,7 +49,12 @@ public class ViewModal extends AndroidViewModel {
 
     public static class QueryBuilder {
 
-        public static SimpleSQLiteQuery buildSearchQuery(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
+        public static SimpleSQLiteQuery buildSearchQuery(String valorDesp,
+                                                         String tipoDesp,
+                                                         String fontDesp,
+                                                         String despDescr,
+                                                         String dataDesp)
+        {
             StringBuilder query = new StringBuilder("SELECT * FROM fin_table WHERE 1=1 ");
 
             if (!valorDesp.isEmpty()) {

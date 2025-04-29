@@ -7,6 +7,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 public class FinRepository {
     private final Dao dao;
@@ -47,13 +48,58 @@ public class FinRepository {
     }
 
     // Método para buscar despesas por ano e mês
-    public LiveData<List<FinModal>> getDespesasPorAnoEMes(String ano, String mes) {
+    public LiveData<List<FinModal>> getDespesasPorAnoEMes(
+            String ano,
+            String mes) {
         return dao.buscaPorAnoEMes(ano, mes);
     }
 
-    public LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
-        SimpleSQLiteQuery query = ViewModal.QueryBuilder.buildSearchQuery(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+
+    public LiveData<List<FinModal>> buscarComFormatacao(
+            String valorDesp,
+            String tipoDesp,
+            String fontDesp,
+            String despDescr,
+            String dataDesp
+    ) {
+        // Função local para formatar os termos
+        Function<String, String> formatar = termo -> {
+            if (termo == null || termo.trim().isEmpty()) {
+                return "%%";
+            }
+            // Limita a 3 substituições de espaços por %
+            String[] partes = termo.split(" ", 4);
+            return "%" + String.join("%", partes) + "%";
+        };
+
+        return dao.buscaDesp(
+                formatar.apply(valorDesp),
+                formatar.apply(tipoDesp),
+                formatar.apply(fontDesp),
+                formatar.apply(despDescr),
+                formatar.apply(dataDesp)
+        );
+    }
+
+
+
+/** ORIGINAL
+    public LiveData<List<FinModal>> buscaDesp(
+            String valorDesp,
+            String tipoDesp,
+            String fontDesp,
+            String despDescr,
+            String dataDesp )
+    {
+        SimpleSQLiteQuery query = ViewModal.QueryBuilder.buildSearchQuery(
+                valorDesp,
+                tipoDesp,
+                fontDesp,
+                despDescr,
+                dataDesp);
         return dao.buscaDesp(query);
     }
+
+ **/
 
 }
