@@ -19,13 +19,13 @@ public class NewFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
     private Spinner tipoDespEdt, fontDespEdt;// Declarado como Spinner
     private Button FinBtnSave;
-    public static final String EXTRA_ID = "com.app.gfgroomdatabase.EXTRA_ID";
+    public static final String EXTRA_ID = "com.app.fintoday.EXTRA_ID";
     //public static final String EXTRA_ID = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID";
-    public static final String EXTRA_VALOR_DESP = "com.app.gfgroomdatabase.EXTRA_VALOR_DESP";
-    public static final String EXTRA_TIPO_DESP = "com.app.gfgroomdatabasee.EXTRA_TIPO_DESP";
-    public static final String EXTRA_FONT_DESP = "com.app.gfgroomdatabasee.EXTRA_FONT_DESP";
-    public static final String EXTRA_DESCR_DESP = "com.app.gfgroomdatabase.EXTRA_DESP_DESCR";
-    public static final String EXTRA_DURATION = "com.app.gfgroomdatabase.EXTRA_DURATION";
+    public static final String EXTRA_VALOR_DESP = "com.app.fintoday.EXTRA_VALOR_DESP";
+    public static final String EXTRA_TIPO_DESP = "com.app.fintoday.EXTRA_TIPO_DESP";
+    public static final String EXTRA_FONT_DESP = "com.app.fintoday.EXTRA_FONT_DESP";
+    public static final String EXTRA_DESCR_DESP = "com.app.fintoday.EXTRA_DESP_DESCR";
+    public static final String EXTRA_DURATION = "com.app.fintoday.EXTRA_DURATION";
 
     public String getDataHoraAtual() {
         LocalDateTime dataHoraAtual = LocalDateTime.now();

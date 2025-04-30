@@ -177,14 +177,17 @@ public class ResultBuscaActivity extends AppCompatActivity {
                             // Atualiza a lista após exclusão (opcional)
                             resultados.remove(position);
                             adapter.notifyItemRemoved(position);
+                            recalculateTotals(); // Recalcular os valores de resumo após a atualização 30.04.2025
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
                             adapter.notifyItemChanged(position); // Cancela o swipe
                             Toast.makeText(ResultBuscaActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
                         })
                         .show();
+
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
+
     } // Fim ON CREATE
 
     // Métodos auxiliares para filtrar, métodos de filtro (fora do onCreate):
@@ -227,11 +230,34 @@ public class ResultBuscaActivity extends AppCompatActivity {
                 Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
                 adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
                 //finish();
-
+                recalculateTotals(); // Recalcular os valores de resumo após a atualização 30.04.2025
                 // Inicie a MainActivity após a conclusão da edição
                 //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 //startActivity(intent);
             }
         }
+    }
+
+    // Metodo para recalcular os totais 30.04.2025
+    private void recalculateTotals() {
+        double totalCredito = 0;
+        double totalDespesa = 0;
+
+        for (FinModal item : resultados) {
+            double valor = Double.parseDouble(item.getValorDesp());
+
+            if ("-".equals(item.getTipoDesp())) continue;
+
+            if ("CRED".equals(item.getTipoDesp())) {
+                totalCredito += valor;
+            } else {
+                totalDespesa += valor;
+            }
+        }
+        double saldo = totalCredito - totalDespesa;
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        creditoTextView.setText("Créditos: $ " + df.format(totalCredito));
+        despesaTextView.setText("Despesas: $ " + df.format(totalDespesa));
+        saldoTextView.setText("Saldo: $ " + df.format(saldo));
     }
 }
