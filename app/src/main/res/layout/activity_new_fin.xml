@@ -9,29 +9,30 @@
     <EditText
         android:id="@+id/idEdtValorDesp"
         android:inputType="numberDecimal"
+        android:imeOptions="actionNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="Valor Desp" />
+        android:hint="@string/valor_desp" />
 
     <Spinner
         android:id="@+id/idEdtTipoDesp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"/>
 
     <Spinner
         android:id="@+id/idEdtFontDesp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"/>
 
     <EditText
         android:id="@+id/idEdtDespDescr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="Descrição Desp"
+        android:hint="@string/desc_desp"
         android:inputType="textCapCharacters"
         android:imeOptions="actionNext"
         android:singleLine="true" />
@@ -41,9 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="Data e Hora"
-        android:inputType="datetime"
-        android:imeOptions="actionDone" />
+        android:hint="@string/data_hora"
+        android:inputType="datetime" />
 
     <Button
         android:id="@+id/idBtnSaveDesp"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="5dp"
-        android:text="Salvar Registro"
+        android:text="@string/salvar_reg"
         android:textAllCaps="false" />
 
 </LinearLayout>
