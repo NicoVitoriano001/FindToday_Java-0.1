@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/idEdtValorDesp"
+        android:inputType="numberDecimal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="Valor Desp" />
+
+    <Spinner
+        android:id="@+id/idEdtTipoDesp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
+    <Spinner
+        android:id="@+id/idEdtFontDesp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
+    <EditText
+        android:id="@+id/idEdtDespDescr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="Descrição Desp"
+        android:inputType="textCapCharacters"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/idEdtDataDesp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="Data e Hora"
+        android:inputType="datetime"
+        android:imeOptions="actionDone" />
+
+    <Button
+        android:id="@+id/idBtnSaveDesp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:text="Salvar Edit Registro"
+        android:textAllCaps="false" />
+
+</LinearLayout>
