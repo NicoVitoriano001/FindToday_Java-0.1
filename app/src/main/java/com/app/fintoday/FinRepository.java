@@ -45,7 +45,7 @@ public class FinRepository {
         return dao.buscaPorAnoEMes(ano, mes);
     }
 
-    //ver Dao.java, relacao direta
+    //ver Dao.java é responsável pelo acesso a dados. repositório lida com a lógica de negócios e a agregação de dados
     public LiveData<List<FinModal>> buscaDesp(
             String valorDesp,
             String tipoDesp,

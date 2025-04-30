@@ -46,9 +46,10 @@ public class NewFinActivity extends AppCompatActivity {
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
      // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
 
-     //   Configurando os Spinners
+     // Configurando os Spinners
         setupSpinners();
 
+    // Configura data
         dataDespEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
