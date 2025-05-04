@@ -23,7 +23,7 @@ public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
     private Context context;
     private static final String DB_NAME = "finDB.db";
-    private static final String BACKUP_FOLDER = "FIND_TODAY";
+    private static final String BACKUP_FOLDER = "FIN_TODAY";
     private static final File BACKUP_DIR = new File(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
 

@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="Descrição Desp"
-        android:inputType="textCapCharacters"
+        android:inputType="textCapCharacters|textMultiLine"
         android:imeOptions="actionNext"
         android:singleLine="true" />
 
