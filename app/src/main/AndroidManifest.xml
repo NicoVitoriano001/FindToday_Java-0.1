@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.GFGRoomDatabase">
-        <activity android:name=".BuscarFinActivity"></activity>
+        <activity android:name=".BuscarFinActivity" android:label="Buscar Fin"></activity>
+        <activity android:name=".EditFinActivity"></activity>
         <activity android:name=".NewFinActivity"></activity>
         <activity android:name=".ResultBuscaActivity"></activity>
         <activity android:name=".ResumoDespActivity"></activity>

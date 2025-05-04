@@ -4,35 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".NewFinActivity">
+    tools:context=".MainActivity">
 
     <EditText
         android:id="@+id/idEdtValorDesp"
         android:inputType="numberDecimal"
-        android:imeOptions="actionNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="@string/valor_desp" />
+        android:hint="Valor Desp" />
 
     <Spinner
         android:id="@+id/idEdtTipoDesp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp" />
 
     <Spinner
         android:id="@+id/idEdtFontDesp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp" />
 
     <EditText
         android:id="@+id/idEdtDespDescr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="@string/desc_desp"
+        android:hint="Descrição Desp"
         android:inputType="textCapCharacters|textMultiLine"
         android:imeOptions="actionNext"
         android:singleLine="true" />
@@ -42,8 +41,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="@string/data_hora"
-        android:inputType="datetime" />
+        android:hint="Data e Hora"
+        android:inputType="datetime"
+        android:imeOptions="actionDone" />
 
     <Button
         android:id="@+id/idBtnSaveDesp"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="5dp"
-        android:text="@string/salvar_reg"
+        android:text="Salvar Edit Registro"
         android:textAllCaps="false" />
 
 </LinearLayout>

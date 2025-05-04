@@ -1,21 +1,23 @@
 package com.app.fintoday;
-
-import androidx.appcompat.app.AppCompatActivity;
+// Criado em 30.04.2025
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import android.app.DatePickerDialog;
-import android.widget.DatePicker;
 
-public class NewFinActivity extends AppCompatActivity {
+public class EditFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
     private Spinner tipoDespEdt, fontDespEdt;// Declarado como Spinner
     private Button FinBtnSave;
@@ -36,7 +38,7 @@ public class NewFinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_fin);
+        setContentView(R.layout.activity_edit_fin);
 
         valorDespEdt = findViewById(R.id.idEdtValorDesp);
         tipoDespEdt = findViewById(R.id.idEdtTipoDesp);
@@ -79,7 +81,7 @@ public class NewFinActivity extends AppCompatActivity {
                 String dataDesp = dataDespEdt.getText().toString();
 
                 if (valorDesp.isEmpty() || tipoDesp.isEmpty() || despDescr.isEmpty() || dataDesp.isEmpty()) {
-                    Toast.makeText(NewFinActivity.this, "Entre com todos valores do registro.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditFinActivity.this, "Entre com todos valores do registro.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
@@ -121,7 +123,7 @@ public class NewFinActivity extends AppCompatActivity {
 
         // Criar o DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                NewFinActivity.this,
+                EditFinActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
@@ -141,15 +143,15 @@ public class NewFinActivity extends AppCompatActivity {
     private void saveFin(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
         // PASSA OS DADOS NOVOS/RECUPERADOS PARA SALVAR
         Intent data = new Intent();
-        data.putExtra(NewFinActivity.EXTRA_VALOR_DESP, valorDesp);
-        data.putExtra(NewFinActivity.EXTRA_TIPO_DESP, tipoDesp);
-        data.putExtra(NewFinActivity.EXTRA_FONT_DESP, fontDesp);
-        data.putExtra(NewFinActivity.EXTRA_DESCR_DESP, despDescr);
-        data.putExtra(NewFinActivity.EXTRA_DURATION, dataDesp);
+        data.putExtra(EditFinActivity.EXTRA_VALOR_DESP, valorDesp);
+        data.putExtra(EditFinActivity.EXTRA_TIPO_DESP, tipoDesp);
+        data.putExtra(EditFinActivity.EXTRA_FONT_DESP, fontDesp);
+        data.putExtra(EditFinActivity.EXTRA_DESCR_DESP, despDescr);
+        data.putExtra(EditFinActivity.EXTRA_DURATION, dataDesp);
 
-        int id = getIntent().getIntExtra(NewFinActivity.EXTRA_ID, -1);
+        int id = getIntent().getIntExtra(EditFinActivity.EXTRA_ID, -1);
         if (id != -1) {
-            data.putExtra(NewFinActivity.EXTRA_ID, id);
+            data.putExtra(EditFinActivity.EXTRA_ID, id);
         }
         setResult(RESULT_OK, data);
         Toast.makeText(this, "Registro foi salvo no Database.", Toast.LENGTH_LONG).show();

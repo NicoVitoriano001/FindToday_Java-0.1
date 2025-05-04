@@ -11,7 +11,6 @@ import androidx.sqlite.db.SupportSQLiteQuery;
 
 @androidx.room.Dao
 
-
 public interface Dao {
 
     @RawQuery(observedEntities = FinModal.class)
@@ -42,13 +41,22 @@ public interface Dao {
             "SUBSTR(dataDesp, 6) DESC, tipoDesp ASC")
     LiveData<List<FinModal>> getallDesp();
 // dataDesp não está formato ISO 8601 (YYYY-MM-DD), SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1): Esta parte da consulta extrai a substring depois do espaço
-    @Query("SELECT * FROM fin_table WHERE valorDesp LIKE '%' || :valorDesp || '%' " +
+
+
+    // Adiciona % inicio e final da string para usar no LIKE - 29.04.2025
+    @Query("SELECT * FROM fin_table WHERE " +
+            "REPLACE(despDescr, ' ', '%') LIKE '%' || REPLACE(:despDescr, ' ', '%') || '%' " + // Adicionado '%' no início e no final
+            "AND valorDesp LIKE '%' || :valorDesp || '%' " +
             "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
             "AND fontDesp LIKE '%' || :fontDesp || '%' " +
-            "AND despDescr LIKE '%' || :despDescr || '%' " +
             "AND dataDesp LIKE '%' || :dataDesp || '%' " +
             "ORDER BY SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1) DESC")
-    LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp);
+    LiveData<List<FinModal>> buscaDesp(
+            String valorDesp,
+            String tipoDesp,
+            String fontDesp,
+            String despDescr,
+            String dataDesp);
 
     @Query("SELECT * FROM fin_table " +
             "WHERE SUBSTR(dataDesp, 6, 4) = :ano " +       // Ano (posições 6-9)

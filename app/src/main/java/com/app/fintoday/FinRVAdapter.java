@@ -121,5 +121,4 @@ public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder>
             }
         }
     }
-
 }

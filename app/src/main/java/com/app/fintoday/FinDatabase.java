@@ -4,13 +4,11 @@
     import android.os.AsyncTask;
     import android.os.Environment;
     import android.util.Log;
-
     import androidx.annotation.NonNull;
     import androidx.room.Database;
     import androidx.room.Room;
     import androidx.room.RoomDatabase;
     import androidx.sqlite.db.SupportSQLiteDatabase;
-
     import java.io.File;
 
     @Database(entities = {FinModal.class}, version = 1)
@@ -22,9 +20,9 @@
         //on below line we are getting instance for our database.
         public static synchronized FinDatabase getInstance(Context context) {
             if (instance == null) {
-                // Caminho para /Download/FIND_TODAY/
+                // Caminho para /Download/FIN_TODAY/
                 File publicDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File appFolder = new File(publicDownloads, "FIND_TODAY");
+                File appFolder = new File(publicDownloads, "FIN_TODAY");
 
                 if (!appFolder.exists()) {
                     boolean dirCreated = appFolder.mkdirs();
@@ -42,8 +40,7 @@
             return instance;
         }
 
-        //below line is to create a callback for our room database.
-        private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
+       private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
