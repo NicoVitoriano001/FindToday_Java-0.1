@@ -13,6 +13,7 @@
         android:title="Nova Despesa"
         android:icon="@drawable/add_file_new"/>
 
+    <group android:id="@+id/group_backup">
     <item
         android:id="@+id/nav_fazer_bkp"
         android:title="Fazer Backup"
@@ -22,5 +23,6 @@
         android:id="@+id/nav_syncDB"
         android:title="Sync DB"
         android:icon="@drawable/sinc"/>
+    </group>
 </menu>
 
