@@ -1,21 +1,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:title="Home" />
+        android:title="Home"
+        android:icon="@drawable/home"/>
     <item
         android:id="@+id/nav_resumo_desp"
-        android:title="Resumo de Despesas" />
+        android:title="Resumo de Despesas"
+        android:icon="@drawable/overview"/>
 
     <item
         android:id="@+id/nav_nova_desp"
-        android:title="Nova Despesa" />
+        android:title="Nova Despesa"
+        android:icon="@drawable/add_file_new"/>
 
     <item
         android:id="@+id/nav_fazer_bkp"
-        android:title="Fazer Backup" />
+        android:title="Fazer Backup"
+        android:icon="@drawable/bkp"/>
 
     <item
         android:id="@+id/nav_syncDB"
-        android:title="Sync DB" />
+        android:title="Sync DB"
+        android:icon="@drawable/sinc"/>
 </menu>
 

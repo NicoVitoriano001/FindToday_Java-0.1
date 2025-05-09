@@ -20,9 +20,9 @@
         //on below line we are getting instance for our database.
         public static synchronized FinDatabase getInstance(Context context) {
             if (instance == null) {
-                // Caminho para /Download/FIND_TODAY/
+                // Caminho para /Download/FIN_TODAY/
                 File publicDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File appFolder = new File(publicDownloads, "FIND_TODAY");
+                File appFolder = new File(publicDownloads, "FIN_TODAY");
 
                 if (!appFolder.exists()) {
                     boolean dirCreated = appFolder.mkdirs();
