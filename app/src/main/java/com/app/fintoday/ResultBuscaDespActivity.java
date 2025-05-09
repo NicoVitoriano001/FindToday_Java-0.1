@@ -14,9 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;

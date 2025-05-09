@@ -16,8 +16,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
@@ -27,10 +31,14 @@ public class DatabaseBackupManager {
     private static final File BACKUP_DIR = new File(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
 
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1002;
+
     public DatabaseBackupManager(Context context) {
         this.context = context;
     }
 
+
+    //INICIO BLOCO BACKUP
     public void performBackup() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -40,22 +48,6 @@ public class DatabaseBackupManager {
         } else {
             showBackupConfirmationDialog();
         }
-    }
-
-    private void showBackupConfirmationDialog() {
-        String dataHora = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String nomeArquivoBKP = "finDB_" + dataHora + ".db";
-        File backupFile = new File(BACKUP_DIR, nomeArquivoBKP);
-
-        new AlertDialog.Builder(context)
-                .setTitle("Confirmar Backup")
-                .setMessage("Deseja fazer backup do banco de dados?\n\n" +
-                        "Local: " + BACKUP_DIR.getAbsolutePath() + "\n" +
-                        "Nome: " + nomeArquivoBKP)
-                .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
-                .setNegativeButton("Não", null)
-                .show();
     }
 
     private void executeBackup(File backupFile) {
@@ -137,18 +129,135 @@ public class DatabaseBackupManager {
             return false;
         }
     }
+    //FIM BLOCO BACKUP
 
-    private void showToast(String message, int duration) {
-        new Handler(Looper.getMainLooper()).post(() ->
-                Toast.makeText(context, message, duration).show());
+
+    // INICIO BLOCO DE RESTORE
+    public void performRestore() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((MainActivity) context,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_READ_EXTERNAL_STORAGE);
+        } else {
+            executeRestore();
+        }
+    }
+
+    private void executeRestore() {
+        try {
+            File[] backupFiles = BACKUP_DIR.listFiles((dir, nome) ->
+                    nome.startsWith("finDB_") && nome.endsWith(".db"));
+
+            if (backupFiles == null || backupFiles.length == 0) {
+                showToast("Nenhum backup encontrado na pasta " + BACKUP_DIR.getAbsolutePath(), Toast.LENGTH_LONG);
+                return;
+            }
+
+            // Ordenar por data (do mais recente para o mais antigo)
+            Arrays.sort(backupFiles, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+
+            String[] fileNames = new String[backupFiles.length];
+            for (int i = 0; i < backupFiles.length; i++) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                fileNames[i] = backupFiles[i].getName() + " - " + sdf.format(new Date(backupFiles[i].lastModified()));
+            }
+
+            new AlertDialog.Builder(context)
+                    .setTitle("Selecione o backup para restaurar")
+                    .setItems(fileNames, (dialog, which) -> {
+                        confirmRestoration(backupFiles[which]);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+
+        } catch (Exception e) {
+            showToast("Erro ao acessar backups: " + e.getMessage(), Toast.LENGTH_LONG);
+            e.printStackTrace();
+        }
+    }
+
+    private void confirmRestoration(File backupFile) {
+        new AlertDialog.Builder(context)
+                .setTitle("Confirmar restauração")
+                .setMessage("Deseja sobrescrever o banco de dados atual com o backup selecionado?\n\n" +
+                        "Esta ação não pode ser desfeita!")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    try {
+                        // 1. Fecha conexões do Room
+                        if (FinDatabase.getInstance(context) != null) {
+                            FinDatabase.getInstance(context).close();
+                        }
+
+                        // 2. Obtém o arquivo do banco de dados atual
+                        File currentDbFile = context.getDatabasePath(DB_NAME);
+
+                        // 3. Copia o arquivo de backup
+                        if (copyDatabaseFile(backupFile, currentDbFile)) {
+                            showToast("Banco de dados restaurado com sucesso!", Toast.LENGTH_LONG);
+
+                            // 4. Recria a activity para aplicar as mudanças
+                            if (context instanceof MainActivity) {
+                                ((MainActivity) context).recreate();
+                            }
+                        } else {
+                            throw new Exception("Falha na cópia do arquivo de backup");
+                        }
+                    } catch (Exception e) {
+                        showToast("Erro ao restaurar backup: " + e.getMessage(), Toast.LENGTH_LONG);
+                        e.printStackTrace();
+                    }
+                })
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private boolean copyDatabaseFile(File source, File destination) {
+        try {
+            try (FileChannel in = new FileInputStream(source).getChannel();
+                 FileChannel out = new FileOutputStream(destination).getChannel()) {
+                in.transferTo(0, in.size(), out);
+                return true;
+            }
+        } catch (IOException e) {
+            showToast("Erro na cópia: " + e.getMessage(), Toast.LENGTH_LONG);
+            return false;
+        }
     }
 
     public void handlePermissionResult(int requestCode, int[] grantResults) {
         if (requestCode == REQUEST_CODE_WRITE_EXTERNAL_STORAGE &&
                 grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             performBackup();
+        } else if (requestCode == REQUEST_CODE_READ_EXTERNAL_STORAGE &&
+                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            performRestore();
         } else {
-            showToast("Permissão negada - backup cancelado", Toast.LENGTH_SHORT);
+            showToast("Permissão negada - operação cancelada", Toast.LENGTH_SHORT);
         }
     }
+    // FIM BLOCO DE RESTORE
+
+    private void showBackupConfirmationDialog() {
+        String dataHora = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String nomeArquivoBKP = "finDB_" + dataHora + ".db";
+        File backupFile = new File(BACKUP_DIR, nomeArquivoBKP);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Confirmar Backup")
+                .setMessage("Deseja fazer backup do banco de dados?\n\n" +
+                        "Local: " + BACKUP_DIR.getAbsolutePath() + "\n" +
+                        "Nome: " + nomeArquivoBKP)
+                .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private void showToast(String message, int duration) {
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(context, message, duration).show());
+    }
+
+
 }

@@ -1,4 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
     <item
         android:id="@+id/nav_home"
         android:title="Home"
@@ -12,6 +18,7 @@
         android:id="@+id/nav_nova_desp"
         android:title="Nova Despesa"
         android:icon="@drawable/add_file_new"/>
+    </group>
 
     <group android:id="@+id/group_backup">
     <item
@@ -20,9 +27,24 @@
         android:icon="@drawable/bkp"/>
 
     <item
-        android:id="@+id/nav_syncDB"
-        android:title="Sync DB"
+        android:id="@+id/nav_restoreDB"
+        android:title="Restore Backup"
         android:icon="@drawable/sinc"/>
+    </group>
+
+
+
+    <!-- Novo grupo para informações sobre o app -->
+    <group android:id="@+id/group_app_info">
+        <item
+            android:id="@+id/nav_about"
+            android:title="Sobre o App"
+            android:icon="@drawable/info"/>
+
+        <item
+            android:id="@+id/nav_help"
+            android:title="Ajuda"
+            android:icon="@drawable/help"/>
     </group>
 </menu>
 
