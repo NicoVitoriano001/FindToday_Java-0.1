@@ -33,12 +33,4 @@ public class AppInfoDialogHelper {
                 .setPositiveButton("OK", null)
                 .show();
     }
-
-    public void openContactScreen() {
-        // Implementação do contato pode ser adicionada aqui
-    }
-
-    public void openPrivacyPolicy() {
-        // Implementação da política de privacidade pode ser adicionada aqui
-    }
 }

@@ -62,7 +62,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaDespActivity.this, NewFinActivity.class);
+                Intent intent = new Intent(ResultBuscaDespActivity.this, EditFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());

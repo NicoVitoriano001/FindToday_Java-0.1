@@ -35,12 +35,11 @@
 
 
     <!-- Novo grupo para informações sobre o app -->
-    <group android:id="@+id/group_app_info">
+    <group android:id="@+id/group_info">
         <item
             android:id="@+id/nav_about"
-            android:title="Sobre o App"
+            android:title="Sobre"
             android:icon="@drawable/info"/>
-
         <item
             android:id="@+id/nav_help"
             android:title="Ajuda"

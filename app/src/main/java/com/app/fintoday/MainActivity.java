@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int SEARCH_DESP_REQUEST = 3;
     private DrawerLayout drawerLayout;
     private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
+    private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
 
 
     @Override
@@ -48,40 +47,29 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Configurando o listener de clique no item do NavigationView
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_resumo_desp:
-                        Intent intent = new Intent(MainActivity.this, ResumoDespActivity.class);
-                        startActivity(intent);
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_nova_desp:
-                        Intent intentNovaDesp = new Intent(MainActivity.this, NewFinActivity.class);
-                        startActivity(intentNovaDesp);
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_fazer_bkp:
-                        databaseBackupManager.performBackup();
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_restoreDB:
-                        databaseBackupManager.performRestore();
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_about:
-                        showAboutDialog();
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_help:
-                        openHelpScreen();
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    default:
-                        return false;
-                }
+        navigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.nav_resumo_desp:
+                    startActivity(new Intent(this, ResumoDespActivity.class));
+                    break;
+                case R.id.nav_nova_desp:
+                    startActivity(new Intent(this, NewFinActivity.class));
+                    break;
+                case R.id.nav_fazer_bkp:
+                    databaseBackupManager.performBackup();
+                    break;
+                case R.id.nav_restoreDB:
+                    databaseBackupManager.performRestore();
+                    break;
+                case R.id.nav_about:
+                    appInfoDialogHelper.showAboutDialog();
+                    break;
+                case R.id.nav_help:
+                    appInfoDialogHelper.openHelpScreen();
+                    break;
             }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
 
@@ -106,18 +94,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-        // Configurando o RecyclerView
+       // Configurando o RecyclerView
         RecyclerView FinRV = findViewById(R.id.idRVFin);
         FinRV.setLayoutManager(new LinearLayoutManager(this));
         FinRV.setHasFixedSize(true);
@@ -177,34 +154,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     } // fim onCreate
-
-
-
-
-    // Métodos para as opções do menu (fora do onCreate)
-    private void showAboutDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Sobre o App")
-                .setMessage("FinToday v1.0\n\n" +
-                        "Um aplicativo para gerenciamento de finanças pessoais.\n\n" +
-                        "Desenvolvido por: [Seu Nome]\n" +
-                        "Versão: 1.0\n" +
-                        "Ano: 2023")
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    private void openHelpScreen() {
-        new AlertDialog.Builder(this)
-                .setTitle("Ajuda")
-                .setMessage("Como usar o FinToday:\n\n" +
-                        "1. Adicione novas despesas clicando no botão '+'\n" +
-                        "2. Visualize seu resumo financeiro no menu\n" +
-                        "3. Faça backup regularmente para proteger seus dados\n\n" +
-                        "Dúvidas? Entre em contato pelo menu 'Contato'")
-                .setPositiveButton("OK", null)
-                .show();
-    }
 
 
     @Override
