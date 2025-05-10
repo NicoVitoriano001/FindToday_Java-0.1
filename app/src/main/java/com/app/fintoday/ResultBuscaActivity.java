@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
@@ -21,11 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultBuscaActivity extends AppCompatActivity {
-    private RecyclerView idRVRetorno;
+   // private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
     private List<FinModal> resultados;
+
+    private int initialX, initialY;
+    private float initialTouchX, initialTouchY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +42,9 @@ public class ResultBuscaActivity extends AppCompatActivity {
         saldoTextView = findViewById(R.id.idTVSaldo);
 
         // Inicializar RecyclerView
-        idRVRetorno = findViewById(R.id.idRVRetorno);
+        // Convertendo para variável local
+        RecyclerView idRVRetorno = findViewById(R.id.idRVRetorno);
+       // idRVRetorno = findViewById(R.id.idRVRetorno);
         adapter = new FinRVAdapter();
         idRVRetorno.setLayoutManager(new LinearLayoutManager(this));
         idRVRetorno.setAdapter(adapter);
@@ -81,31 +87,34 @@ public class ResultBuscaActivity extends AppCompatActivity {
             saldoTextView.setText("Saldo: $ " + df.format(saldo));
         }
 
-        adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaActivity.this, EditFinActivity.class);
-                intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
-                intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
-                intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
-                intent.putExtra(NewFinActivity.EXTRA_FONT_DESP, model.getFontDesp());
-                intent.putExtra(NewFinActivity.EXTRA_DESCR_DESP, model.getDespDescr());
-                intent.putExtra(NewFinActivity.EXTRA_DURATION, model.getDataDesp());
-                startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
-            }
+        // Versão com lambda
+        adapter.setOnItemClickListener(model -> {
+            Intent intent = new Intent(ResultBuscaActivity.this, EditFinActivity.class);
+            intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
+            intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
+            intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
+            intent.putExtra(NewFinActivity.EXTRA_FONT_DESP, model.getFontDesp());
+            intent.putExtra(NewFinActivity.EXTRA_DESCR_DESP, model.getDespDescr());
+            intent.putExtra(NewFinActivity.EXTRA_DURATION, model.getDataDesp());
+            startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
         });
 
         //botao flutuante retornar
         FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
+
+        // Versão com lambda
+        fabReturn.setOnClickListener(v -> finish());
+
+        /** Versão original
         fabReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish(); // Encerra a atividade atual e retorna à atividade anterior
               //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
               //  startActivity(intent);
-
             }
         });
+         **/
 
         //botao flutuante retornar para home
         FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
@@ -116,6 +125,10 @@ public class ResultBuscaActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Configurar movimento para os FABs
+        setupFabMovement(fabReturn);
+        setupFabMovement(fabReturnHome);
 
         creditoTextView.setOnClickListener(v -> {
             List<FinModal> listaFiltrada = filtrarCreditos();
@@ -188,7 +201,48 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
 
-    } // Fim ON CREATE
+
+   } // Fim ON CREATE
+
+    private void setupFabMovement(FloatingActionButton fab) {
+        fab.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = (int) fab.getX();
+                        initialY = (int) fab.getY();
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        int x = initialX + (int) (event.getRawX() - initialTouchX);
+                        int y = initialY + (int) (event.getRawY() - initialTouchY);
+
+                        // Limitar os movimentos para dentro da tela
+                        int maxX = ((View) fab.getParent()).getWidth() - fab.getWidth();
+                        int maxY = ((View) fab.getParent()).getHeight() - fab.getHeight();
+
+                        x = Math.min(Math.max(x, 0), maxX);
+                        y = Math.min(Math.max(y, 0), maxY);
+
+                        fab.setX(x);
+                        fab.setY(y);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // Verificar se foi um clique ou arrasto
+                        if (Math.abs(event.getRawX() - initialTouchX) < 10 &&
+                                Math.abs(event.getRawY() - initialTouchY) < 10) {
+                            // This ensures accessibility services can perform the click
+                            fab.performClick();
+                            return true;
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+    }
 
     // Métodos auxiliares para filtrar, métodos de filtro (fora do onCreate):
     private List<FinModal> filtrarCreditos() {
