@@ -6,51 +6,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ResultBuscaActivity">
+    <!-- Linha horizontal para os rótulos -->
 
-    <!-- Total Créditos -->
-    <TextView
-        android:id="@+id/idTVCredito"
-        android:layout_width="wrap_content"
+    <!--
+    <LinearLayout
+        android:id="@+id/layoutLabels"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:textColor="@color/green_200"
-        android:text="Créditos: $ 0.00"
-        android:textSize="16sp"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3">
 
-    <!-- Total Despesas -->
-    <TextView
-        android:id="@+id/idTVDespesa"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/idTVCredito"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Despesas: $ 0.00"
-        android:textColor="@color/vermelho"
-        android:textSize="16sp"/>
 
-    <!-- Saldo -->
-    <TextView
-        android:id="@+id/idTVSaldo"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Crédito"
+            android:textAlignment="center"
+            android:textSize="16sp"/>
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Despesa"
+            android:textAlignment="center"
+            android:textSize="16sp"/>
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Saldo"
+            android:textAlignment="center"
+            android:textSize="16sp"/>
+    </LinearLayout>
+    -->
+
+    <!-- Linha horizontal para os valores -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/idTVDespesa"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Saldo: $ 0.00"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/tvCred_ResultBuscaActivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$ 0.00"
+            android:textAlignment="center"
+            android:textColor="@color/green_200"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvDesp_ResultBuscaActivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$ 0.00"
+            android:textAlignment="center"
+            android:textColor="@color/vermelho"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvSal_ResultBuscaActivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$ 0.00"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/idRVRetorno"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/idTVSaldo"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="72dp"/>
 
-    <!-- Botões flutuantes (mantidos como no original) -->
+    <!-- Botões flutuantes -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/idFABresultadoConsultReturn"
         android:layout_width="wrap_content"

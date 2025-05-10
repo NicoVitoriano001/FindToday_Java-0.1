@@ -37,9 +37,9 @@ public class ResultBuscaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result_busca_rv);
 
         // Inicializar os TextViews
-        creditoTextView = findViewById(R.id.idTVCredito);
-        despesaTextView = findViewById(R.id.idTVDespesa);
-        saldoTextView = findViewById(R.id.idTVSaldo);
+        creditoTextView = findViewById(R.id.tvCred_ResultBuscaActivity);
+        despesaTextView = findViewById(R.id.tvDesp_ResultBuscaActivity);
+        saldoTextView = findViewById(R.id.tvSal_ResultBuscaActivity);
 
         // Inicializar RecyclerView
         // Convertendo para variável local
