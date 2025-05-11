@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
@@ -109,8 +111,11 @@ public class BuscarFinActivity extends AppCompatActivity {
             dataDespEdtBusca.setText(formattedDate);
 
         } catch (Exception e) {
-          //  showToast("Erro ao definir data atual: " + e.getMessage());
+            showToast("Erro ao definir data atual: " + e.getMessage());
         }
+    }
+    private void showToast(String message) {
+        Toast.makeText(this, "Error. Deu zebra", Toast.LENGTH_SHORT).show();
     }
 
 }
