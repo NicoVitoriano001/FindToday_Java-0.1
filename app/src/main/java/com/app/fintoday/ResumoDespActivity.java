@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -149,26 +151,41 @@ public class ResumoDespActivity extends AppCompatActivity {
             }
         }
 
+
+        // obter cores do colors.xml
+        int blue_500 = ContextCompat.getColor(this, R.color.blue_500);
+        int green_200 = ContextCompat.getColor(this, R.color.green_200);
+        int laranja = ContextCompat.getColor(this, R.color.laranja);
+        int teal_150 = ContextCompat.getColor(this, R.color.teal_150);
+        int vermelho = ContextCompat.getColor(this, R.color.vermelho);
+        int colorAccent = ContextCompat.getColor(this, R.color.colorAccent);
+        int magenta = ContextCompat.getColor(this, R.color.magenta);
+        int azulclaro = ContextCompat.getColor(this, R.color.azulclaro);
+        int azulescuro = ContextCompat.getColor(this, R.color.azulescuro);
+        int amarelo_canario = ContextCompat.getColor(this, R.color.amarelo_canario);
+
+
+
         // Configurar gráfico de Pizza
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "Resumo por Tipo");
-        pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+        //pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        pieDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
         pieDataSet.setValueTextSize(12f);
         pieDataSet.setValueFormatter(new PercentFormatter(pieChart));
-        pieDataSet.setValueTextColor(Color.BLACK); // Adicionado para melhor visibilidade
+        pieDataSet.setValueTextColor(Color.WHITE); // Cor do texto dos valores
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
-        pieChart.setExtraOffsets(20f, 0f, 20f, 20f); // Espaço para legendas
-        pieChart.setEntryLabelColor(Color.BLACK); // Cor dos rótulos
 
 
         // Configurar gráfico de Barras
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Valor por Tipo");
-        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        barDataSet.setValueTextSize(12f);
-        barDataSet.setValueTextColor(Color.BLACK);
+        BarDataSet barDataSet = new BarDataSet(barEntries, "");
         BarData barData = new BarData(barDataSet);
+        barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
+        //barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        barDataSet.setValueTextSize(12f);
+        barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
-        barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
+       // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
 
 
         // Configurar eixo X para barras
@@ -176,43 +193,57 @@ public class ResumoDespActivity extends AppCompatActivity {
         xAxisBar.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisBar.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxisBar.setGranularity(1f);
-        xAxisBar.setDrawGridLines(false);
-        xAxisBar.setTextColor(Color.BLACK); // Cor do texto do eixo X
+        xAxisBar.setDrawGridLines(true);
+        xAxisBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
         xAxisBar.setTextSize(10f);
 
         // Configurar eixo Y para barras
         YAxis yAxisLeftBar = barChart.getAxisLeft();
         yAxisLeftBar.setGranularity(1f);
+        yAxisLeftBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
+
         barChart.getAxisRight().setEnabled(false);
-        barChart.getDescription().setEnabled(false);
+        barChart.getDescription().setEnabled(true);
         barChart.setTouchEnabled(true);
         barChart.setDragDecelerationFrictionCoef(0.95f);
         barChart.setScaleEnabled(true);
         barChart.animateY(1000);
-        barChart.invalidate();
+        barChart.setFitBars(true); // make the x-axis fit exactly all bars
+        barChart.invalidate(); // refresh
 
-        // Configurar gráfico de Linhas (similar ao de barras)
-        LineDataSet lineDataSet = new LineDataSet(lineEntries, "Valor por Tipo");
-        lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        // Configurar gráfico de Linhas
+        LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
+        lineDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta});
+        // Usando cores do colors.xml
+       // lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         lineDataSet.setValueTextSize(12f);
-        lineDataSet.setValueTextColor(Color.BLACK);
+        lineDataSet.setValueTextColor(Color.WHITE); // Alterado para branco para melhor visibilidade
 
+        LineData lineData = new LineData(lineDataSet);
+        lineChart.setData(lineData);
+
+// Configurar eixo X para linhas
         XAxis xAxisLine = lineChart.getXAxis();
         xAxisLine.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisLine.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxisLine.setGranularity(1f);
         xAxisLine.setDrawGridLines(false);
+        xAxisLine.setTextColor(Color.WHITE); // Cor do texto do eixo X
+        xAxisLine.setTextSize(10f); // Tamanho do texto do eixo X
 
+// Configurar eixo Y para linhas
         YAxis yAxisLeftLine = lineChart.getAxisLeft();
         yAxisLeftLine.setGranularity(1f);
-        lineChart.getAxisRight().setEnabled(false);
+        yAxisLeftLine.setTextColor(Color.WHITE); // Cor do texto do eixo Y
 
-        lineChart.getDescription().setEnabled(false);
+        lineChart.getAxisRight().setEnabled(false); // Desabilitar o eixo Y direito
+        lineChart.getDescription().setEnabled(false); // Desabilitar descrição
         lineChart.setTouchEnabled(true);
         lineChart.setDragDecelerationFrictionCoef(0.95f);
         lineChart.setScaleEnabled(true);
         lineChart.animateY(1000);
         lineChart.invalidate();
+
 
 
 // Configurações comuns para todos os gráficos
@@ -221,13 +252,12 @@ public class ResumoDespActivity extends AppCompatActivity {
             chart.setTouchEnabled(true);
             chart.setDragDecelerationFrictionCoef(0.95f);
             chart.animateY(1000);
-
             Legend legend = chart.getLegend();
             legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(false);
-            legend.setTextColor(Color.BLACK); // Cor da legenda
+            legend.setTextColor(Color.WHITE); // Cor da legenda
             legend.setTextSize(12f);
             legend.setFormSize(10f);
 

@@ -15,4 +15,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="magenta">#9C27B0</color>
+    <color name="azulclaro">#36B8F2</color>
+    <color name="azulescuro">#3B0783</color>
+    <color name="amarelo_canario">#F9FD13</color>
 </resources>
