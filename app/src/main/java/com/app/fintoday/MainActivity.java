@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int SEARCH_DESP_REQUEST = 3;
     private DrawerLayout drawerLayout;
     private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
+    private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
 
 
     @Override
@@ -47,33 +47,31 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Configurando o listener de clique no item do NavigationView
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_resumo_desp: // ID do item que você adicionou
-                        Intent intent = new Intent(MainActivity.this, ResumoDespActivity.class);
-                        startActivity(intent);
-                        drawerLayout.closeDrawer(GravityCompat.START); // Fecha o drawer após a seleção
-                        return true;
-                    case R.id.nav_nova_desp:
-                        Intent intentNovaDesp = new Intent(MainActivity.this, NewFinActivity.class);
-                        startActivity(intentNovaDesp);
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_fazer_bkp:
-                        databaseBackupManager.performBackup(); // Chama o metodo de backup
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    case R.id.nav_syncDB:
-                        databaseBackupManager.performBackup(); // Chama o metodo de backup
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
-                    default:
-                        return false;
-                }
+        navigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.nav_resumo_desp:
+                    startActivity(new Intent(this, ResumoDespActivity.class));
+                    break;
+                case R.id.nav_nova_desp:
+                    startActivity(new Intent(this, NewFinActivity.class));
+                    break;
+                case R.id.nav_fazer_bkp:
+                    databaseBackupManager.performBackup();
+                    break;
+                case R.id.nav_restoreDB:
+                    databaseBackupManager.performRestore();
+                    break;
+                case R.id.nav_about:
+                    appInfoDialogHelper.showAboutDialog();
+                    break;
+                case R.id.nav_help:
+                    appInfoDialogHelper.openHelpScreen();
+                    break;
             }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
+
 
         // Configurando o botão de ação flutuante para adicionar
         FloatingActionButton fab = findViewById(R.id.idFABAdd);
@@ -95,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Configurando o RecyclerView
+
+       // Configurando o RecyclerView
         RecyclerView FinRV = findViewById(R.id.idRVFin);
         FinRV.setLayoutManager(new LinearLayoutManager(this));
         FinRV.setHasFixedSize(true);
@@ -124,11 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 FinModal itemToDelete = adapter.getDespAt(position);
 
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Confirmar Exclusão");
-                      //  .setMessage("Você tem certeza que deseja
-                new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Confirmar Exclusão")
-                        .setMessage("Você tem certeza que deseja deletar este registro?")  // String completa e fechada
+                        .setMessage("Você tem certeza que deseja deletar este registro?")
                         .setPositiveButton("Sim", (dialog, which) -> {
                             viewmodal.delete(itemToDelete);
                             Toast.makeText(MainActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
@@ -141,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(FinRV);
         // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
+
 
         // Configurando o listener de clique no item do RecyclerView
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
@@ -156,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, EDIT_DESP_REQUEST);
             }
         });
-
     } // fim onCreate
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

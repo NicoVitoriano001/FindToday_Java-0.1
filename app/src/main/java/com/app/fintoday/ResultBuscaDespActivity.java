@@ -14,9 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +62,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaDespActivity.this, NewFinActivity.class);
+                Intent intent = new Intent(ResultBuscaDespActivity.this, EditFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
@@ -76,16 +74,10 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         });
 
 
-        //botao flutuante retornar
-        FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
-        fabReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Encerra a atividade atual e retorna à atividade anterior
-                //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
-                //  startActivity(intent);
-
-            }
+//botao flutuante newsfin com expressao lambda
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            startActivity(new Intent(this, NewFinActivity.class));
         });
 
         //botao flutuante retornar para home

@@ -61,7 +61,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaCredActivity.this, NewFinActivity.class);
+                Intent intent = new Intent(ResultBuscaCredActivity.this, EditFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
@@ -73,15 +73,10 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         });
 
         //botao flutuante retornar
-        FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
-        fabReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Criar um intent de resultado para forçar atualização
-                Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish(); // Encerra a atividade atual e retorna à atividade anterior
-            }
+//botao flutuante newsfin com expressao lambda
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            startActivity(new Intent(this, NewFinActivity.class));
         });
 
         //botao flutuante retornar para home

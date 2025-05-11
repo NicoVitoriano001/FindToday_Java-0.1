@@ -4,7 +4,8 @@
     <color name="blue_500">#191750</color> #CABEÇALHO
     <color name="blue_700">#191520</color> #SUPERIOR DO RELOGIO
     <color name="green_200">#02F40B</color> # 24.03.25 cor principal valor dos positivos
-    <color name="teal_200">#191967</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_150">#FF67E8DC</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="vermelho">#ED8484</color>  # 24.03.25 cor prnicipal valor negativo
@@ -14,4 +15,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="magenta">#9C27B0</color>
+    <color name="azulclaro">#36B8F2</color>
+    <color name="azulescuro">#3B0783</color>
+    <color name="amarelo_canario">#F9FD13</color>
 </resources>

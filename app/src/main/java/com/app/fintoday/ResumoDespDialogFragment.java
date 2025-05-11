@@ -41,6 +41,7 @@ public class ResumoDespDialogFragment extends DialogFragment {
             }
 
             // Configurando o adaptador para o ListView
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, displayData);
             listView.setAdapter(adapter); // Aqui é onde listView é utilizado
         }

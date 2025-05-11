@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".ResumoDespActivity">
 
-    <!-- Layout horizontal para os EditTexts de Ano e Mês -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- EditText para Ano -->
         <EditText
             android:id="@+id/idEdtAno"
-            android:inputType="number"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Ano" />
+            android:layout_weight="1"
+            android:hint="Ano (YYYY)"
+            android:inputType="number"/>
 
-        <!-- EditText para Mês -->
         <EditText
             android:id="@+id/idEdtMes"
-            android:inputType="number"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Mês"
-            android:imeOptions="actionNext"
-            android:singleLine="true" />
+            android:layout_weight="1"
+            android:hint="Mês (MM)"
+            android:inputType="number"/>
     </LinearLayout>
 
     <Button
         android:id="@+id/idBtnFazerResumo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="5dp"
-        android:text="Resumo"
-        android:textAllCaps="false" />
+        android:layout_marginTop="8dp"
+        android:text="Gerar Resumo"/>
 
+    <Spinner
+        android:id="@+id/spinnerChartType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Aumentar a altura dos gráficos para acomodar legendas -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
 </LinearLayout>

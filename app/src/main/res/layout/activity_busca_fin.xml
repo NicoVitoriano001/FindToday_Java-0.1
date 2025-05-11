@@ -55,7 +55,8 @@
             android:layout_margin="10dp"
             android:hint="Data e Hora Buscar"
             android:imeOptions="actionDone"
-            android:inputType="datetime" />
+            android:inputType="number|textCapCharacters" />
+          <!--  android:inputType="datetime" -->
 
         <Button
             android:id="@+id/idBtnBuscarDesp"

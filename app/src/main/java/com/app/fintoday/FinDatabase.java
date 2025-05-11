@@ -26,11 +26,11 @@
 
                 if (!appFolder.exists()) {
                     boolean dirCreated = appFolder.mkdirs();
-                    Log.d("DB_DEBUG", "Pasta criada? " + dirCreated);
+                 //   Log.d("DB_DEBUG", "Pasta criada? " + dirCreated);
                 }
 
                 String dbPath = new File(appFolder, "finDB.db").getAbsolutePath();
-                Log.d("DB_DEBUG", "Caminho do DB: " + dbPath); // Verifique no Logcat!
+             //   Log.d("DB_DEBUG", "Caminho do DB: " + dbPath); // Verifique no Logcat!
 
                 instance = Room.databaseBuilder(context, FinDatabase.class, dbPath)
                         .fallbackToDestructiveMigration()

@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="chart_types">
+        <item>Pizza</item>
+        <item>Barras</item>
+        <item>Linhas</item>
+    </string-array>
+</resources>
