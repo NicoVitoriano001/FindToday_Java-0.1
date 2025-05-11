@@ -165,7 +165,6 @@ public class ResumoDespActivity extends AppCompatActivity {
         int amarelo_canario = ContextCompat.getColor(this, R.color.amarelo_canario);
 
 
-
         // Configurar gráfico de Pizza
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         //pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
