@@ -29,14 +29,14 @@
 
     <!-- Botões flutuantes (mantidos como no original) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/idFABresultadoConsultReturn"
+        android:id="@+id/idFABresultadoConsultNewsFIN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/abc_vector_test"
+        android:src="@android:drawable/ic_input_add"
         app:tint="@color/white"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

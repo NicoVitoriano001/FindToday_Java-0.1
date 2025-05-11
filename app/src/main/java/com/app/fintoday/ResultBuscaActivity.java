@@ -99,11 +99,13 @@ public class ResultBuscaActivity extends AppCompatActivity {
             startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
         });
 
-        //botao flutuante retornar
-        FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
-
+        //botao flutuante newsfin com expressao lambda
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            startActivity(new Intent(ResultBuscaActivity.this, NewFinActivity.class));
+        });
         // Versão com lambda
-        fabReturn.setOnClickListener(v -> finish());
+      //  fabNewFin.setOnClickListener(v -> finish());
 
         /** Versão original
         fabReturn.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +129,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
         });
 
         // Configurar movimento para os FABs
-        setupFabMovement(fabReturn);
+        setupFabMovement(fabNewFin);
         setupFabMovement(fabReturnHome);
 
         creditoTextView.setOnClickListener(v -> {

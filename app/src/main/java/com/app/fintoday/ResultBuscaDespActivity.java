@@ -74,16 +74,10 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         });
 
 
-        //botao flutuante retornar
-        FloatingActionButton fabReturn = findViewById(R.id.idFABresultadoConsultReturn);
-        fabReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Encerra a atividade atual e retorna à atividade anterior
-                //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
-                //  startActivity(intent);
-
-            }
+//botao flutuante newsfin com expressao lambda
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            startActivity(new Intent(this, NewFinActivity.class));
         });
 
         //botao flutuante retornar para home

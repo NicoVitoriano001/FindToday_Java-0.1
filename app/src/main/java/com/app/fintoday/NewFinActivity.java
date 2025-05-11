@@ -78,8 +78,8 @@ public class NewFinActivity extends AppCompatActivity {
                 String despDescr = despDescrEdt.getText().toString();
                 String dataDesp = dataDespEdt.getText().toString();
 
-                if (valorDesp.isEmpty() || tipoDesp.isEmpty() || despDescr.isEmpty() || dataDesp.isEmpty()) {
-                    Toast.makeText(NewFinActivity.this, "Entre com todos valores do registro.", Toast.LENGTH_LONG).show();
+                if (tipoDesp.isEmpty() || despDescr.isEmpty() || dataDesp.isEmpty()) {
+                    Toast.makeText(NewFinActivity.this, "Entre com os valores mínimos do registro.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
