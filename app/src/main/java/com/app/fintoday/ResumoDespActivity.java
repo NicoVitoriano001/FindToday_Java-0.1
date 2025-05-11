@@ -21,6 +21,8 @@ import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,8 @@ public class ResumoDespActivity extends AppCompatActivity {
         barChart = findViewById(R.id.barChart);
         lineChart = findViewById(R.id.lineChart);
         spinnerChartType = findViewById(R.id.spinnerChartType);
+
+        setCurrentDate();
 
         // Configurar Spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -94,7 +98,7 @@ public class ResumoDespActivity extends AppCompatActivity {
                 clearCharts();
             }
         });
-    }
+    } // fim on create
 
     private void updateChartVisibility() {
         pieChart.setVisibility(selectedChartType.equals("Pizza") ? View.VISIBLE : View.GONE);
@@ -233,5 +237,22 @@ public class ResumoDespActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setCurrentDate() {
+        try {
+            LocalDate currentDate = LocalDate.now();
+
+            // Preencher ano com o ano atual (yyyy)
+            String currentYear = String.valueOf(currentDate.getYear());
+            anoEditText.setText(currentYear);
+
+            // Preencher mês com o mês atual (MM) - adiciona zero à esquerda se necessário
+            String currentMonth = String.format("%02d", currentDate.getMonthValue());
+            mesEditText.setText(currentMonth);
+
+        } catch (Exception e) {
+            showToast("Erro ao definir data atual: " + e.getMessage());
+        }
     }
 }

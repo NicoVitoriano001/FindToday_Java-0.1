@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class BuscarFinActivity extends AppCompatActivity {
         FinBtnBusca = findViewById(R.id.idBtnBuscarDesp);
 
         setupSpinners();
+        setCurrentDate();
 
         FinBtnBusca.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +75,7 @@ public class BuscarFinActivity extends AppCompatActivity {
             }
         });
 
+        //botão FAB
         FloatingActionButton fabvoltardaBusca = findViewById(R.id.idFABvoltardaBusca);
         fabvoltardaBusca.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +84,8 @@ public class BuscarFinActivity extends AppCompatActivity {
                 }
           });
     }
+
+
     // spinners
     private void setupSpinners() {
         // Configurando o Spinner para Tipo de Despesa
@@ -93,4 +100,17 @@ public class BuscarFinActivity extends AppCompatActivity {
         fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fontDespEdtBusca.setAdapter(fontAdapter);
     }
+
+    private void setCurrentDate() {
+        try {
+            LocalDate currentDate = LocalDate.now();
+             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            String formattedDate = currentDate.format(formatter);
+            dataDespEdtBusca.setText(formattedDate);
+
+        } catch (Exception e) {
+          //  showToast("Erro ao definir data atual: " + e.getMessage());
+        }
+    }
+
 }
