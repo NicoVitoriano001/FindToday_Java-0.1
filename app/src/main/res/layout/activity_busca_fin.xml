@@ -45,7 +45,7 @@
             android:layout_margin="10dp"
             android:hint="Descrição Buscar"
             android:imeOptions="actionNext"
-            android:inputType="textCapCharacters"
+            android:inputType="textCapCharacters|textMultiLine"
             android:singleLine="true" />
 
         <EditText
