@@ -14,7 +14,7 @@
         <activity android:name=".EditFinActivity" android:label="Edit Fin"/>
         <activity android:name=".NewFinActivity" android:label="Nova Fin"/>
         <activity android:name=".ResultBuscaActivity" android:label="Resumo Fin"/>
-        <activity android:name=".ResumoDespActivity" android:exported="false" />
+        <activity android:name=".ResumoDespGrafActivity" android:exported="false" />
         <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
         <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
         <activity android:name=".MainActivity">

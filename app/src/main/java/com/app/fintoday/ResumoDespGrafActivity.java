@@ -22,7 +22,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResumoDespActivity extends AppCompatActivity {
+public class ResumoDespGrafActivity extends AppCompatActivity {
     private FinDatabase finDatabase;
     private EditText anoEditText, mesEditText;
     private PieChart pieChart;
@@ -42,7 +41,7 @@ public class ResumoDespActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resumo_desp);
+        setContentView(R.layout.activity_resumo_desp_graf);
 
         finDatabase = FinDatabase.getInstance(getApplicationContext());
         anoEditText = findViewById(R.id.idEdtAno);
@@ -186,7 +185,6 @@ public class ResumoDespActivity extends AppCompatActivity {
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
         // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
-
 
         // Configurar eixo X para barras
         XAxis xAxisBar = barChart.getXAxis();

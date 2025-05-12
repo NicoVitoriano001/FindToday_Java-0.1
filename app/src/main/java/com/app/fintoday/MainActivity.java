@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.nav_resumo_desp:
-                    startActivity(new Intent(MainActivity.this, ResumoDespActivity.class));
+                    startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
                     break;
                 case R.id.nav_nova_desp:
                     startActivity(new Intent(this, NewFinActivity.class));
