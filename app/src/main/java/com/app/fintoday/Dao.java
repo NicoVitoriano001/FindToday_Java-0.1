@@ -28,7 +28,7 @@ public interface Dao {
     @Query("DELETE FROM fin_table")
     void deleteallDesp();
 
-    @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+@Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
             "CASE SUBSTR(dataDesp, 1, 3) " +
             "   WHEN 'Sun' THEN 1 " +
             "   WHEN 'Mon' THEN 2 " +
@@ -43,7 +43,7 @@ public interface Dao {
 // dataDesp não está formato ISO 8601 (YYYY-MM-DD), SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1): Esta parte da consulta extrai a substring depois do espaço
 
 
-    // Adiciona % inicio e final da string para usar no LIKE - 29.04.2025
+// Adiciona % inicio e final da string para usar no LIKE - 29.04.2025
     @Query("SELECT * FROM fin_table WHERE " +
             "REPLACE(despDescr, ' ', '%') LIKE '%' || REPLACE(:despDescr, ' ', '%') || '%' " + // Adicionado '%' no início e no final
             "AND valorDesp LIKE '%' || :valorDesp || '%' " +
@@ -73,3 +73,5 @@ public interface Dao {
             "SUBSTR(dataDesp, 6, 10) DESC")              // Ordena por data (YYYY-MM-DD)
     LiveData<List<FinModal>> buscaPorAnoEMes(String ano, String mes);
 }
+
+

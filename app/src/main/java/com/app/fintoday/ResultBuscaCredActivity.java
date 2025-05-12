@@ -24,6 +24,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
     private FinRVAdapter adapter;
     private TextView totalTextView;
     private ViewModal viewmodal;
+    private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,8 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
 //botao flutuante newsfin com expressao lambda
         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
         fabNewFin.setOnClickListener(v -> {
-            startActivity(new Intent(this, NewFinActivity.class));
+            Intent intent = new Intent(ResultBuscaCredActivity.this, NewFinActivity.class);
+            startActivityForResult(intent, ADD_DESP_REQUEST);
         });
 
         //botao flutuante retornar para home
@@ -88,7 +90,6 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
 
         // Adicionar ItemTouchHelper para swipe
@@ -171,26 +172,17 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == MainActivity.EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
-            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
-            if (id != -1) {
-                String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
-                String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
-                String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
-                String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
-                String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
-                FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                model.setId(id);
-                viewmodal.update(model);
-                Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
-                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                //finish();
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
-                // Inicie a MainActivity após a conclusão da edição
-                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
-                //startActivity(intent);
-            }
         }
     }
 

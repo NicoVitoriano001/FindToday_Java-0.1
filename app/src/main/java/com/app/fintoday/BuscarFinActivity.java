@@ -1,8 +1,11 @@
 package com.app.fintoday;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +27,9 @@ public class BuscarFinActivity extends AppCompatActivity {
     private Spinner tipoDespEdtBusca, fontDespEdtBusca; // Declarado como Spinner
     private Button FinBtnBusca;
     private Dao dao;
+    private static final int ADD_DESP_REQUEST = 1;
+
+    private ViewModal viewmodal; //acrescentei juntamente metodo onActivityResult e com botao de add despesas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,7 @@ public class BuscarFinActivity extends AppCompatActivity {
         setContentView(R.layout.activity_busca_fin);
 
         dao = FinDatabase.getInstance(this).Dao();
+        viewmodal = new ViewModelProvider(this).get(ViewModal.class); // Inicializar viewmodal
 
         valorDespEdtBusca = findViewById(R.id.idEdtValorDespBuscar);
         tipoDespEdtBusca = findViewById(R.id.idEdtTipoDespBuscar);
@@ -77,7 +84,13 @@ public class BuscarFinActivity extends AppCompatActivity {
             }
         });
 
-        //botão FAB
+        // lambida do botao fabNewFin
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABBuscarNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            Intent intent = new Intent(BuscarFinActivity.this, NewFinActivity.class);
+            startActivityForResult(intent, ADD_DESP_REQUEST);
+        });
+        /** botão FAB
         FloatingActionButton fabvoltardaBusca = findViewById(R.id.idFABvoltardaBusca);
         fabvoltardaBusca.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +98,19 @@ public class BuscarFinActivity extends AppCompatActivity {
                 finish(); // Encerra a atividade atual e retorna à atividade anterior
                 }
           });
+         **/
+
+        // lambida do botao fabNewFin
+        FloatingActionButton fabhome = findViewById(R.id.idFABBuscarHome);
+        fabhome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BuscarFinActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish(); // Opcional: encerra a atividade atual se necessário
+            }
+        });
     }
 
 
@@ -116,6 +142,26 @@ public class BuscarFinActivity extends AppCompatActivity {
     }
     private void showToast(String message) {
         Toast.makeText(this, "Error. Deu zebra", Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+
+        }
     }
 
 }

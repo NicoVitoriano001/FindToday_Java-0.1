@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultBuscaActivity extends AppCompatActivity {
-   // private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
@@ -30,6 +29,10 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
+
+    public static final int EDIT_DESP_REQUEST = 2;
+    private static final int SEARCH_DESP_REQUEST = 3;
+    private static final int ADD_DESP_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,24 +102,24 @@ public class ResultBuscaActivity extends AppCompatActivity {
             startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
         });
 
-        //botao flutuante newsfin com expressao lambda
-        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
-        fabNewFin.setOnClickListener(v -> {
-            startActivity(new Intent(ResultBuscaActivity.this, NewFinActivity.class));
-        });
-        // Versão com lambda
-      //  fabNewFin.setOnClickListener(v -> finish());
 
-        /** Versão original
-        fabReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Encerra a atividade atual e retorna à atividade anterior
-              //  Intent intent = new Intent(ResultBuscaActivity.this, BuscarFinActivity.class);
-              //  startActivity(intent);
-            }
+       // lambida do botao fabNewFin
+         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+         fabNewFin.setOnClickListener(v -> {
+         Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
+         startActivityForResult(intent, ADD_DESP_REQUEST);
+         });
+        /** // tradicional do botao fabNewFin
+         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+         fabNewFin.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+        Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
+        startActivityForResult(intent, ADD_DESP_REQUEST);
+        }
         });
          **/
+
 
         //botao flutuante retornar para home
         FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
@@ -202,8 +205,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
-
-
    } // Fim ON CREATE
 
     private void setupFabMovement(FloatingActionButton fab) {
@@ -267,33 +268,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
         return filtrada;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == MainActivity.EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
-            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
-            if (id != -1) {
-                String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
-                String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
-                String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
-                String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
-                String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
-
-                FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                model.setId(id);
-                viewmodal.update(model);
-                Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
-                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                //finish();
-                recalculateTotals(); // Recalcular os valores de resumo após a atualização 30.04.2025
-                // Inicie a MainActivity após a conclusão da edição
-                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
-                //startActivity(intent);
-            }
-        }
-    }
-
     // Metodo para recalcular os totais 30.04.2025
     private void recalculateTotals() {
         double totalCredito = 0;
@@ -316,4 +290,46 @@ public class ResultBuscaActivity extends AppCompatActivity {
         despesaTextView.setText("Despesas: $ " + df.format(totalDespesa));
         saldoTextView.setText("Saldo: $ " + df.format(saldo));
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+
+        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
+            if (id == -1) {
+                Toast.makeText(this, "Registro não pode ser atualizado.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            model.setId(id);
+            viewmodal.update(model);
+            Toast.makeText(this, "Registro atualizado.", Toast.LENGTH_SHORT).show();
+
+        } else if (requestCode == SEARCH_DESP_REQUEST && resultCode == RESULT_OK) {
+            // Código para lidar com a resposta da BuscarFinActivity
+        } else {
+            Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }
