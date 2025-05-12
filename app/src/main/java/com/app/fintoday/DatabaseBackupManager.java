@@ -25,14 +25,12 @@ import java.util.Locale;
 
 public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1002;
     private Context context;
     private static final String DB_NAME = "finDB.db";
     private static final String BACKUP_FOLDER = "FIN_TODAY";
     private static final File BACKUP_DIR = new File(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
-
-    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1002;
-
     public DatabaseBackupManager(Context context) {
         this.context = context;
     }

@@ -15,7 +15,7 @@
     <group android:checkableBehavior="single">
     <item
         android:id="@+id/nav_resumo_desp"
-        android:title="Resumo de Despesas"
+        android:title="Resumo de Gráficos"
         android:icon="@drawable/overview"/>
 
     <item
