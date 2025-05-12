@@ -1,5 +1,6 @@
 package com.app.fintoday;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
@@ -22,6 +25,8 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,6 +47,8 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resumo_desp_graf);
+
+
 
         finDatabase = FinDatabase.getInstance(getApplicationContext());
         anoEditText = findViewById(R.id.idEdtAno);
@@ -100,6 +107,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
             }
         });
     } // fim on create
+
 
     private void updateChartVisibility() {
         pieChart.setVisibility(selectedChartType.equals("Pizza") ? View.VISIBLE : View.GONE);
@@ -261,6 +269,58 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
 
         }
         updateChartVisibility();
+
+
+
+        // Adicionar listener de clique para os gráficos
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                PieEntry pe = (PieEntry) e;
+                abrirTelaFiltrada(pe.getLabel());
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+        barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String tipo = labels.get((int) e.getX());
+                abrirTelaFiltrada(tipo);
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+        lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String tipo = labels.get((int) e.getX());
+                abrirTelaFiltrada(tipo);
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+
+
+
+    }
+
+
+    private void abrirTelaFiltrada(String tipo) {
+        String ano = anoEditText.getText().toString();
+        String mes = mesEditText.getText().toString();
+
+        Intent intent = new Intent(this, ResultBuscaGrafActivity.class);
+        intent.putExtra("TIPO_SELECIONADO", tipo);  // Usar o parâmetro 'tipo' ao invés da variável não declarada
+        intent.putExtra("ANO", ano);
+        intent.putExtra("MES", mes);
+        startActivity(intent);
     }
 
     private void showToast(String message) {

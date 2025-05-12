@@ -36,10 +36,11 @@ public class ViewModal extends AndroidViewModel {
     public LiveData<List<FinModal>> getallDesp() {
         return allDesp;
     }
-    public LiveData<List<FinModal>> getDespesasPorAnoEMes(
-            String ano,
-            String mes)
-    {
-        return repository.getDespesasPorAnoEMes(ano, mes);
+
+    //NOVO MeTODO ADICIONADO //Listener no grafico
+    public LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes) {
+        return repository.buscarPorTipoAnoMes(tipo, ano, mes);
     }
-}
+
+  }
+

@@ -16,6 +16,7 @@
         <activity android:name=".ResultBuscaActivity" android:label="Resumo Fin"/>
         <activity android:name=".ResumoDespGrafActivity" android:exported="false" />
         <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
+        <activity android:name=".ResultBuscaGrafActivity" android:label="Resumo Graf Fin"/>
         <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
         <activity android:name=".MainActivity">
             <intent-filter>
