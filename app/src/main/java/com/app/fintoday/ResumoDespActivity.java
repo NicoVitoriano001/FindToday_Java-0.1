@@ -185,7 +185,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         barDataSet.setValueTextSize(12f);
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
-       // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
+        // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
 
 
         // Configurar eixo X para barras
@@ -215,7 +215,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
         lineDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta});
         // Usando cores do colors.xml
-       // lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        // lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         lineDataSet.setValueTextSize(12f);
         lineDataSet.setValueTextColor(Color.WHITE); // Alterado para branco para melhor visibilidade
 

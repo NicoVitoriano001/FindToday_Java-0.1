@@ -29,7 +29,8 @@ public class AppInfoDialogHelper {
                 .setMessage("Como usar o FinToday:\n\n" +
                         "1. Adicione novas despesas clicando no botão '+'\n" +
                         "2. Visualize seu resumo financeiro no menu\n" +
-                        "3. Banco dados em Download/FIN_TODAY\n\n" +
+                        "3. Banco dados em Download/FIN_TODAY\n" +
+                        "4. Deve dar permissão de Acesso ao app\n\n" +
                         "Dúvidas? Entre em contato pelo menu 'Contato'")
                 .setPositiveButton("OK", null)
                 .show();
