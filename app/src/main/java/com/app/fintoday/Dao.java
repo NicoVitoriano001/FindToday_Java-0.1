@@ -14,7 +14,7 @@ import androidx.sqlite.db.SupportSQLiteQuery;
 public interface Dao {
 
     @RawQuery(observedEntities = FinModal.class)
-    LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
+  LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
 
     @Insert
     void insert(FinModal model);
