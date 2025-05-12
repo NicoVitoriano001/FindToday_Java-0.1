@@ -28,7 +28,8 @@ public interface Dao {
     @Query("DELETE FROM fin_table")
     void deleteallDesp();
 
-@Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+
+ @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
             "CASE SUBSTR(dataDesp, 1, 3) " +
             "   WHEN 'Sun' THEN 1 " +
             "   WHEN 'Mon' THEN 2 " +
