@@ -30,9 +30,10 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
 
+    private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
-    private static final int ADD_DESP_REQUEST = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
