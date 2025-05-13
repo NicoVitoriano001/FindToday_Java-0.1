@@ -10,59 +10,57 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class ResultBuscaCredActivity extends AppCompatActivity {
-    private RecyclerView idRVRetorno;
+public class ResultBuscaGrafActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
     private FinRVAdapter adapter;
-    private TextView totalTextView;
-    private ViewModal viewmodal;
-    private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
+    private TextView tituloTextView, totalTextView;
+    private ViewModal viewModel;
+    private String tipoSelecionado, ano, mes;
+    private static final int ADD_DESP_REQUEST = 1;
+    public static final int EDIT_DESP_REQUEST = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result_filtrado);
+        setContentView(R.layout.activity_result_busca_graf);
 
-        totalTextView = findViewById(R.id.idTVTotal);
-        idRVRetorno = findViewById(R.id.idRVRetorno);
+        // Inicializar componentes
+        tituloTextView = findViewById(R.id.tvTitulo);
+        totalTextView = findViewById(R.id.tvTotal);
+        recyclerView = findViewById(R.id.rvResultados);
 
         // Configurar RecyclerView
         adapter = new FinRVAdapter();
-        idRVRetorno.setLayoutManager(new LinearLayoutManager(this));
-        idRVRetorno.setAdapter(adapter);
-
-        // Inicialize o ViewModel para quando chanvar o NewFinActivity.class e atualizar
-        viewmodal = new ViewModelProvider(this).get(ViewModal.class);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
         // Obter dados da Intent
-        ArrayList<FinModal> resultados = getIntent().getParcelableArrayListExtra("resultadosFiltrados");
+        Intent intent = getIntent();
+        tipoSelecionado = intent.getStringExtra("TIPO_SELECIONADO");
+        ano = intent.getStringExtra("ANO");
+        mes = intent.getStringExtra("MES");
 
-        // Usar o metodo filtrarCreditos desta classe
-        List<FinModal> listaFiltrada = filtrarCreditos(resultados);
+        tituloTextView.setText(String.format("Filtro: %s - %s/%s", tipoSelecionado, mes, ano));
 
-        if (listaFiltrada != null && !listaFiltrada.isEmpty()) {
-            adapter.submitList(listaFiltrada);
-            // Usar o metodo calcularTotal desta classe
-            double total = calcularTotal(listaFiltrada);
-            DecimalFormat df = new DecimalFormat("#,##0.00");
-            totalTextView.setText("Total Créditos: $ " + df.format(total));
-        } else {
-            totalTextView.setText("Nenhum crédito encontrado");
-            Toast.makeText(this, "Lista de créditos vazia", Toast.LENGTH_SHORT).show();
-        }
+        viewModel = new ViewModelProvider(this).get(ViewModal.class);
 
+        buscarDadosFiltrados();
+
+        // Configurar clique nos itens
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaCredActivity.this, EditFinActivity.class);
+                Intent intent = new Intent(ResultBuscaGrafActivity.this, EditFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
@@ -73,20 +71,18 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             }
         });
 
-        //botao flutuante retornar
-//botao flutuante newsfin com expressao lambda
-        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        //  botão flutuante
+        FloatingActionButton fabNewFin  = findViewById(R.id.FABresultBuscaGrafAdd);
         fabNewFin.setOnClickListener(v -> {
-            Intent intent = new Intent(ResultBuscaCredActivity.this, NewFinActivity.class);
-            startActivityForResult(intent, ADD_DESP_REQUEST);
+            Intent newFinIntent = new Intent(ResultBuscaGrafActivity.this, NewFinActivity.class);
+            startActivityForResult(newFinIntent, ADD_DESP_REQUEST);
         });
 
-        //botao flutuante retornar para home
-        FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
-        fabReturnHome.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabReturnHome  = findViewById(R.id.FABresultBuscaGrafHome);
+        fabReturnHome .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ResultBuscaCredActivity.this, MainActivity.class);
+                Intent intent = new Intent(ResultBuscaGrafActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -109,7 +105,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
                 // Criar uma cópia da lista atual para manipulação segura
                 List<FinModal> currentList = new ArrayList<>(adapter.getCurrentList());
 
-                new AlertDialog.Builder(ResultBuscaCredActivity.this)
+                new AlertDialog.Builder(ResultBuscaGrafActivity.this)
                         .setTitle("Confirmar Exclusão")
                         .setMessage("Você tem certeza que deseja deletar este registro?")
                         .setPositiveButton("Sim", (dialog, which) -> {
@@ -120,58 +116,55 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
                             adapter.submitList(currentList);
 
                             // 3. Atualiza o total
-                            double total = calcularTotal(currentList);
-                            DecimalFormat df = new DecimalFormat("#,##0.00");
-                            totalTextView.setText("Total Créditos: $ " + df.format(total));
+                            calcularTotal(currentList);
 
                             // 4. Remove do banco de dados
-                            viewmodal.delete(itemToDelete);
+                            viewModel.delete(itemToDelete);
 
-                            Toast.makeText(ResultBuscaCredActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ResultBuscaGrafActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
                             // Cancela a exclusão
                             adapter.notifyItemChanged(position);
-                            Toast.makeText(ResultBuscaCredActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ResultBuscaGrafActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
                         })
                         .show();
             }
-        }).attachToRecyclerView(idRVRetorno);
+        }).attachToRecyclerView(recyclerView);
 
-    } //FIM onCreate
+    } //FIM ON CREATE
 
-
-    // Metodo para filtrar créditos (versão para esta atividade)
-    private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
-        List<FinModal> filtrada = new ArrayList<>();
-        if (listaOriginal != null) {
-            for (FinModal item : listaOriginal) {
-                if (item.getTipoDesp() != null && item.getTipoDesp().equals("CRED")) {
-                    filtrada.add(item);
-                }
+    private void buscarDadosFiltrados() {
+        viewModel.buscarPorTipoAnoMes(tipoSelecionado, ano, mes).observe(this, lista -> {
+            if (lista != null && !lista.isEmpty()) {
+                adapter.submitList(lista);
+                calcularTotal(lista);
+            } else {
+                Toast.makeText(this, "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
+                totalTextView.setText("Total: R$ 0,00");
             }
-        }
-        return filtrada;
+        });
     }
 
-    // Metodo para calcular o total
-    private double calcularTotal(List<FinModal> lista) {
+    private void calcularTotal(List<FinModal> lista) {
         double total = 0;
         for (FinModal item : lista) {
             try {
                 total += Double.parseDouble(item.getValorDesp());
             } catch (NumberFormatException e) {
-                Log.e("CALCULO", "Valor inválido: " + item.getValorDesp(), e);
+                e.printStackTrace();
             }
         }
-        return total;
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        totalTextView.setText("Total: R$ " + df.format(total));
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
             String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
             String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
@@ -179,12 +172,28 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+            viewModel.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
-        }
-    }
+        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
+            if (id == -1) {
+                Toast.makeText(this, "Registro não pode ser atualizado.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            model.setId(id);
+                viewModel.update(model);
+            Toast.makeText(this, "Registro atualizado.", Toast.LENGTH_SHORT).show();
+
+            }
+        }
 
 
 }

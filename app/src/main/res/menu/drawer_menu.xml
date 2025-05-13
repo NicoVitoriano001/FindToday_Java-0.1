@@ -9,9 +9,13 @@
         android:id="@+id/nav_home"
         android:title="Home"
         android:icon="@drawable/home"/>
+    </group>
+
+
+    <group android:checkableBehavior="single">
     <item
         android:id="@+id/nav_resumo_desp"
-        android:title="Resumo de Despesas"
+        android:title="Resumo de Gráficos"
         android:icon="@drawable/overview"/>
 
     <item
@@ -19,6 +23,7 @@
         android:title="Nova Despesa"
         android:icon="@drawable/add_file_new"/>
     </group>
+
 
     <group android:id="@+id/group_backup">
     <item

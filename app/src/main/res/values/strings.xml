@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">FinToday-0.1.4.29</string>
+    <string name="app_name" translatable="false">FinToday-0.1.4.32</string>
     <string name="navigation_drawer_open">Abrir menu</string>
     <string name="navigation_drawer_close">Fechar menu</string>
     <string name="valor_desp">Valor Desp</string>
     <string name="desc_desp">Descrição Desp</string>
     <string name="data_hora">Data e Hora</string>
-    <string name="salvar_reg">Salvar Registro</string>
+    <string name="salvar_reg">Salvar Novo Registro</string>
 </resources>

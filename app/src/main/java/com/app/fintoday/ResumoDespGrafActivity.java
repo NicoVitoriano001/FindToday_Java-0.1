@@ -1,5 +1,6 @@
 package com.app.fintoday;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
@@ -22,7 +25,8 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResumoDespActivity extends AppCompatActivity {
+public class ResumoDespGrafActivity extends AppCompatActivity {
     private FinDatabase finDatabase;
     private EditText anoEditText, mesEditText;
     private PieChart pieChart;
@@ -42,7 +46,7 @@ public class ResumoDespActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resumo_desp);
+        setContentView(R.layout.activity_resumo_desp_graf);
 
         finDatabase = FinDatabase.getInstance(getApplicationContext());
         anoEditText = findViewById(R.id.idEdtAno);
@@ -72,8 +76,8 @@ public class ResumoDespActivity extends AppCompatActivity {
             }
         });
 
-        Button resumoButton = findViewById(R.id.idBtnFazerResumo);
-        resumoButton.setOnClickListener(v -> {
+        Button resumoDespGrafButton = findViewById(R.id.idBtnFazerResumo);
+        resumoDespGrafButton.setOnClickListener(v -> {
             try {
                 String ano = anoEditText.getText().toString().trim();
                 String mes = mesEditText.getText().toString().trim();
@@ -101,6 +105,7 @@ public class ResumoDespActivity extends AppCompatActivity {
             }
         });
     } // fim on create
+
 
     private void updateChartVisibility() {
         pieChart.setVisibility(selectedChartType.equals("Pizza") ? View.VISIBLE : View.GONE);
@@ -151,7 +156,6 @@ public class ResumoDespActivity extends AppCompatActivity {
             }
         }
 
-
         // obter cores do colors.xml
         int blue_500 = ContextCompat.getColor(this, R.color.blue_500);
         int green_200 = ContextCompat.getColor(this, R.color.green_200);
@@ -166,7 +170,7 @@ public class ResumoDespActivity extends AppCompatActivity {
 
 
 
-        // Configurar gráfico de Pizza
+// Configurar gráfico de Pizza
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         //pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         pieDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
@@ -177,7 +181,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         pieChart.setData(pieData);
 
 
-        // Configurar gráfico de Barras
+// Configurar gráfico de Barras
         BarDataSet barDataSet = new BarDataSet(barEntries, "");
         BarData barData = new BarData(barDataSet);
         barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
@@ -185,10 +189,9 @@ public class ResumoDespActivity extends AppCompatActivity {
         barDataSet.setValueTextSize(12f);
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
-       // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
+// barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
 
-
-        // Configurar eixo X para barras
+// Configurar eixo X para barras
         XAxis xAxisBar = barChart.getXAxis();
         xAxisBar.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisBar.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -197,7 +200,7 @@ public class ResumoDespActivity extends AppCompatActivity {
         xAxisBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
         xAxisBar.setTextSize(10f);
 
-        // Configurar eixo Y para barras
+// Configurar eixo Y para barras
         YAxis yAxisLeftBar = barChart.getAxisLeft();
         yAxisLeftBar.setGranularity(1f);
         yAxisLeftBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
@@ -211,11 +214,11 @@ public class ResumoDespActivity extends AppCompatActivity {
         barChart.setFitBars(true); // make the x-axis fit exactly all bars
         barChart.invalidate(); // refresh
 
-        // Configurar gráfico de Linhas
+// Configurar gráfico de Linhas
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
         lineDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta});
-        // Usando cores do colors.xml
-       // lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+// Usando cores do colors.xml
+// lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         lineDataSet.setValueTextSize(12f);
         lineDataSet.setValueTextColor(Color.WHITE); // Alterado para branco para melhor visibilidade
 
@@ -263,6 +266,53 @@ public class ResumoDespActivity extends AppCompatActivity {
 
         }
         updateChartVisibility();
+
+
+        // Adicionar listener de clique para os gráficos
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                PieEntry pe = (PieEntry) e;
+                abrirTelaFiltrada(pe.getLabel());
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+        barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String tipo = labels.get((int) e.getX());
+                abrirTelaFiltrada(tipo);
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+        lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String tipo = labels.get((int) e.getX());
+                abrirTelaFiltrada(tipo);
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+
+    } //fim generateCharts
+
+    private void abrirTelaFiltrada(String tipo) {
+        String ano = anoEditText.getText().toString();
+        String mes = mesEditText.getText().toString();
+
+        Intent intent = new Intent(this, ResultBuscaGrafActivity.class);
+        intent.putExtra("TIPO_SELECIONADO", tipo);  // Usar o parâmetro 'tipo' ao invés da variável não declarada
+        intent.putExtra("ANO", ano);
+        intent.putExtra("MES", mes);
+        startActivity(intent);
     }
 
     private void showToast(String message) {

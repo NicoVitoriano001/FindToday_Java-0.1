@@ -64,17 +64,33 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:padding="5dp"
-            android:text="Buscar"
+            android:text="Buscar Registro"
             android:textAllCaps="false" />
     </LinearLayout>
 
-    <!-- Floating Action Button posicionado no canto inferior direito -->
+
+
+        <!-- Botão de retorno à home -->
+    <!-- Botão Home - Canto inferior esquerdo -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/idFABvoltardaBusca"
+        android:id="@+id/idFABBuscarHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_home"
+        app:tint="@color/white"/>
+
+    <!-- Botão Add - Canto inferior direito -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/idFABBuscarNewsFIN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:src="@drawable/abc_vector_test"
-        app:tint="@color/white" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="@color/white"/>
+
 </FrameLayout>

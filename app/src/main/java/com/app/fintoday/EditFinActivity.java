@@ -10,9 +10,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -22,7 +20,6 @@ public class EditFinActivity extends AppCompatActivity {
     private Spinner tipoDespEdt, fontDespEdt;// Declarado como Spinner
     private Button FinBtnSave;
     public static final String EXTRA_ID = "com.app.fintoday.EXTRA_ID";
-    //public static final String EXTRA_ID = "com.gtappdevelopers.gfgroomdatabase.EXTRA_ID";
     public static final String EXTRA_VALOR_DESP = "com.app.fintoday.EXTRA_VALOR_DESP";
     public static final String EXTRA_TIPO_DESP = "com.app.fintoday.EXTRA_TIPO_DESP";
     public static final String EXTRA_FONT_DESP = "com.app.fintoday.EXTRA_FONT_DESP";

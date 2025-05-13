@@ -12,12 +12,13 @@ public class AppInfoDialogHelper {
 
     public void showAboutDialog() {
         new AlertDialog.Builder(context)
-                .setTitle("Sobre o App")
-                .setMessage("FinToday v1.0\n\n" +
+                .setTitle("Sobre o App FinToday")
+                .setMessage("FinToday v0.1.4.30\n\n" +
                         "Um aplicativo para gerenciamento de finanças pessoais.\n\n" +
-                        "Desenvolvido por: [Seu Nome]\n" +
-                        "Versão: 1.0\n" +
-                        "Ano: 2023")
+                        "Desenvolvido por: nicovitoriano@gmail.com\n" +
+                        "Adaptado para Anabelle\n" +
+                   //     "Versão: 1.0\n" +
+                        "Maio 2025")
                 .setPositiveButton("OK", null)
                 .show();
     }
@@ -28,7 +29,8 @@ public class AppInfoDialogHelper {
                 .setMessage("Como usar o FinToday:\n\n" +
                         "1. Adicione novas despesas clicando no botão '+'\n" +
                         "2. Visualize seu resumo financeiro no menu\n" +
-                        "3. Faça backup regularmente para proteger seus dados\n\n" +
+                        "3. Banco dados em Download/FIN_TODAY\n" +
+                        "4. Deve dar permissão de Acesso ao app\n\n" +
                         "Dúvidas? Entre em contato pelo menu 'Contato'")
                 .setPositiveButton("OK", null)
                 .show();

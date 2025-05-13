@@ -19,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import java.util.List;
+//import com.app.fintoday.DatabaseBackupManager;
 
 public class MainActivity extends AppCompatActivity {
     private ViewModal viewmodal;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Inicialize o databaseBackupManager
         databaseBackupManager = new com.app.fintoday.DatabaseBackupManager(this);
+        // Inicialize o appInfoDialogHelper
+        appInfoDialogHelper = new AppInfoDialogHelper(this);
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.nav_resumo_desp:
-                    startActivity(new Intent(this, ResumoDespActivity.class));
+                    startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
                     break;
                 case R.id.nav_nova_desp:
                     startActivity(new Intent(this, NewFinActivity.class));

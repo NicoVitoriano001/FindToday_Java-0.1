@@ -6,17 +6,18 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.GFGRoomDatabase">
-        <activity android:name=".BuscarFinActivity" android:label="Buscar Fin"></activity>
-        <activity android:name=".EditFinActivity" android:label="Edit Fin"></activity>
-        <activity android:name=".NewFinActivity" android:label="Nova Fin"></activity>
-        <activity android:name=".ResultBuscaActivity" android:label="Resumo Fin"></activity>
-        <activity android:name=".ResumoDespActivity" android:label="Resumo Fin"></activity>
-        <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"></activity>
-        <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"></activity>
+        <activity android:name=".BuscarFinActivity" android:label="Buscar Fin"/>
+        <activity android:name=".EditFinActivity" android:label="Edit Fin"/>
+        <activity android:name=".NewFinActivity" android:label="Nova Fin"/>
+        <activity android:name=".ResultBuscaActivity" android:label="Resumo Fin"/>
+        <activity android:name=".ResumoDespGrafActivity" android:exported="false" />
+        <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
+        <activity android:name=".ResultBuscaGrafActivity" android:label="Resumo Graf Fin"/>
+        <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
