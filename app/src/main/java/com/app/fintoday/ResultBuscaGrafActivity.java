@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -15,12 +17,9 @@ import java.util.List;
 public class ResultBuscaGrafActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FinRVAdapter adapter;
-    private TextView tituloTextView;
-    private TextView totalTextView;
+    private TextView tituloTextView, totalTextView;
     private ViewModal viewModel;
-    private String tipoSelecionado;
-    private String ano;
-    private String mes;
+    private String tipoSelecionado, ano, mes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +42,22 @@ public class ResultBuscaGrafActivity extends AppCompatActivity {
         ano = intent.getStringExtra("ANO");
         mes = intent.getStringExtra("MES");
 
-        // Configurar título
         tituloTextView.setText(String.format("Filtro: %s - %s/%s", tipoSelecionado, mes, ano));
 
-        // Inicializar ViewModel
         viewModel = new ViewModelProvider(this).get(ViewModal.class);
 
-        // Buscar dados filtrados
         buscarDadosFiltrados();
 
-        // Configurar botão flutuante para voltar
-        FloatingActionButton fabVoltar = findViewById(R.id.fabVoltar);
+        //  botão flutuante
+        FloatingActionButton fabVoltar = findViewById(R.id.FABresultBuscaGrafVoltar);
         fabVoltar.setOnClickListener(v -> finish());
-    }
 
-    // MÉTODO DE BUSCA - DEVE FICAR NA ACTIVITY
+        FloatingActionButton fabNewFin = findViewById(R.id.FABresultBuscaGrafHome);
+        fabNewFin.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+        });
+    } //FIM ON CREATE
+
     private void buscarDadosFiltrados() {
         viewModel.buscarPorTipoAnoMes(tipoSelecionado, ano, mes).observe(this, lista -> {
             if (lista != null && !lista.isEmpty()) {

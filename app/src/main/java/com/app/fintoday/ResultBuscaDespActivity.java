@@ -73,8 +73,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
             }
         });
 
-
-//botao flutuante newsfin com expressao lambda
+        //botao flutuante newsfin com expressao lambda
         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
         fabNewFin.setOnClickListener(v -> {
             startActivity(new Intent(this, NewFinActivity.class));
