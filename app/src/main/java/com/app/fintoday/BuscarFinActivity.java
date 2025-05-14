@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +18,13 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class BuscarFinActivity extends AppCompatActivity {
     private EditText valorDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
@@ -28,7 +32,6 @@ public class BuscarFinActivity extends AppCompatActivity {
     private Button FinBtnBusca;
     private Dao dao;
     private static final int ADD_DESP_REQUEST = 1;
-
     private ViewModal viewmodal; //acrescentei juntamente metodo onActivityResult e com botao de add despesas
 
     @Override
@@ -49,6 +52,8 @@ public class BuscarFinActivity extends AppCompatActivity {
 
         setupSpinners();
         setCurrentDate();
+
+        dataDespEdtBusca.setOnClickListener(v -> showDatePickerDialog());
 
         FinBtnBusca.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +116,37 @@ public class BuscarFinActivity extends AppCompatActivity {
                 finish(); // Opcional: encerra a atividade atual se necessário
             }
         });
+
+    } // FIM ON CREATE
+
+    // INICIO PEGAR DATA
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(selectedYear, selectedMonth, selectedDay);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.getDefault());
+                    dataDespEdtBusca.setText(sdf.format(selectedDate.getTime()));
+                },
+                year, month, day);
+        datePickerDialog.show();
     }
+    public String getDataHoraAtual() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
+        return sdf.format(calendar.getTime());
+    }
+
+
+
+
 
 
     // spinners
