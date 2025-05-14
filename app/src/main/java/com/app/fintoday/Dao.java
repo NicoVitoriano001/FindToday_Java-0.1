@@ -77,8 +77,10 @@ public interface Dao {
     //Listener no grafico data "qui. YYYY-MM-DD"
     @Query("SELECT * FROM fin_table WHERE tipoDesp = :tipo AND " +
             "SUBSTR(dataDesp, 6, 4) = :ano AND " +    // Extrai o ano (posições 6-9)
-            "SUBSTR(dataDesp, 11, 2) = :mes")          // Extrai o mês (posições 11-12)
+            "SUBSTR(dataDesp, 11, 2) = :mes " +       // Extrai o mês (posições 11-12)
+            "ORDER BY dataDesp DESC")                  // Ordena pela data de forma decrescente
     LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes);
+
 
 }
 

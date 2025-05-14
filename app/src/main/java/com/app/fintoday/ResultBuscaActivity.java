@@ -26,13 +26,10 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
     private List<FinModal> resultados;
-
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
-
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
-    private static final int SEARCH_DESP_REQUEST = 3;
 
 
     @Override
@@ -46,15 +43,14 @@ public class ResultBuscaActivity extends AppCompatActivity {
         saldoTextView = findViewById(R.id.tvSal_ResultBuscaActivity);
 
         // Inicializar RecyclerView
-        // Convertendo para variável local
         RecyclerView idRVRetorno = findViewById(R.id.idRVRetorno);
-       // idRVRetorno = findViewById(R.id.idRVRetorno);
         adapter = new FinRVAdapter();
         idRVRetorno.setLayoutManager(new LinearLayoutManager(this));
         idRVRetorno.setAdapter(adapter);
         viewmodal = new ViewModelProvider(this).get(ViewModal.class); // Inicializar viewmodal
 
         ArrayList<Parcelable> parcelableList = getIntent().getParcelableArrayListExtra("resultados");
+
         resultados = new ArrayList<>();
 
         if (parcelableList != null) {
@@ -121,7 +117,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
         });
          **/
 
-
         //botao flutuante retornar para home
         FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
         fabReturnHome.setOnClickListener(new View.OnClickListener() {
@@ -144,14 +139,12 @@ public class ResultBuscaActivity extends AppCompatActivity {
                     intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
 
                     // Adicione logs para depuração
-                    Log.d("DEBUG", "Iniciando ResultBuscaCredActivity com " + listaFiltrada.size() + " itens");
-                    for (FinModal item : listaFiltrada) {
-                        Log.d("DEBUG", "Item: " + item.getTipoDesp() + " - " + item.getValorDesp());
+                       for (FinModal item : listaFiltrada) {
                     }
 
                     startActivity(intent);
                 } catch (Exception e) {
-                    Log.e("ERROR", "Falha ao iniciar ResultBuscaCredActivity", e);
+
                     Toast.makeText(this, "Erro ao exibir créditos", Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -306,31 +299,30 @@ public class ResultBuscaActivity extends AppCompatActivity {
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
             viewmodal.insert(model);
+            adapter.addItem(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+            recalculateTotals();
 
-        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
-            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
-            if (id == -1) {
-                Toast.makeText(this, "Registro não pode ser atualizado.", Toast.LENGTH_LONG).show();
-                return;
+        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+            int id = data.getIntExtra(EditFinActivity.EXTRA_ID, -1);
+            if (id != -1) {
+                String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+                String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+                String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+                String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+                String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+                FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+                model.setId(id);
+                viewmodal.update(model);
+                Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
+                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); //aqui atualiza a tela quando volta
+                // Atualiza o total
+                recalculateTotals();
+            } else {
+                Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
             }
-            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
-            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
-            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
-            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
-            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
-
-            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            model.setId(id);
-            viewmodal.update(model);
-            Toast.makeText(this, "Registro atualizado.", Toast.LENGTH_SHORT).show();
-
-        } else if (requestCode == SEARCH_DESP_REQUEST && resultCode == RESULT_OK) {
-            // Código para lidar com a resposta da BuscarFinActivity
-        } else {
-            Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
         }
+
     }
-
-
 }

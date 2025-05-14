@@ -10,8 +10,6 @@ public class ViewModal extends AndroidViewModel {
 
     // Variável para o repositório
     private final FinRepository repository;
-
-    // Variável para armazenar todas as despesas
     private final LiveData<List<FinModal>> allDesp;
 
     // Construtor do ViewModel
@@ -37,10 +35,16 @@ public class ViewModal extends AndroidViewModel {
         return allDesp;
     }
 
+
+
     //NOVO MeTODO ADICIONADO //Listener no grafico
     public LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes) {
         return repository.buscarPorTipoAnoMes(tipo, ano, mes);
     }
 
+
+    public LiveData<List<FinModal>> getAllDespesas() {
+        return repository.getallDesp();
+    }
   }
 

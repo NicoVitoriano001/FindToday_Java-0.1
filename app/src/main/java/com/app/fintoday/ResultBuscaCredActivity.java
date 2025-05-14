@@ -23,8 +23,9 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
     private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private TextView totalTextView;
-    private ViewModal viewmodal;
+    private ViewModal viewModal;
     private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
+    public static final int EDIT_DESP_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
         idRVRetorno.setAdapter(adapter);
 
         // Inicialize o ViewModel para quando chanvar o NewFinActivity.class e atualizar
-        viewmodal = new ViewModelProvider(this).get(ViewModal.class);
+        viewModal = new ViewModelProvider(this).get(ViewModal.class);
 
         // Obter dados da Intent
         ArrayList<FinModal> resultados = getIntent().getParcelableArrayListExtra("resultadosFiltrados");
@@ -125,7 +126,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
                             totalTextView.setText("Total Créditos: $ " + df.format(total));
 
                             // 4. Remove do banco de dados
-                            viewmodal.delete(itemToDelete);
+                            viewModal.delete(itemToDelete);
 
                             Toast.makeText(ResultBuscaCredActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
                         })
@@ -140,8 +141,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
 
     } //FIM onCreate
 
-
-    // Metodo para filtrar créditos (versão para esta atividade)
+    // Metodo para filtrar créditos
     private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
         List<FinModal> filtrada = new ArrayList<>();
         if (listaOriginal != null) {
@@ -179,9 +179,46 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+            viewModal.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
+           /**
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+            adapter.addItem(model);
+**/
+            // Atualiza o total
+            double total = calcularTotal(adapter.getCurrentList());
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            totalTextView.setText("Total Créditos: $ " + df.format(total));
+        }
+        else   if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+            int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
+            if (id != -1) {
+                String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+                String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+                String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+                String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+                String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+                FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+                model.setId(id);
+                viewModal.update(model);
+                Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
+                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); //aqui atualiza a tela quando volta
+
+                // Atualiza o total
+                double total = calcularTotal(adapter.getCurrentList());
+                DecimalFormat df = new DecimalFormat("#,##0.00");
+                totalTextView.setText("Total Créditos: $ " + df.format(total));
+
+                Toast.makeText(this, "Despesa atualizada.", Toast.LENGTH_SHORT).show();
+                //finish();
+                // Inicie a MainActivity após a conclusão da edição
+                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
+                //startActivity(intent);
+            }
         }
     }
 

@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.ContextCompat;
 import android.graphics.Typeface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder> {
     private OnItemClickListener listener;
     FinRVAdapter() {
@@ -120,5 +123,12 @@ public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder>
                 break;
             }
         }
+    }
+
+    public void addItem(FinModal newItem) {
+        List<FinModal> currentList = new ArrayList<>(getCurrentList());
+        currentList.add(newItem);
+        submitList(currentList); // Usa submitList em vez de notifyItemInserted
+       //notifyItemInserted(currentList.size() - 1);
     }
 }

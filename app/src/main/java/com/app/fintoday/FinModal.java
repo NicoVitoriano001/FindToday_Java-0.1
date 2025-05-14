@@ -25,7 +25,6 @@ public class FinModal implements Parcelable {
     public int getId() {
         return id;
     }
-
     public void setId(int id) { this.id = id; }
     public String getValorDesp() {return valorDesp; }
     public void setValorDesp(String valorDesp) {

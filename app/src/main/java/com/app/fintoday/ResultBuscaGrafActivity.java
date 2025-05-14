@@ -54,6 +54,9 @@ public class ResultBuscaGrafActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(ViewModal.class);
 
+        /**
+         No ResultBuscaGrafActivity, após inserir ou atualizar um item, ele chama buscarDadosFiltrados() que recarrega toda a lista do banco de dados
+         **/
         buscarDadosFiltrados();
 
         // Configurar clique nos itens
@@ -175,6 +178,7 @@ public class ResultBuscaGrafActivity extends AppCompatActivity {
             viewModel.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
+
         } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
             int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
             if (id == -1) {
@@ -189,11 +193,11 @@ public class ResultBuscaGrafActivity extends AppCompatActivity {
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
             model.setId(id);
-                viewModel.update(model);
+            viewModel.update(model);
             Toast.makeText(this, "Registro atualizado.", Toast.LENGTH_SHORT).show();
 
-            }
         }
+    }
 
 
 }

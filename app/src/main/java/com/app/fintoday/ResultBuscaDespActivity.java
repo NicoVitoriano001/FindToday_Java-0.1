@@ -24,6 +24,8 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
     private FinRVAdapter adapter;
     private TextView totalTextView;
     private ViewModal viewmodal;
+    private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
+    public static final int EDIT_DESP_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,6 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         });
 
 
-
         // Adicionar ItemTouchHelper para swipe
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT
@@ -139,7 +140,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
 
     } //Fim onCreate
 
-    // Metodo para filtrar créditos (versão para esta atividade)
+    // Metodo para filtrar créditos
     private List<FinModal> filtrarDespesas(List<FinModal> listaOriginal) {
         List<FinModal> filtrada = new ArrayList<>();
         if (listaOriginal != null) {
@@ -165,12 +166,32 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         return total;
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == MainActivity.EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
+            String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
+            String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
+            String despDescr = data.getStringExtra(NewFinActivity.EXTRA_DESCR_DESP);
+            String fontDesp = data.getStringExtra(NewFinActivity.EXTRA_FONT_DESP);
+            String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
+
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+
+            // Atualiza o total
+            double total = calcularTotal(adapter.getCurrentList());
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            totalTextView.setText("Total Despesas: $ " + df.format(total));
+                //finish();
+                // Inicie a MainActivity após a conclusão da edição
+                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
+                //startActivity(intent);
+        }
+
+        else if (requestCode == MainActivity.EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
             int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
             if (id != -1) {
                 String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
@@ -183,17 +204,20 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
                 model.setId(id);
                 viewmodal.update(model);
                 Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
-                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                //finish();
+                adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); //aqui atualiza a tela quando volta
 
+                // Atualiza o total
+                double total = calcularTotal(adapter.getCurrentList());
+                DecimalFormat df = new DecimalFormat("#,##0.00");
+                totalTextView.setText("Total Despesas: $ " + df.format(total));
+
+                Toast.makeText(this, "Despesa atualizada.", Toast.LENGTH_SHORT).show();
+
+                //finish();
                 // Inicie a MainActivity após a conclusão da edição
                 //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 //startActivity(intent);
             }
         }
     }
-
-
-
-
 }

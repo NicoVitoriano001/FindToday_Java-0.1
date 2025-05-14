@@ -27,6 +27,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.model.GradientColor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -151,7 +152,22 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
                 pieEntries.add(new PieEntry(entry.getValue(), entry.getKey()));
                 barEntries.add(new BarEntry(i, entry.getValue()));
                 lineEntries.add(new Entry(i, entry.getValue()));
-                labels.add(entry.getKey());
+                switch (entry.getKey()) {
+                    case "D PUB":
+                        labels.add("D PUB");
+                        break;
+                    case "INVEST":
+                        labels.add("INVEST");
+                        break;
+                    case "OUTR":
+                        labels.add("OUTR");
+                        break;
+                    default:
+                        labels.add(entry.getKey());
+                        break;
+                }
+                //labels.add(entry.getKey().replace(" ", "\n"));
+                //labels.add(entry.getKey());
                 i++;
             }
         }
@@ -184,8 +200,19 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
 // Configurar gráfico de Barras
         BarDataSet barDataSet = new BarDataSet(barEntries, "");
         BarData barData = new BarData(barDataSet);
-        barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
-        //barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        List<GradientColor> gradientColors = new ArrayList<>();
+        gradientColors.add(new GradientColor(vermelho, Color.DKGRAY));
+        gradientColors.add(new GradientColor(azulescuro, Color.BLACK));
+        gradientColors.add(new GradientColor(amarelo_canario, Color.GRAY));
+        gradientColors.add(new GradientColor(green_200, Color.DKGRAY));
+        gradientColors.add(new GradientColor(laranja, Color.BLACK));
+        gradientColors.add(new GradientColor(teal_150, Color.GRAY));
+        gradientColors.add(new GradientColor(colorAccent, Color.DKGRAY));
+        gradientColors.add(new GradientColor(magenta, Color.BLACK));
+
+        barDataSet.setGradientColors(gradientColors);
+     // barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
+     // barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextSize(12f);
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
@@ -196,9 +223,13 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         xAxisBar.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisBar.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxisBar.setGranularity(1f);
-        xAxisBar.setDrawGridLines(true);
+        xAxisBar.setDrawGridLines(false);
         xAxisBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
         xAxisBar.setTextSize(10f);
+        xAxisBar.setLabelRotationAngle(-30f); // Gira os rótulos para melhor ajuste
+        xAxisBar.setLabelCount(labels.size());
+        xAxisBar.setAvoidFirstLastClipping(true);
+
 
 // Configurar eixo Y para barras
         YAxis yAxisLeftBar = barChart.getAxisLeft();
@@ -262,7 +293,8 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
             legend.setDrawInside(false);
             legend.setTextColor(Color.WHITE); // Cor da legenda
             legend.setTextSize(12f);
-            legend.setFormSize(10f);
+            legend.setForm(Legend.LegendForm.CIRCLE); // Mais visível no tema escuro
+           // legend.setFormSize(10f);
 
         }
         updateChartVisibility();
