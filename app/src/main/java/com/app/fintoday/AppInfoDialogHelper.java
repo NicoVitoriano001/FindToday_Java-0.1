@@ -17,7 +17,7 @@ public class AppInfoDialogHelper {
                         "Um aplicativo para gerenciamento de finanças pessoais.\n\n" +
                         "Desenvolvido por: nicovitoriano@gmail.com\n" +
                         "Adaptado para Anabelle\n" +
-                   //     "Versão: 1.0\n" +
+                   //   "Versão: 1.0\n" +
                         "Maio 2025")
                 .setPositiveButton("OK", null)
                 .show();
