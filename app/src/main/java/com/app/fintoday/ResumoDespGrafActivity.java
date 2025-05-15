@@ -177,7 +177,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         int green_200 = ContextCompat.getColor(this, R.color.green_200);
         int laranja = ContextCompat.getColor(this, R.color.laranja);
         int teal_150 = ContextCompat.getColor(this, R.color.teal_150);
-        int vermelho = ContextCompat.getColor(this, R.color.vermelho);
+        int vermelho = ContextCompat.getColor(this, R.color.red);
         int colorAccent = ContextCompat.getColor(this, R.color.colorAccent);
         int magenta = ContextCompat.getColor(this, R.color.magenta);
         int azulclaro = ContextCompat.getColor(this, R.color.azulclaro);
@@ -188,7 +188,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         // Configurar gráfico de Pizza
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         //pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        pieDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
+        pieDataSet.setColors(new int[] {blue_500,vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
         pieDataSet.setValueTextSize(12f);
         pieDataSet.setValueFormatter(new PercentFormatter(pieChart));
         pieDataSet.setValueTextColor(Color.WHITE); // Cor do texto dos valores
