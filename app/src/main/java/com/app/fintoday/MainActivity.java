@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         // Configurando o listener de clique no item do NavigationView
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
-                case R.id.nav_resumo_desp:
+                case R.id.nav_resumo_desp_graf:
                     startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
                     break;
                 case R.id.nav_nova_desp:

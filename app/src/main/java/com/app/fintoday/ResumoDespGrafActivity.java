@@ -201,14 +201,14 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         BarDataSet barDataSet = new BarDataSet(barEntries, "");
         BarData barData = new BarData(barDataSet);
         List<GradientColor> gradientColors = new ArrayList<>();
-        gradientColors.add(new GradientColor(vermelho, Color.DKGRAY));
-        gradientColors.add(new GradientColor(azulescuro, Color.BLACK));
-        gradientColors.add(new GradientColor(amarelo_canario, Color.GRAY));
-        gradientColors.add(new GradientColor(green_200, Color.DKGRAY));
-        gradientColors.add(new GradientColor(laranja, Color.BLACK));
-        gradientColors.add(new GradientColor(teal_150, Color.GRAY));
-        gradientColors.add(new GradientColor(colorAccent, Color.DKGRAY));
-        gradientColors.add(new GradientColor(magenta, Color.BLACK));
+        gradientColors.add(new GradientColor(vermelho, Color.WHITE));
+        gradientColors.add(new GradientColor(azulescuro, Color.WHITE));
+        gradientColors.add(new GradientColor(amarelo_canario, Color.WHITE));
+        gradientColors.add(new GradientColor(green_200, Color.WHITE));
+        gradientColors.add(new GradientColor(laranja, Color.WHITE));
+        gradientColors.add(new GradientColor(teal_150, Color.WHITE));
+        gradientColors.add(new GradientColor(colorAccent, Color.WHITE));
+        gradientColors.add(new GradientColor(magenta, Color.WHITE));
 
         barDataSet.setGradientColors(gradientColors);
      // barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml

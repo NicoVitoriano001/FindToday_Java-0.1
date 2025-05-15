@@ -27,6 +27,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
     private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
     public static final int EDIT_DESP_REQUEST = 2;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,7 +194,8 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             DecimalFormat df = new DecimalFormat("#,##0.00");
             totalTextView.setText("Total Créditos: $ " + df.format(total));
         }
-        else   if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+        // TIREI  && data != null
+        else   if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
             int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
             if (id != -1) {
                 String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
@@ -220,8 +222,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
                 //startActivity(intent);
             }
         }
-    }
-
+     }
 
 
 }

@@ -141,8 +141,8 @@ public class ResultBuscaActivity extends AppCompatActivity {
                     // Adicione logs para depuração
                        for (FinModal item : listaFiltrada) {
                     }
-
-                    startActivity(intent);
+                   startActivityForResult(intent, 1001); // ou qualquer código
+                   //startActivity(intent);
                 } catch (Exception e) {
 
                     Toast.makeText(this, "Erro ao exibir créditos", Toast.LENGTH_SHORT).show();
@@ -200,6 +200,8 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
    } // Fim ON CREATE
+
+
 
     private void setupFabMovement(FloatingActionButton fab) {
         fab.setOnTouchListener(new View.OnTouchListener() {
@@ -285,7 +287,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
         saldoTextView.setText("Saldo: $ " + df.format(saldo));
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -303,7 +304,8 @@ public class ResultBuscaActivity extends AppCompatActivity {
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
             recalculateTotals();
 
-        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+            //TIRE && data != null
+        } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK ) {
             int id = data.getIntExtra(EditFinActivity.EXTRA_ID, -1);
             if (id != -1) {
                 String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
@@ -323,6 +325,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
                 Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
+
 }

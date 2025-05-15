@@ -138,17 +138,6 @@ public class BuscarFinActivity extends AppCompatActivity {
                 year, month, day);
         datePickerDialog.show();
     }
-    public String getDataHoraAtual() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-        return sdf.format(calendar.getTime());
-    }
-
-
-
-
-
-
     // spinners
     private void setupSpinners() {
         // Configurando o Spinner para Tipo de Despesa

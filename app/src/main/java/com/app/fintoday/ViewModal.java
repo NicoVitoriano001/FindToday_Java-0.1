@@ -22,9 +22,7 @@ public class ViewModal extends AndroidViewModel {
     public void insert(FinModal model) {
         repository.insert(model);
     }
-    public void update(FinModal model) {
-        repository.update(model);
-    }
+    public void update(FinModal model) { repository.update(model); }
     public void delete(FinModal model) {
         repository.delete(model);
     }
@@ -35,16 +33,11 @@ public class ViewModal extends AndroidViewModel {
         return allDesp;
     }
 
-
-
     //NOVO MeTODO ADICIONADO //Listener no grafico
     public LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes) {
         return repository.buscarPorTipoAnoMes(tipo, ano, mes);
     }
 
 
-    public LiveData<List<FinModal>> getAllDespesas() {
-        return repository.getallDesp();
-    }
   }
 
