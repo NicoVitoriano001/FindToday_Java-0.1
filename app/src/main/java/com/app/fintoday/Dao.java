@@ -29,7 +29,8 @@ public interface Dao {
     void deleteallDesp();
 
 
- @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+ //@Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+ @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%' || strftime('%Y-%m', 'now') || '%' ORDER BY " +
             "CASE SUBSTR(dataDesp, 1, 3) " +
             "   WHEN 'Sun' THEN 1 " +
             "   WHEN 'Mon' THEN 2 " +
@@ -39,7 +40,7 @@ public interface Dao {
             "   WHEN 'Fri' THEN 6 " +
             "   ELSE 7 " +
             "END ASC, " +
-            "SUBSTR(dataDesp, 6) DESC, tipoDesp ASC")
+            "SUBSTR(dataDesp, 6) DESC, despDescr ASC")
     LiveData<List<FinModal>> getallDesp();
 // dataDesp não está formato ISO 8601 (YYYY-MM-DD), SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1): Esta parte da consulta extrai a substring depois do espaço
 
