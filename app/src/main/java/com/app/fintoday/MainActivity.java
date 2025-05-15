@@ -30,10 +30,11 @@ public class MainActivity extends AppCompatActivity {
     private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
     private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(getApplicationContext(),"onCreate Metodo Chamado", Toast.LENGTH_SHORT).show();
+
         setContentView(R.layout.activity_main);
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
+
 
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);

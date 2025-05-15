@@ -121,6 +121,8 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
     }
 
     private void generateCharts(List<FinModal> dados) {
+        Toast.makeText(getApplicationContext(),"generateCharts Metodo Chamado", Toast.LENGTH_SHORT).show();
+
         // Agrupar por tipoDesp e somar os valores
         Map<String, Float> valoresPorTipo = new HashMap<>();
         String[] tipos = {"ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
