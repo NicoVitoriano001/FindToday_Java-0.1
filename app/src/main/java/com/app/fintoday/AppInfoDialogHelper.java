@@ -5,11 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 
 public class AppInfoDialogHelper {
     private Context context;
-
     public AppInfoDialogHelper(Context context) {
         this.context = context;
     }
-
     public void showAboutDialog() {
         new AlertDialog.Builder(context)
                 .setTitle("Sobre o App FinToday")
@@ -22,7 +20,6 @@ public class AppInfoDialogHelper {
                 .setPositiveButton("OK", null)
                 .show();
     }
-
     public void openHelpScreen() {
         new AlertDialog.Builder(context)
                 .setTitle("Ajuda")

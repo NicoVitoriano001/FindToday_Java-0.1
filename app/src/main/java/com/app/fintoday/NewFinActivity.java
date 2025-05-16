@@ -46,10 +46,8 @@ public class NewFinActivity extends AppCompatActivity {
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
      // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
 
-     // Configurando os Spinners
         setupSpinners();
 
-    // Configura data
         dataDespEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,13 +86,11 @@ public class NewFinActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        // Configurando o Spinner para Tipo de Despesa
         String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);
         tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoDespEdt.setAdapter(tipoAdapter);
 
-        // Configurando o Spinner para Fonte de Despesa
         String[] fontesDespesa = {"-","ALELO","BB","BRA","BTG","CASH", "CEF1","CEF2","NU", "MP", "STDER","OUTR"};
         ArrayAdapter<String> fontAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fontesDespesa);
         fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -134,8 +130,7 @@ public class NewFinActivity extends AppCompatActivity {
                     }
                 },
                 year, month, day);
-        // Mostrar o DatePickerDialog
-        datePickerDialog.show();
+                datePickerDialog.show();// Mostrar o DatePickerDialog
     }
 
     private void saveFin(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {

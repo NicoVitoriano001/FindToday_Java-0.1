@@ -28,20 +28,19 @@ import java.util.Locale;
 
 public class BuscarFinActivity extends AppCompatActivity {
     private EditText valorDespEdtBusca, despDescrEdtBusca, dataDespEdtBusca;
-    private Spinner tipoDespEdtBusca, fontDespEdtBusca; // Declarado como Spinner
+    private Spinner tipoDespEdtBusca, fontDespEdtBusca;
     private Button FinBtnBusca;
     private Dao dao;
     private static final int ADD_DESP_REQUEST = 1;
-    private ViewModal viewmodal; //acrescentei juntamente metodo onActivityResult e com botao de add despesas
+    private ViewModal viewmodal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_busca_fin);
 
         dao = FinDatabase.getInstance(this).Dao();
-        viewmodal = new ViewModelProvider(this).get(ViewModal.class); // Inicializar viewmodal
+        viewmodal = new ViewModelProvider(this).get(ViewModal.class);
 
         valorDespEdtBusca = findViewById(R.id.idEdtValorDespBuscar);
         tipoDespEdtBusca = findViewById(R.id.idEdtTipoDespBuscar);
@@ -95,16 +94,6 @@ public class BuscarFinActivity extends AppCompatActivity {
             Intent intent = new Intent(BuscarFinActivity.this, NewFinActivity.class);
             startActivityForResult(intent, ADD_DESP_REQUEST);
         });
-        /** botão FAB
-        FloatingActionButton fabvoltardaBusca = findViewById(R.id.idFABvoltardaBusca);
-        fabvoltardaBusca.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Encerra a atividade atual e retorna à atividade anterior
-                }
-          });
-         **/
-
         // lambida do botao fabNewFin
         FloatingActionButton fabhome = findViewById(R.id.idFABBuscarHome);
         fabhome.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +105,6 @@ public class BuscarFinActivity extends AppCompatActivity {
                 finish(); // Opcional: encerra a atividade atual se necessário
             }
         });
-
     } // FIM ON CREATE
 
     // INICIO PEGAR DATA
@@ -126,18 +114,28 @@ public class BuscarFinActivity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(selectedYear, selectedMonth, selectedDay);
-
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.getDefault());
                     dataDespEdtBusca.setText(sdf.format(selectedDate.getTime()));
                 },
                 year, month, day);
         datePickerDialog.show();
     }
+    private void setCurrentDate() {
+        try {
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            String formattedDate = currentDate.format(formatter);
+            dataDespEdtBusca.setText(formattedDate);
+
+        } catch (Exception e) {
+            showToast("Erro ao definir data atual: " + e.getMessage());
+        }
+    }
+
     // spinners
     private void setupSpinners() {
         // Configurando o Spinner para Tipo de Despesa
@@ -153,21 +151,9 @@ public class BuscarFinActivity extends AppCompatActivity {
         fontDespEdtBusca.setAdapter(fontAdapter);
     }
 
-    private void setCurrentDate() {
-        try {
-            LocalDate currentDate = LocalDate.now();
-             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-            String formattedDate = currentDate.format(formatter);
-            dataDespEdtBusca.setText(formattedDate);
-
-        } catch (Exception e) {
-            showToast("Erro ao definir data atual: " + e.getMessage());
-        }
-    }
     private void showToast(String message) {
         Toast.makeText(this, "Error. Deu zebra", Toast.LENGTH_SHORT).show();
     }
-
 
 
     @Override

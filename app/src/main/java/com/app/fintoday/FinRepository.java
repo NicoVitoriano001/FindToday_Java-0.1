@@ -1,6 +1,7 @@
 package com.app.fintoday;
 
 import android.app.Application;
+import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.util.Collections;
@@ -20,41 +21,52 @@ public class FinRepository {
         dao = database.Dao();
         allDesp = dao.getallDesp();
         executorService = Executors.newSingleThreadExecutor();
-
-
-        firebaseHelper = FirebaseHelper.getInstance(application);
+        firebaseHelper = FirebaseHelper.getInstance(application); //16.05.25
     }
 
     public void insert(FinModal model) {
         executorService.execute(() -> {
             dao.insert(model);
-            // Sincroniza com Firebase após inserção local
-            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model));
+            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); //16.05.25  Sincroniza com Firebase após inserção local
         });
 
     }
 
-  //  public void insert(FinModal model) {
-  //      executorService.execute(() -> dao.insert(model));
-  //  }
-
+    /** ORIGINAL //16.05.25
+    public void insert(FinModal model) {
+        executorService.execute(() -> dao.insert(model));
+    }
+    **/
 
     public void update(FinModal model) {
         executorService.execute(() -> {
-            dao.insert(model);
-            // Sincroniza com Firebase após inserção local
-            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model));
+            dao.update(model);
+            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); // Sincroniza com Firebase após edicao local
         });
-
     }
-//    public void update(FinModal model) {
-//        executorService.execute(() -> dao.update(model));
-//    }
-
+    /** ORIGINAL
+    //    public void update(FinModal model) {
+    //        executorService.execute(() -> dao.update(model));
+       }
+     **/
     public void delete(FinModal model) {
-        executorService.execute(() -> dao.delete(model));
+        executorService.execute(() -> {
+            dao.delete(model);
+            if (firebaseHelper != null) {
+                String userId = firebaseHelper.getCurrentUserId();
+                if (userId != null) {
+                    firebaseHelper.getUserFinancesReference()  // Já aponta para users/{userId}/finances
+                            .child(String.valueOf(model.getId()))
+                            .removeValue();
+                }
+            }
+        });
     }
-
+    /** ORIGINAL
+        public void delete(FinModal model) {
+          executorService.execute(() -> dao.delete(model));
+       }
+     **/
     public void deleteallDesp() {
         executorService.execute(dao::deleteallDesp);
     }
@@ -83,7 +95,37 @@ public class FinRepository {
                 despDescr,
                 dataDesp
         );
+   }
+
+    // Metodo para sincronização manual, verificar
+    public void forceSyncWithFirebase() {
+        executorService.execute(() -> {
+            List<FinModal> allItems = dao.getAllItemsSync();
+            if (firebaseHelper != null) {
+                firebaseHelper.syncAllItemsToFirebase(allItems);
+            } else {
+                Log.e("FinRepository", "FirebaseHelper não inicializado");
+            }
+        });
     }
+
+
+    public void syncFromFirebase(FinModal modal) {
+        executorService.execute(() -> {
+            FinModal existingItem = dao.getDespById(modal.getId());// Verifica se o item já existe localmente
+
+            if (existingItem == null) {// Item não existe - insere novo
+                dao.insert(modal);
+                Log.d("FirebaseSync", "Novo item inserido do Firebase: " + modal.getId());
+            } else if (modal.getLastUpdated() > existingItem.getLastUpdated()) {
+                // Item existe e está mais atualizado no Firebase - atualiza
+                dao.update(modal);
+                Log.d("FirebaseSync", "Item atualizado do Firebase: " + modal.getId());
+            }
+            // Se o item local estiver mais recente, não faz nada
+        });
+    }
+
 }
 
 

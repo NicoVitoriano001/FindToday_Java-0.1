@@ -113,7 +113,7 @@ public class DatabaseBackupManager {
 
     private boolean copyDatabaseFile(File backupFile) {
         try {
-            File srcFile = new File(BACKUP_DIR, DB_NAME); // Origem no diretório especificado
+            File srcFile = new File(BACKUP_DIR, DB_NAME);
 
             if (!srcFile.exists()) {
                 throw new IOException("Arquivo original não encontrado");
@@ -129,7 +129,7 @@ public class DatabaseBackupManager {
             return false;
         }
     }
-    //FIM BLOCO BACKUP
+    // FIM BLOCO BACKUP
 
 
     // INICIO BLOCO DE RESTORE
@@ -225,17 +225,6 @@ public class DatabaseBackupManager {
         }
     }
 
-    public void handlePermissionResult(int requestCode, int[] grantResults) {
-        if (requestCode == REQUEST_CODE_WRITE_EXTERNAL_STORAGE &&
-                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            performBackup();
-        } else if (requestCode == REQUEST_CODE_READ_EXTERNAL_STORAGE &&
-                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            performRestore();
-        } else {
-            showToast("Permissão negada - operação cancelada", Toast.LENGTH_SHORT);
-        }
-    }
     // FIM BLOCO DE RESTORE
 
     private void showBackupConfirmationDialog() {
@@ -253,8 +242,6 @@ public class DatabaseBackupManager {
                 .setNegativeButton("Não", null)
                 .show();
 
-
-
         // Adicionar nova opção para backup no Firebase
         new AlertDialog.Builder(context)
                 .setTitle("Escolha o tipo de backup")
@@ -270,7 +257,6 @@ public class DatabaseBackupManager {
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
-
 
     private void showToast(String message, int duration) {
         new Handler(Looper.getMainLooper()).post(() ->

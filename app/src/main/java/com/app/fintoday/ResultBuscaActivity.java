@@ -11,7 +11,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -98,7 +97,6 @@ public class ResultBuscaActivity extends AppCompatActivity {
             intent.putExtra(NewFinActivity.EXTRA_DURATION, model.getDataDesp());
             startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
         });
-
 
        // lambida do botao fabNewFin
          FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);

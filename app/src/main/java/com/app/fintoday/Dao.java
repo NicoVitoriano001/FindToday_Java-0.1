@@ -82,7 +82,11 @@ public interface Dao {
             "ORDER BY dataDesp DESC")                  // Ordena pela data de forma decrescente
     LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes);
 
+    @Query("SELECT * FROM fin_table")
+    List<FinModal> getAllItemsSync();
 
+    @Query("SELECT * FROM fin_table WHERE id = :id")
+    FinModal getDespById(int id);
 }
 
 

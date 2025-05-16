@@ -75,7 +75,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             }
         });
 
-        //botao flutuante retornar
+
 //botao flutuante newsfin com expressao lambda
         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
         fabNewFin.setOnClickListener(v -> {
@@ -140,7 +140,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(idRVRetorno);
 
-    } //FIM onCreate
+    } //FIM ON CREATE
 
     // Metodo para filtrar créditos
     private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
@@ -188,7 +188,7 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             viewmodal.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
             adapter.addItem(model);
-**/
+            **/
             // Atualiza o total
             double total = calcularTotal(adapter.getCurrentList());
             DecimalFormat df = new DecimalFormat("#,##0.00");

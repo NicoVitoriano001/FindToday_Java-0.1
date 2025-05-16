@@ -3,21 +3,27 @@
     import android.content.Context;
     import android.os.AsyncTask;
     import android.os.Environment;
-    import android.util.Log;
     import androidx.annotation.NonNull;
     import androidx.room.Database;
     import androidx.room.Room;
     import androidx.room.RoomDatabase;
+    import androidx.room.migration.Migration;
     import androidx.sqlite.db.SupportSQLiteDatabase;
     import java.io.File;
 
-    @Database(entities = {FinModal.class}, version = 1)
+    @Database(entities = {FinModal.class}, version = 2)  //16.05.25 modificado FinModal criação coluna lastUpdated no banco de dados, no contexto do Firebase, foi necessário modificar versao do Rom
+
     public abstract class FinDatabase extends RoomDatabase {
-        //below line is to create instance for our databse class.
+
+        static final Migration MIGRATION_1_2 = new Migration(1, 2) {  //16.05.25 contexto Firebase
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                //16.05.25 migraçao sucesso, comentado   database.execSQL("ALTER TABLE fin_table ADD COLUMN lastUpdated INTEGER NOT NULL DEFAULT 0");
+            }
+        };
         private static FinDatabase instance;
         public abstract Dao Dao();
 
-        //on below line we are getting instance for our database.
         public static synchronized FinDatabase getInstance(Context context) {
             if (instance == null) {
                 // Caminho para /Download/FIN_TODAY/

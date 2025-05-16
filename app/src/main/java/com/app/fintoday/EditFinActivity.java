@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class EditFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
-    private Spinner tipoDespEdt, fontDespEdt;// Declarado como Spinner
+    private Spinner tipoDespEdt, fontDespEdt;
     private Button FinBtnSave;
     public static final String EXTRA_ID = "com.app.fintoday.EXTRA_ID";
     public static final String EXTRA_VALOR_DESP = "com.app.fintoday.EXTRA_VALOR_DESP";
@@ -87,19 +87,16 @@ public class EditFinActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        // Configurando o Spinner para Tipo de Despesa
         String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);
         tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoDespEdt.setAdapter(tipoAdapter);
 
-        // Configurando o Spinner para Fonte de Despesa
         String[] fontesDespesa = {"-","ALELO","BB","BRA","BTG","CASH", "CEF1","CEF2","NU", "MP", "STDER","OUTR"};
         ArrayAdapter<String> fontAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fontesDespesa);
         fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fontDespEdt.setAdapter(fontAdapter);
     }
-
     private int getIndex(Spinner spinner, String myString) {
         int index = 0;
         for (int i = 0; i < spinner.getCount(); i++) {
@@ -133,8 +130,7 @@ public class EditFinActivity extends AppCompatActivity {
                     }
                 },
                 year, month, day);
-        // Mostrar o DatePickerDialog
-        datePickerDialog.show();
+        datePickerDialog.show();        // Mostrar o DatePickerDialog
     }
 
     private void saveFin(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
