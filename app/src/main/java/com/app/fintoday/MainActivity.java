@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
     private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         databaseBackupManager = new com.app.fintoday.DatabaseBackupManager(this);
         // Inicialize o appInfoDialogHelper
         appInfoDialogHelper = new AppInfoDialogHelper(this);
+        // Criar canal de notificação
+        NotificationHelper.createNotificationChannel(this);
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

@@ -2,11 +2,14 @@ package com.app.fintoday;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FinRepository {
+    private final FirebaseHelper firebaseHelper;
     private final Dao dao;
     private final LiveData<List<FinModal>> allDesp;
     private final ExecutorService executorService;
@@ -17,15 +20,36 @@ public class FinRepository {
         dao = database.Dao();
         allDesp = dao.getallDesp();
         executorService = Executors.newSingleThreadExecutor();
+
+
+        firebaseHelper = FirebaseHelper.getInstance(application);
     }
 
     public void insert(FinModal model) {
-        executorService.execute(() -> dao.insert(model));
+        executorService.execute(() -> {
+            dao.insert(model);
+            // Sincroniza com Firebase após inserção local
+            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model));
+        });
+
     }
 
+  //  public void insert(FinModal model) {
+  //      executorService.execute(() -> dao.insert(model));
+  //  }
+
+
     public void update(FinModal model) {
-        executorService.execute(() -> dao.update(model));
+        executorService.execute(() -> {
+            dao.insert(model);
+            // Sincroniza com Firebase após inserção local
+            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model));
+        });
+
     }
+//    public void update(FinModal model) {
+//        executorService.execute(() -> dao.update(model));
+//    }
 
     public void delete(FinModal model) {
         executorService.execute(() -> dao.delete(model));

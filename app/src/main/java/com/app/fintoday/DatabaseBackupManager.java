@@ -26,6 +26,7 @@ import java.util.Locale;
 public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
     private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1002;
+    private final FirebaseHelper firebaseHelper;
     private Context context;
     private static final String DB_NAME = "finDB.db";
     private static final String BACKUP_FOLDER = "FIN_TODAY";
@@ -33,6 +34,7 @@ public class DatabaseBackupManager {
             Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
     public DatabaseBackupManager(Context context) {
         this.context = context;
+        this.firebaseHelper = FirebaseHelper.getInstance(context); // Inicialização no construtor
     }
 
 
@@ -250,7 +252,25 @@ public class DatabaseBackupManager {
                 .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
                 .setNegativeButton("Não", null)
                 .show();
+
+
+
+        // Adicionar nova opção para backup no Firebase
+        new AlertDialog.Builder(context)
+                .setTitle("Escolha o tipo de backup")
+                .setItems(new String[]{"Backup Local", "Backup no Firebase"}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Backup local
+                        executeBackup(backupFile);
+                    } else {
+                        // Backup no Firebase
+                        firebaseHelper.backupDatabaseToFirebase(context);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
+
 
     private void showToast(String message, int duration) {
         new Handler(Looper.getMainLooper()).post(() ->
