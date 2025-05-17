@@ -67,17 +67,31 @@ public class FinRepository {
      **/
     public void delete(FinModal model) {
         executorService.execute(() -> {
+            // 1. Remove do banco local
             dao.delete(model);
-            if (firebaseHelper != null) {
+
+            try {
+                // 2. Remove do Firebase
                 String userId = firebaseHelper.getCurrentUserId();
-                if (userId != null) {
-                    firebaseHelper.getUserFinancesReference()  // Já aponta para users/{userId}/finances
-                            .child(String.valueOf(model.getId()))
-                            .removeValue();
+                if (userId == null) {
+                    Log.e("SYNC_DEBUG", "Usuário não autenticado, não é possível excluir no Firebase");
+                    return;
                 }
+
+                // Usa a mesma estrutura que update/insert
+                firebaseHelper.getUserFinancesReference(userId)
+                        .child(String.valueOf(model.getId()))
+                        .removeValue()
+                        .addOnSuccessListener(aVoid ->
+                                Log.d("SYNC_DEBUG", "Item removido do Firebase: " + model.getId()))
+                        .addOnFailureListener(e ->
+                                Log.e("SYNC_DEBUG", "Erro ao remover item do Firebase", e));
+            } catch (Exception e) {
+                Log.e("SYNC_DEBUG", "Erro geral ao remover item do Firebase", e);
             }
         });
     }
+
 
     /**
      * ORIGINAL

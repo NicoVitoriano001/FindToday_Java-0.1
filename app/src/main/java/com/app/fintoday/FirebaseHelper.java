@@ -91,7 +91,7 @@ public class FirebaseHelper {
                     return;
                 }
 
-                item.setLastUpdated(System.currentTimeMillis());// Atualiza timestamp e envia apenas o item editado
+                item.setLastUpdated(System.currentTimeMillis());
 
                 // Usando o mesmo caminho que syncAllItemsToFirebase
                 databaseReference.child("finances")
@@ -163,11 +163,12 @@ public class FirebaseHelper {
 
     // Métodos adicionais para autenticação, etc.
     // No FirebaseHelper
-    public DatabaseReference getUserFinancesReference() {
-        String userId = getCurrentUserId();
-        if (userId == null) return null;
-        return databaseReference.child("users").child(userId).child("finances");
+    public DatabaseReference getUserFinancesReference(String userId) {
+        return databaseReference
+                .child("finances")
+                .child(userId);
     }
+
 
     public FirebaseAuth getFirebaseAuth() {
         return firebaseAuth;
@@ -199,4 +200,14 @@ public class FirebaseHelper {
             });
         }
     }
+
+    public DatabaseReference getUserFinancesReference() {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "Usuário não autenticado");
+            return null;
+        }
+        return getUserFinancesReference(userId);
+    }
+
 }

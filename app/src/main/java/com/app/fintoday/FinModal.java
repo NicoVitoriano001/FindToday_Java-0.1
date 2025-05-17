@@ -14,7 +14,6 @@ public class FinModal implements Parcelable {
     private String valorDesp, tipoDesp, fontDesp, despDescr, dataDesp;
     private long lastUpdated;
 
-
     // Construtor vazio necessário para Firebase
     public FinModal() {
         this.lastUpdated = System.currentTimeMillis();
