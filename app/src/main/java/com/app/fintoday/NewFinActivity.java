@@ -1,7 +1,12 @@
 package com.app.fintoday;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,7 +31,8 @@ public class NewFinActivity extends AppCompatActivity {
     public static final String EXTRA_FONT_DESP = "com.app.fintoday.EXTRA_FONT_DESP";
     public static final String EXTRA_DESCR_DESP = "com.app.fintoday.EXTRA_DESP_DESCR";
     public static final String EXTRA_DURATION = "com.app.fintoday.EXTRA_DURATION";
-
+    private FirebaseHelper firebaseHelper;
+    private NotificationHelper notificationHelper;
     public String getDataHoraAtual() {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE yyyy-MM-dd");
@@ -37,6 +43,11 @@ public class NewFinActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_fin);
+
+        // Inicializa FirebaseHelper e NotificationHelper
+        firebaseHelper = FirebaseHelper.getInstance(this);
+        notificationHelper = new NotificationHelper();
+        notificationHelper.createNotificationChannel(this);
 
         valorDespEdt = findViewById(R.id.idEdtValorDesp);
         tipoDespEdt = findViewById(R.id.idEdtTipoDesp);
@@ -80,9 +91,49 @@ public class NewFinActivity extends AppCompatActivity {
                     Toast.makeText(NewFinActivity.this, "Entre com os valores mínimos do registro.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+
+                // Cria o objeto FinModal
+                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+                finModal.setLastUpdated(System.currentTimeMillis());
+
+                // Salva via Repository (único ponto de salvamento)
+                FinRepository repository = new FinRepository(getApplication());
+                repository.insert(finModal);
+
+                // Mostra notificação
+                showSyncNotification();
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(EXTRA_VALOR_DESP, valorDesp);
+                resultIntent.putExtra(EXTRA_TIPO_DESP, tipoDesp);
+                resultIntent.putExtra(EXTRA_FONT_DESP, fontDesp);
+                resultIntent.putExtra(EXTRA_DESCR_DESP, despDescr);
+                resultIntent.putExtra(EXTRA_DURATION, dataDesp);
+
+                // Apenas indica sucesso e fecha a atividade
+                setResult(RESULT_OK, resultIntent);
+
+                Toast.makeText(NewFinActivity.this, "Registro salvo com sucesso.", Toast.LENGTH_SHORT).show();
+               finish();
             }
         });
+    }
+
+
+    private void showSyncNotification() {
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                    NotificationHelper.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_menu)
+                    .setContentTitle("Sincronização concluída")
+                    .setContentText("Novo registro foi sincronizado com o Firebase")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            notificationManager.notify(1, builder.build());
+        }
     }
 
     private void setupSpinners() {
@@ -133,6 +184,7 @@ public class NewFinActivity extends AppCompatActivity {
                 datePickerDialog.show();// Mostrar o DatePickerDialog
     }
 
+    /**
     private void saveFin(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
         // PASSA OS DADOS NOVOS/RECUPERADOS PARA SALVAR
         Intent data = new Intent();
@@ -150,5 +202,7 @@ public class NewFinActivity extends AppCompatActivity {
         Toast.makeText(this, "Registro foi salvo no Database.", Toast.LENGTH_LONG).show();
         finish();
     }
+**/
+
 
 }

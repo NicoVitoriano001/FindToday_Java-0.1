@@ -91,8 +91,7 @@ public class FirebaseHelper {
                     return;
                 }
 
-                // Atualiza timestamp e envia apenas o item editado
-                item.setLastUpdated(System.currentTimeMillis());
+                item.setLastUpdated(System.currentTimeMillis());// Atualiza timestamp e envia apenas o item editado
 
                 // Usando o mesmo caminho que syncAllItemsToFirebase
                 databaseReference.child("finances")

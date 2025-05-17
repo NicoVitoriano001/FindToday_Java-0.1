@@ -16,8 +16,10 @@ public interface Dao {
     @RawQuery(observedEntities = FinModal.class)
   LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
 
+
     @Insert
-    void insert(FinModal model);
+    long insert(FinModal model); // Altere o retorno de void para long
+    //@Insert //void insert(FinModal model);
 
     @Update
     void update(FinModal model);
@@ -27,7 +29,6 @@ public interface Dao {
 
     @Query("DELETE FROM fin_table")
     void deleteallDesp();
-
 
  //@Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
  @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%' || strftime('%Y-%m', 'now') || '%' ORDER BY " +

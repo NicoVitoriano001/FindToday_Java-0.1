@@ -29,10 +29,18 @@ public class FinRepository {
 
     public void insert(FinModal model) {
         executorService.execute(() -> {
-            dao.insert(model);
-            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); //16.05.25  Sincroniza com Firebase após inserção local
-        });
+            // 1. Define timestamp
+            model.setLastUpdated(System.currentTimeMillis());
 
+            // 2. Insere no SQLite (Room gera o ID)
+            long insertedId = dao.insert(model);
+            model.setId((int) insertedId); // Atualiza o modelo com o ID real
+
+            // 3. Sincroniza com Firebase APÓS ter o ID definitivo
+            firebaseHelper.syncItemToFirebase(model);
+
+            Log.d("SYNC_DEBUG", "Novo item inserido. ID: " + insertedId);
+        });
     }
 
     /**
@@ -44,15 +52,9 @@ public class FinRepository {
 
     public void update(FinModal model) {
         executorService.execute(() -> {
-            // 1. Atualiza timestamp ANTES de enviar
-            model.setLastUpdated(System.currentTimeMillis());
-
-            // 2. Persiste localmente
-            dao.update(model);
-
-            // 3. Envia para Firebase (apenas campos relevantes)
-            firebaseHelper.syncItemToFirebase(model);
-
+            model.setLastUpdated(System.currentTimeMillis());// 1. Atualiza timestamp ANTES de enviar
+            dao.update(model);  // 2. Persiste localmente
+            firebaseHelper.syncItemToFirebase(model); // 3. Envia para Firebase (apenas campos relevantes)
             //firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); // Sincroniza com Firebase após edicao local
         });
     }

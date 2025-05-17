@@ -43,12 +43,10 @@ public class EditFinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_fin);
 
-
         // Inicializa FirebaseHelper e NotificationHelper
         firebaseHelper = FirebaseHelper.getInstance(this);
         notificationHelper = new NotificationHelper();
         notificationHelper.createNotificationChannel(this);
-
 
         valorDespEdt = findViewById(R.id.idEdtValorDesp);
         tipoDespEdt = findViewById(R.id.idEdtTipoDesp);
@@ -86,7 +84,7 @@ public class EditFinActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String valorDesp = valorDespEdt.getText().toString();
                 String tipoDesp = tipoDespEdt.getSelectedItem().toString();
-                String fontDesp = fontDespEdt.getSelectedItem().toString();
+                String fontDesp = fontDespEdt.getSelectedItem().toString(); // Correct variable name
                 String despDescr = despDescrEdt.getText().toString();
                 String dataDesp = dataDespEdt.getText().toString();
 
@@ -94,22 +92,26 @@ public class EditFinActivity extends AppCompatActivity {
                     Toast.makeText(EditFinActivity.this, "Entre com valores mínimos do registro.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                // Cria o objeto FinModal com os dados editados
-                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Usar construtor completo
 
-                // Se for edição (tem ID), seta o ID
+                // Obter o ID do registro existente
                 int id = getIntent().getIntExtra(EXTRA_ID, -1);
-                if (id != -1) {
-                    finModal.setId(id); // Garante que o ID está definido
-                } else {
-                    // Para novos itens, gere um ID temporário se necessário
-                    finModal.setId((int) System.currentTimeMillis());
+                if (id == -1) {
+                    Toast.makeText(EditFinActivity.this, "Erro: ID do registro não encontrado.", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                // Salva localmente e sincroniza com Firebase
-                saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-                firebaseHelper.syncItemToFirebase(finModal);
-                // Mostra notificação
+
+                // Criar o objeto FinModal com os dados editados e o ID original
+                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Using fontDesp here
+                finModal.setId(id); // Manter o ID original
+                finModal.setLastUpdated(System.currentTimeMillis());
+
+                // Atualizar no repositório (que cuidará da sincronização com Firebase)
+                FinRepository repository = new FinRepository(getApplication());
+                repository.update(finModal);
+
+                // Mostrar notificação e finalizar
                 showSyncNotification();
+                saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Using fontDesp here
             }
         });
     }

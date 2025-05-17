@@ -181,6 +181,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
 
+        if (data == null) {
+            Toast.makeText(this, "Sem dados retornados.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
             String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
@@ -189,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+           // viewmodal.insert(model);  // salvando novamente
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
         } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
