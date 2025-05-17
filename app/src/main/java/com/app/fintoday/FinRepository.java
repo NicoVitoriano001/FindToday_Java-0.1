@@ -4,8 +4,11 @@ import android.app.Application;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,22 +35,33 @@ public class FinRepository {
 
     }
 
-    /** ORIGINAL //16.05.25
-    public void insert(FinModal model) {
-        executorService.execute(() -> dao.insert(model));
-    }
-    **/
+    /**
+     * ORIGINAL //16.05.25
+     * public void insert(FinModal model) {
+     * executorService.execute(() -> dao.insert(model));
+     * }
+     **/
 
     public void update(FinModal model) {
         executorService.execute(() -> {
+            // 1. Atualiza timestamp ANTES de enviar
+            model.setLastUpdated(System.currentTimeMillis());
+
+            // 2. Persiste localmente
             dao.update(model);
-            firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); // Sincroniza com Firebase após edicao local
+
+            // 3. Envia para Firebase (apenas campos relevantes)
+            firebaseHelper.syncItemToFirebase(model);
+
+            //firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); // Sincroniza com Firebase após edicao local
         });
     }
-    /** ORIGINAL
-    //    public void update(FinModal model) {
-    //        executorService.execute(() -> dao.update(model));
-       }
+
+    /**
+     * ORIGINAL
+     * //    public void update(FinModal model) {
+     * //        executorService.execute(() -> dao.update(model));
+     * }
      **/
     public void delete(FinModal model) {
         executorService.execute(() -> {
@@ -62,10 +76,12 @@ public class FinRepository {
             }
         });
     }
-    /** ORIGINAL
-        public void delete(FinModal model) {
-          executorService.execute(() -> dao.delete(model));
-       }
+
+    /**
+     * ORIGINAL
+     * public void delete(FinModal model) {
+     * executorService.execute(() -> dao.delete(model));
+     * }
      **/
     public void deleteallDesp() {
         executorService.execute(dao::deleteallDesp);
@@ -95,7 +111,7 @@ public class FinRepository {
                 despDescr,
                 dataDesp
         );
-   }
+    }
 
     // Metodo para sincronização manual, verificar
     public void forceSyncWithFirebase() {
@@ -109,23 +125,27 @@ public class FinRepository {
         });
     }
 
-
-    public void syncFromFirebase(FinModal modal) {
+    public void syncFromFirebase(FinModal remoteItem) {
         executorService.execute(() -> {
-            FinModal existingItem = dao.getDespById(modal.getId());// Verifica se o item já existe localmente
+            FinModal localItem = dao.getDespById(remoteItem.getId());
 
-            if (existingItem == null) {// Item não existe - insere novo
-                dao.insert(modal);
-                Log.d("FirebaseSync", "Novo item inserido do Firebase: " + modal.getId());
-            } else if (modal.getLastUpdated() > existingItem.getLastUpdated()) {
-                // Item existe e está mais atualizado no Firebase - atualiza
-                dao.update(modal);
-                Log.d("FirebaseSync", "Item atualizado do Firebase: " + modal.getId());
+            // Resolução de conflito baseada em lastUpdated
+            if (localItem == null || remoteItem.getLastUpdated() > localItem.getLastUpdated()) {
+
+                // Se for um novo item (localItem == null), formata dataDesp se necessário
+                if (localItem == null && remoteItem.getDataDesp() == null) {
+                    remoteItem.setDataDesp(formatLocalDate(new Date(remoteItem.getLastUpdated())));
+                }
+
+                // Atualiza o banco local
+                dao.update(remoteItem);
             }
-            // Se o item local estiver mais recente, não faz nada
         });
     }
 
+    // Método auxiliar para formatar data local
+    private String formatLocalDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(date);
+    }
 }
-
-

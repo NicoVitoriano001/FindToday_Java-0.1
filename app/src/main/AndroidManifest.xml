@@ -14,13 +14,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.GFGRoomDatabase">
-
-        <activity android:name=".LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
    <!-- Meta-dados do Firebase -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -31,6 +24,20 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="true" />
+
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:hardwareAccelerated="true">
+        </activity>
+
         <activity android:name=".BuscarFinActivity" android:label="Buscar Fin"/>
         <activity android:name=".EditFinActivity" android:label="Edit Fin"/>
         <activity android:name=".NewFinActivity" android:label="Nova Fin"/>
@@ -39,12 +46,6 @@
         <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
         <activity android:name=".ResultBuscaGrafActivity" android:label="Resumo Graf Fin"/>
         <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustPan"
-            android:hardwareAccelerated="true">
 
-        </activity>
     </application>
 </manifest>

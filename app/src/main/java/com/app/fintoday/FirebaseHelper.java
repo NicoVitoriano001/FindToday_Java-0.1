@@ -83,24 +83,31 @@ public class FirebaseHelper {
 
     // Metodo para sincronizar um único item, verificar
     public void syncItemToFirebase(FinModal item) {
-        Log.d("FirebaseSync", "Iniciando sincronização do item: " + item.getId());
-        String userId = getCurrentUserId();
-        if (userId == null) {
-            Log.e("FirebaseSync", "Falha: usuário não autenticado");
-            return;
-        }
-        Log.d("FirebaseSync", "Usuário autenticado: " + userId);
+        executorService.execute(() -> {
+            try {
+                String userId = getCurrentUserId();
+                if (userId == null) {
+                    Log.e(TAG, "Usuário não autenticado");
+                    return;
+                }
 
-        item.setLastUpdated(System.currentTimeMillis());  // Atualiza o timestamp antes de enviar
+                // Atualiza timestamp e envia apenas o item editado
+                item.setLastUpdated(System.currentTimeMillis());
 
-        databaseReference.child("users")
-                .child(userId)
-                .child("finances")
-                .child(String.valueOf(item.getId()))
-                .setValue(item);
+                // Usando o mesmo caminho que syncAllItemsToFirebase
+                databaseReference.child("finances")
+                        .child(userId)
+                        .child(String.valueOf(item.getId()))
+                        .setValue(item)
+                        .addOnSuccessListener(aVoid ->
+                                Log.d(TAG, "Item sincronizado: " + item.getId()))
+                        .addOnFailureListener(e ->
+                                Log.e(TAG, "Erro ao sincronizar item", e));
+            } catch (Exception e) {
+                Log.e(TAG, "Erro geral", e);
+            }
+        });
     }
-
-    // Metodo para sincronizar todos os itens
     public void syncAllItemsToFirebase(List<FinModal> items) {
         if (items == null || items.isEmpty()) return;
 

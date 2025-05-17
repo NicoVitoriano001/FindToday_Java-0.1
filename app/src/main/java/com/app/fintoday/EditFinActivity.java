@@ -1,7 +1,10 @@
 package com.app.fintoday;
 // Criado em 30.04.2025
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -25,7 +30,8 @@ public class EditFinActivity extends AppCompatActivity {
     public static final String EXTRA_FONT_DESP = "com.app.fintoday.EXTRA_FONT_DESP";
     public static final String EXTRA_DESCR_DESP = "com.app.fintoday.EXTRA_DESP_DESCR";
     public static final String EXTRA_DURATION = "com.app.fintoday.EXTRA_DURATION";
-
+    private FirebaseHelper firebaseHelper;
+    private NotificationHelper notificationHelper;
     public String getDataHoraAtual() {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE yyyy-MM-dd");
@@ -36,6 +42,13 @@ public class EditFinActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_fin);
+
+
+        // Inicializa FirebaseHelper e NotificationHelper
+        firebaseHelper = FirebaseHelper.getInstance(this);
+        notificationHelper = new NotificationHelper();
+        notificationHelper.createNotificationChannel(this);
+
 
         valorDespEdt = findViewById(R.id.idEdtValorDesp);
         tipoDespEdt = findViewById(R.id.idEdtTipoDesp);
@@ -81,9 +94,40 @@ public class EditFinActivity extends AppCompatActivity {
                     Toast.makeText(EditFinActivity.this, "Entre com valores mínimos do registro.", Toast.LENGTH_LONG).show();
                     return;
                 }
+                // Cria o objeto FinModal com os dados editados
+                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Usar construtor completo
+
+                // Se for edição (tem ID), seta o ID
+                int id = getIntent().getIntExtra(EXTRA_ID, -1);
+                if (id != -1) {
+                    finModal.setId(id); // Garante que o ID está definido
+                } else {
+                    // Para novos itens, gere um ID temporário se necessário
+                    finModal.setId((int) System.currentTimeMillis());
+                }
+                // Salva localmente e sincroniza com Firebase
                 saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+                firebaseHelper.syncItemToFirebase(finModal);
+                // Mostra notificação
+                showSyncNotification();
             }
         });
+    }
+
+    private void showSyncNotification() {
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                    NotificationHelper.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_menu) /// modificar
+                    .setContentTitle("Sincronização concluída")
+                    .setContentText("O registro foi sincronizado com o Firebase")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            notificationManager.notify(1, builder.build());
+        }
     }
 
     private void setupSpinners() {

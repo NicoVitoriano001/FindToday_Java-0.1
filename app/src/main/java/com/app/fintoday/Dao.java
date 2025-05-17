@@ -83,7 +83,7 @@ public interface Dao {
     LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes);
 
     @Query("SELECT * FROM fin_table")
-    List<FinModal> getAllItemsSync();
+    List<FinModal> getAllItemsSync(); //16.05.25 Firebase
 
     @Query("SELECT * FROM fin_table WHERE id = :id")
     FinModal getDespById(int id);

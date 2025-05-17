@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
             setContentView(R.layout.activity_login);
             // Resto do código...
         } catch (Exception e) {
-            Log.e("INIT", "Firebase init failed", e);
+         //  Log.e("INIT", "Firebase init failed", e);
             finish();
         }
 
@@ -47,22 +47,5 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }// FIM ON CREATE
-
-    private void signInAnonymously() {
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        startMainActivity();
-                    } else {
-                        Toast.makeText(LoginActivity.this,
-                                "Falha no login: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-    private void startMainActivity() {
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        finish();
-    }
 }
 

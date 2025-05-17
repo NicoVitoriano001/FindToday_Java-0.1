@@ -14,6 +14,11 @@ public class FinModal implements Parcelable {
     private String valorDesp, tipoDesp, fontDesp, despDescr, dataDesp;
     private long lastUpdated;
 
+
+    // Construtor vazio necessário para Firebase
+    public FinModal() {
+        this.lastUpdated = System.currentTimeMillis();
+    }
     //construtor
     public FinModal(String valorDesp, String tipoDesp, String fontDesp,  String despDescr, String dataDesp) {
         this.valorDesp = valorDesp;
@@ -25,9 +30,7 @@ public class FinModal implements Parcelable {
     }
 
     //on below line we are creating getter and setter methods.
-    public int getId() {
-        return id;
-    }
+    public int getId() {return id;}
     public void setId(int id) { this.id = id; }
     public String getValorDesp() {return valorDesp; }
     public void setValorDesp(String valorDesp) {
@@ -47,12 +50,10 @@ public class FinModal implements Parcelable {
     }
     public String getDespDescr() { return despDescr; }
     public void setDespDescr(String despDescr) { this.despDescr = despDescr; }
-    public String getDataDesp() {
-        return dataDesp;
-    }
+    public String getDataDesp() { return dataDesp;  }
     public void setDataDesp(String dataDesp) {this.dataDesp = dataDesp; }
     public long getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(long lastUpdated) { this.lastUpdated = lastUpdated;    }
+    public void setLastUpdated(long lastUpdated) { this.lastUpdated = lastUpdated; }
 
     protected FinModal(Parcel in) {
         id = in.readInt();
