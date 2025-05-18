@@ -1,10 +1,7 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 // Criado em 30.04.2025
 import android.app.DatePickerDialog;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,7 +11,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRepository;
+import com.app.fintoday.data.FirebaseHelper;
+import com.app.fintoday.utils.NotificationHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -109,7 +111,7 @@ public class EditFinActivity extends AppCompatActivity {
                 FinRepository repository = new FinRepository(getApplication());
                 repository.update(finModal);
 
-                // Mostrar notificação e finalizar
+                // Mostrar notificação reutilizavel
                 NotificationHelper.showSyncNotification(EditFinActivity.this);
 
                 // showSyncNotification();
@@ -118,22 +120,6 @@ public class EditFinActivity extends AppCompatActivity {
         });
     }
 
-    /**
-    private void showSyncNotification() {
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
-                    NotificationHelper.CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_menu) /// modificar
-                    .setContentTitle("Sincronização concluída")
-                    .setContentText("O registro foi sincronizado com o Firebase")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            notificationManager.notify(1, builder.build());
-        }
-    }
-**/
     private void setupSpinners() {
         String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);

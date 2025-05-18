@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

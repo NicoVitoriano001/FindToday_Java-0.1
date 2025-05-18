@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.utils;
 
 import android.content.Context;
 import androidx.appcompat.app.AlertDialog;

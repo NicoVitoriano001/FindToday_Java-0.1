@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ResultBuscaActivity">
+    tools:context=".ui.ResultBuscaActivity">
     <!-- Linha horizontal para os rótulos -->
 
     <!--

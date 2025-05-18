@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.ContextCompat;
 import android.graphics.Typeface;
 
+import com.app.fintoday.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FinRVAdapter extends ListAdapter<FinModal, FinRVAdapter.ViewHolder> {
     private OnItemClickListener listener;
-    FinRVAdapter() {
+    public FinRVAdapter() {
         super(DIFF_CALLBACK);
     }
 

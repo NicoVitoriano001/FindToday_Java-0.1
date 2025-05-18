@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -14,18 +14,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRVAdapter;
+import com.app.fintoday.data.ViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultBuscaDespActivity extends AppCompatActivity {
+public class ResultBuscaCredActivity extends AppCompatActivity {
     private RecyclerView idRVRetorno;
     private FinRVAdapter adapter;
     private TextView totalTextView;
-    private ViewModal viewmodal;
+    private ViewModal viewModal;
     private static final int ADD_DESP_REQUEST = 1; //acrescentei já tinha metodo onActivityResult e com botao de add despesas
     public static final int EDIT_DESP_REQUEST = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,30 +47,29 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         idRVRetorno.setAdapter(adapter);
 
         // Inicialize o ViewModel para quando chanvar o NewFinActivity.class e atualizar
-        viewmodal = new ViewModelProvider(this).get(ViewModal.class);
+        viewModal = new ViewModelProvider(this).get(ViewModal.class);
 
         // Obter dados da Intent
         ArrayList<FinModal> resultados = getIntent().getParcelableArrayListExtra("resultadosFiltrados");
 
-        // Usar o metodo filtrarDespesas desta classe
-        List<FinModal> listaFiltrada = filtrarDespesas(resultados);
+        // Usar o metodo filtrarCreditos desta classe
+        List<FinModal> listaFiltrada = filtrarCreditos(resultados);
 
         if (listaFiltrada != null && !listaFiltrada.isEmpty()) {
             adapter.submitList(listaFiltrada);
-            // Usar o método calcularTotal desta classe
+            // Usar o metodo calcularTotal desta classe
             double total = calcularTotal(listaFiltrada);
             DecimalFormat df = new DecimalFormat("#,##0.00");
-            totalTextView.setText("Total Despesas: $ " + df.format(total));
+            totalTextView.setText("Total Créditos: $ " + df.format(total));
         } else {
-            totalTextView.setText("Nenhum despesa encontrado");
-            Toast.makeText(this, "Lista de despesa vazia", Toast.LENGTH_SHORT).show();
+            totalTextView.setText("Nenhum crédito encontrado");
+            Toast.makeText(this, "Lista de créditos vazia", Toast.LENGTH_SHORT).show();
         }
 
-        // Adicionar clique nos itens
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FinModal model) {
-                Intent intent = new Intent(ResultBuscaDespActivity.this, EditFinActivity.class);
+                Intent intent = new Intent(ResultBuscaCredActivity.this, EditFinActivity.class);
                 intent.putExtra(NewFinActivity.EXTRA_ID, model.getId());
                 intent.putExtra(NewFinActivity.EXTRA_VALOR_DESP, model.getValorDesp());
                 intent.putExtra(NewFinActivity.EXTRA_TIPO_DESP, model.getTipoDesp());
@@ -75,10 +80,12 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
             }
         });
 
-        //botao flutuante newsfin com expressao lambda
+
+//botao flutuante newsfin com expressao lambda
         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
         fabNewFin.setOnClickListener(v -> {
-            startActivity(new Intent(this, NewFinActivity.class));
+            Intent intent = new Intent(ResultBuscaCredActivity.this, NewFinActivity.class);
+            startActivityForResult(intent, ADD_DESP_REQUEST);
         });
 
         //botao flutuante retornar para home
@@ -86,7 +93,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
         fabReturnHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ResultBuscaDespActivity.this, MainActivity.class);
+                Intent intent = new Intent(ResultBuscaCredActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -109,7 +116,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
                 // Criar uma cópia da lista atual para manipulação segura
                 List<FinModal> currentList = new ArrayList<>(adapter.getCurrentList());
 
-                new AlertDialog.Builder(ResultBuscaDespActivity.this)
+                new AlertDialog.Builder(ResultBuscaCredActivity.this)
                         .setTitle("Confirmar Exclusão")
                         .setMessage("Você tem certeza que deseja deletar este registro?")
                         .setPositiveButton("Sim", (dialog, which) -> {
@@ -122,30 +129,30 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
                             // 3. Atualiza o total
                             double total = calcularTotal(currentList);
                             DecimalFormat df = new DecimalFormat("#,##0.00");
-                            totalTextView.setText("Total Despesas: $ " + df.format(total));
+                            totalTextView.setText("Total Créditos: $ " + df.format(total));
 
                             // 4. Remove do banco de dados
-                            viewmodal.delete(itemToDelete);
+                            viewModal.delete(itemToDelete);
 
-                            Toast.makeText(ResultBuscaDespActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ResultBuscaCredActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
                             // Cancela a exclusão
                             adapter.notifyItemChanged(position);
-                            Toast.makeText(ResultBuscaDespActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ResultBuscaCredActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
                         })
                         .show();
             }
         }).attachToRecyclerView(idRVRetorno);
 
-    } //Fim onCreate
+    } //FIM ON CREATE
 
     // Metodo para filtrar créditos
-    private List<FinModal> filtrarDespesas(List<FinModal> listaOriginal) {
+    private List<FinModal> filtrarCreditos(List<FinModal> listaOriginal) {
         List<FinModal> filtrada = new ArrayList<>();
         if (listaOriginal != null) {
             for (FinModal item : listaOriginal) {
-                if (item.getTipoDesp() != null && !item.getTipoDesp().equals("CRED")) {
+                if (item.getTipoDesp() != null && item.getTipoDesp().equals("CRED")) {
                     filtrada.add(item);
                 }
             }
@@ -178,20 +185,22 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+            viewModal.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
+           /**
+            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
+            viewmodal.insert(model);
+            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
+            adapter.addItem(model);
+            **/
             // Atualiza o total
             double total = calcularTotal(adapter.getCurrentList());
             DecimalFormat df = new DecimalFormat("#,##0.00");
-            totalTextView.setText("Total Despesas: $ " + df.format(total));
-                //finish();
-                // Inicie a MainActivity após a conclusão da edição
-                //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
-                //startActivity(intent);
+            totalTextView.setText("Total Créditos: $ " + df.format(total));
         }
-
-        else if (requestCode == MainActivity.EDIT_DESP_REQUEST && resultCode == RESULT_OK && data != null) {
+        // TIREI  && data != null
+        else   if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
             int id = data.getIntExtra(NewFinActivity.EXTRA_ID, -1);
             if (id != -1) {
                 String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
@@ -202,22 +211,23 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
 
                 FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
                 model.setId(id);
-                viewmodal.update(model);
+                viewModal.update(model);
                 Toast.makeText(this, "Registro com busca atualizado.", Toast.LENGTH_SHORT).show();
                 adapter.updateItem(id, valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); //aqui atualiza a tela quando volta
 
                 // Atualiza o total
                 double total = calcularTotal(adapter.getCurrentList());
                 DecimalFormat df = new DecimalFormat("#,##0.00");
-                totalTextView.setText("Total Despesas: $ " + df.format(total));
+                totalTextView.setText("Total Créditos: $ " + df.format(total));
 
                 Toast.makeText(this, "Despesa atualizada.", Toast.LENGTH_SHORT).show();
-
                 //finish();
                 // Inicie a MainActivity após a conclusão da edição
                 //Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 //startActivity(intent);
             }
         }
-    }
+     }
+
+
 }

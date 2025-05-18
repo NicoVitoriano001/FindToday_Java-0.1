@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -14,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRVAdapter;
+import com.app.fintoday.data.ViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
 import java.util.List;

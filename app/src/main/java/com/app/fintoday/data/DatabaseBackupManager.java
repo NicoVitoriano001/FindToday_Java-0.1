@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.app.fintoday.ui.MainActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

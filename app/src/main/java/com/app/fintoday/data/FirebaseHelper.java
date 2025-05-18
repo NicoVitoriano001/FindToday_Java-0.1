@@ -1,19 +1,15 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 //Criado em 16.05.25
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-import androidx.annotation.NonNull;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,7 +39,7 @@ public class FirebaseHelper {
             firebaseAuth = FirebaseAuth.getInstance();
             storageReference = FirebaseStorage.getInstance().getReference();
         } catch (Exception e) {
-            Log.e(TAG, "Erro ao inicializar FirebaseHelper", e);
+         //   Log.e(TAG, "Erro ao inicializar FirebaseHelper", e);
         }
     }
 
@@ -76,7 +72,7 @@ public class FirebaseHelper {
                                     Log.e(TAG, "Erro ao sincronizar dados: " + key, e));
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Erro geral na sincronização", e);
+              //  Log.e(TAG, "Erro geral na sincronização", e);
             }
         });
     }
@@ -160,7 +156,6 @@ public class FirebaseHelper {
         });
     }
 
-
     // Métodos adicionais para autenticação, etc.
     // No FirebaseHelper
     public DatabaseReference getUserFinancesReference(String userId) {
@@ -168,8 +163,7 @@ public class FirebaseHelper {
                 .child("finances")
                 .child(userId);
     }
-
-
+/**
     public FirebaseAuth getFirebaseAuth() {
         return firebaseAuth;
     }
@@ -209,5 +203,7 @@ public class FirebaseHelper {
         }
         return getUserFinancesReference(userId);
     }
+**/
+
 
 }

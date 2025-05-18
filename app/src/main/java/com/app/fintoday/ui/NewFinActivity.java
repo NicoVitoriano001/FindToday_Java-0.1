@@ -1,12 +1,7 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,6 +14,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRepository;
+import com.app.fintoday.data.FirebaseHelper;
+import com.app.fintoday.utils.NotificationHelper;
 
 public class NewFinActivity extends AppCompatActivity {
     private EditText valorDespEdt, despDescrEdt, dataDespEdt;
@@ -33,6 +34,7 @@ public class NewFinActivity extends AppCompatActivity {
     public static final String EXTRA_DURATION = "com.app.fintoday.EXTRA_DURATION";
     private FirebaseHelper firebaseHelper;
     private NotificationHelper notificationHelper;
+
     public String getDataHoraAtual() {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE yyyy-MM-dd");
@@ -55,7 +57,7 @@ public class NewFinActivity extends AppCompatActivity {
         despDescrEdt = findViewById(R.id.idEdtDespDescr);
         dataDespEdt = findViewById(R.id.idEdtDataDesp);
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
-     // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
+        // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
 
         setupSpinners();
 
@@ -100,9 +102,8 @@ public class NewFinActivity extends AppCompatActivity {
                 FinRepository repository = new FinRepository(getApplication());
                 repository.insert(finModal);
 
-                // Mostra notificação
+                // Mostra notificação reutilizavel
                 NotificationHelper.showSyncNotification(NewFinActivity.this);
-                //showSyncNotification();
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(EXTRA_VALOR_DESP, valorDesp);
@@ -114,36 +115,18 @@ public class NewFinActivity extends AppCompatActivity {
                 // Apenas indica sucesso e fecha a atividade
                 setResult(RESULT_OK, resultIntent);
                 Toast.makeText(NewFinActivity.this, "Registro salvo com sucesso.", Toast.LENGTH_SHORT).show();
-               finish();
+                finish();
             }
         });
     }
 
-/**
-    private void showSyncNotification() {
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
-                    NotificationHelper.CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_menu)
-                    .setContentTitle("Sincronização concluída")
-                    .setContentText("Novo registro foi sincronizado com o Firebase")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            notificationManager.notify(1, builder.build());
-        }
-    }
-**/
-
     private void setupSpinners() {
-        String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
+        String[] tiposDespesa = {"-", "ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);
         tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoDespEdt.setAdapter(tipoAdapter);
 
-        String[] fontesDespesa = {"-","ALELO","BB","BRA","BTG","CASH", "CEF1","CEF2","NU", "MP", "STDER","OUTR"};
+        String[] fontesDespesa = {"-", "ALELO", "BB", "BRA", "BTG", "CASH", "CEF1", "CEF2", "NU", "MP", "STDER", "OUTR"};
         ArrayAdapter<String> fontAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fontesDespesa);
         fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fontDespEdt.setAdapter(fontAdapter);
@@ -182,28 +165,7 @@ public class NewFinActivity extends AppCompatActivity {
                     }
                 },
                 year, month, day);
-                datePickerDialog.show();// Mostrar o DatePickerDialog
+        datePickerDialog.show();// Mostrar o DatePickerDialog
     }
-
-    /**
-    private void saveFin(String valorDesp, String tipoDesp, String fontDesp, String despDescr, String dataDesp) {
-        // PASSA OS DADOS NOVOS/RECUPERADOS PARA SALVAR
-        Intent data = new Intent();
-        data.putExtra(NewFinActivity.EXTRA_VALOR_DESP, valorDesp);
-        data.putExtra(NewFinActivity.EXTRA_TIPO_DESP, tipoDesp);
-        data.putExtra(NewFinActivity.EXTRA_FONT_DESP, fontDesp);
-        data.putExtra(NewFinActivity.EXTRA_DESCR_DESP, despDescr);
-        data.putExtra(NewFinActivity.EXTRA_DURATION, dataDesp);
-
-        int id = getIntent().getIntExtra(NewFinActivity.EXTRA_ID, -1);
-        if (id != -1) {
-            data.putExtra(NewFinActivity.EXTRA_ID, id);
-        }
-        setResult(RESULT_OK, data);
-        Toast.makeText(this, "Registro foi salvo no Database.", Toast.LENGTH_LONG).show();
-        finish();
-    }
-**/
-
 
 }

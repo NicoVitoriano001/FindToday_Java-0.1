@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +16,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.app.fintoday.R;
+import com.app.fintoday.data.Dao;
+import com.app.fintoday.data.FinDatabase;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.ViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Delete;

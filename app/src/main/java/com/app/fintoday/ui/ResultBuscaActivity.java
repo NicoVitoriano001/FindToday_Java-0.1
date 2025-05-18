@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +15,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRVAdapter;
+import com.app.fintoday.data.ViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;

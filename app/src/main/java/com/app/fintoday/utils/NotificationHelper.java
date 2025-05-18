@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -6,6 +6,8 @@ import android.content.Context;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+
+import com.app.fintoday.R;
 
 public class NotificationHelper {
     public static final String CHANNEL_ID = "fintoday_channel";
@@ -26,7 +28,6 @@ public class NotificationHelper {
         }
     }
 
-    // ✅ Novo método reutilizável
     public static void showSyncNotification(Context context) {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

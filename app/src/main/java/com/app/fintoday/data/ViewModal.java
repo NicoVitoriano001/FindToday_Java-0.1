@@ -1,9 +1,10 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
 import java.util.List;
 
 public class ViewModal extends AndroidViewModel {

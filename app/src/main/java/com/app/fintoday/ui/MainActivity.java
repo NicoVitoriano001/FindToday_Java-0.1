@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,13 +16,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.DatabaseBackupManager;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRVAdapter;
+import com.app.fintoday.data.FinRepository;
+import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.AppInfoDialogHelper;
+import com.app.fintoday.utils.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
-//import com.app.fintoday.DatabaseBackupManager;
+//import com.app.fintoday.data.DatabaseBackupManager;
 
 public class MainActivity extends AppCompatActivity {
     private ViewModal viewmodal;
@@ -30,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
     private DrawerLayout drawerLayout;
-    private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
-    private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
+    private DatabaseBackupManager databaseBackupManager;
+    private AppInfoDialogHelper appInfoDialogHelper;
 
 
     @Override
@@ -50,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        databaseBackupManager = new com.app.fintoday.DatabaseBackupManager(this);
+        databaseBackupManager = new DatabaseBackupManager(this);
         appInfoDialogHelper = new AppInfoDialogHelper(this);
 
         NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
@@ -148,12 +157,15 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Sim", (dialog, which) -> {
                             viewmodal.delete(itemToDelete);
                             Toast.makeText(MainActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            // Mostrar notificação reutilizavel
+                            NotificationHelper.showSyncNotification(MainActivity.this);
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
                             adapter.notifyItemChanged(position);
                             Toast.makeText(MainActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
                         })
                         .show();
+
             }
         }).attachToRecyclerView(FinRV);
         // FIM ItemTouchHelper CONFIRMA EXCLUSÃO

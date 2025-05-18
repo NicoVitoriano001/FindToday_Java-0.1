@@ -1,4 +1,4 @@
-    package com.app.fintoday;
+    package com.app.fintoday.data;
 
     import android.content.Context;
     import android.os.AsyncTask;
@@ -9,6 +9,7 @@
     import androidx.room.RoomDatabase;
     import androidx.room.migration.Migration;
     import androidx.sqlite.db.SupportSQLiteDatabase;
+
     import java.io.File;
 
     @Database(entities = {FinModal.class}, version = 2)  //16.05.25 modificado FinModal criação coluna lastUpdated no banco de dados, no contexto do Firebase, foi necessário modificar versao do Rom
