@@ -1,12 +1,11 @@
 package com.app.fintoday.data;
-//Criado em 16.05.25
+// 16.05.25 firebase
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,20 +30,67 @@ public class FirebaseHelper {
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private StorageReference storageReference;
+    private ValueEventListener realtimeListener;
+    public OnDataUpdateListener dataUpdateListener;
 
     private FirebaseHelper(Context context) {
         executorService = Executors.newSingleThreadExecutor();
-
         try {
             FirebaseApp.initializeApp(context);
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true); // Habilita persistência offline do Firebase
+            // Removido o cache offline para melhor sincronização
             databaseReference = FirebaseDatabase.getInstance().getReference();
             firebaseAuth = FirebaseAuth.getInstance();
             storageReference = FirebaseStorage.getInstance().getReference();
         } catch (Exception e) {
-         //   Log.e(TAG, "Erro ao inicializar FirebaseHelper", e);
+            Log.e(TAG, "Erro ao inicializar FirebaseHelper", e);
         }
     }
+
+
+
+    // FirebaseHelper.java
+    public void startRealtimeListener(OnDataUpdateListener listener) {
+        this.dataUpdateListener = listener;
+        String userId = getCurrentUserId();
+        DatabaseReference userRef = databaseReference.child("finances").child(userId);
+
+        realtimeListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    FinModal item = snapshot.getValue(FinModal.class);
+                    if (item != null && dataUpdateListener != null) {
+                        dataUpdateListener.onItemUpdated(item);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Erro ao escutar atualizações", error.toException());
+            }
+        };
+
+        userRef.addValueEventListener(realtimeListener);
+    }
+
+    public void stopRealtimeListener() {
+        if (realtimeListener != null) {
+            String userId = getCurrentUserId();
+            DatabaseReference userRef = databaseReference.child("finances").child(userId);
+            userRef.removeEventListener(realtimeListener);
+            realtimeListener = null;
+            dataUpdateListener = null;
+        }
+    }
+
+
+
+
+
+
+
+
 
     public static synchronized FirebaseHelper getInstance(Context context) {
         if (instance == null) {

@@ -2,6 +2,7 @@ package com.app.fintoday.data;
 
 import android.app.Application;
 import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 
 import com.google.firebase.database.DataSnapshot;
@@ -14,128 +15,115 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.app.fintoday.data.OnDataUpdateListener;
 
 public class FinRepository {
     private final FirebaseHelper firebaseHelper;
     private final Dao dao;
     private final LiveData<List<FinModal>> allDesp;
     private final ExecutorService executorService;
+    private OnDataUpdateListener firebaseListener;
 
-    // Construtor para inicializar variáveis
     public FinRepository(Application application) {
         FinDatabase database = FinDatabase.getInstance(application);
         dao = database.Dao();
         allDesp = dao.getallDesp();
         executorService = Executors.newSingleThreadExecutor();
-        firebaseHelper = FirebaseHelper.getInstance(application); //16.05.25
+        firebaseHelper = FirebaseHelper.getInstance(application);
+
+        setupFirebaseListener();
+    }
+
+    private void setupFirebaseListener() {
+        firebaseListener = new OnDataUpdateListener() {
+            @Override
+            public void onItemUpdated(FinModal item) {
+                syncFromFirebase(item);
+            }
+
+            @Override
+            public void onItemRemoved(int itemId) {
+                executorService.execute(() -> {
+                    FinModal item = dao.getDespById(itemId);
+                    if (item != null) {
+                        dao.delete(item);
+                    }
+                });
+            }
+        };
+
+        firebaseHelper.startRealtimeListener(firebaseListener);
+    }
+
+    public void cleanup() {
+        firebaseHelper.stopRealtimeListener();
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
     }
 
     public void insert(FinModal model) {
         executorService.execute(() -> {
-            // 1. Define timestamp
             model.setLastUpdated(System.currentTimeMillis());
-
-            // 2. Insere no SQLite (Room gera o ID)
             long insertedId = dao.insert(model);
-            model.setId((int) insertedId); // Atualiza o modelo com o ID real
-
-            // 3. Sincroniza com Firebase APÓS ter o ID definitivo
+            model.setId((int) insertedId);
             firebaseHelper.syncItemToFirebase(model);
-           // Log.d("SYNC_DEBUG", "Novo item inserido. ID: " + insertedId);
         });
     }
-
-    /**
-     * ORIGINAL //16.05.25
-     * public void insert(FinModal model) {
-     * executorService.execute(() -> dao.insert(model));
-     * }
-     **/
 
     public void update(FinModal model) {
         executorService.execute(() -> {
-            model.setLastUpdated(System.currentTimeMillis());// 1. Atualiza timestamp ANTES de enviar
-            dao.update(model);  // 2. Persiste localmente
-            firebaseHelper.syncItemToFirebase(model); // 3. Envia para Firebase (apenas campos relevantes)
+            model.setLastUpdated(System.currentTimeMillis());
+            dao.update(model);
+            firebaseHelper.syncItemToFirebase(model);
         });
     }
 
-    /**
-     * ORIGINAL
-     * //    public void update(FinModal model) {
-     * //        executorService.execute(() -> dao.update(model));
-     * }
-     **/
     public void delete(FinModal model) {
         executorService.execute(() -> {
-            dao.delete(model);// 1. Remove do banco local
-
+            dao.delete(model);
             try {
-                // 2. Remove do Firebase
                 String userId = firebaseHelper.getCurrentUserId();
-                if (userId == null) {
-                   // Log.e("SYNC_DEBUG", "Usuário não autenticado, não é possível excluir no Firebase");
-                    return;
+                if (userId != null) {
+                    firebaseHelper.getUserFinancesReference(userId)
+                            .child(String.valueOf(model.getId()))
+                            .removeValue()
+                            .addOnSuccessListener(aVoid ->
+                                    Log.d("SYNC_DEBUG", "Item removido do Firebase: " + model.getId()))
+                            .addOnFailureListener(e ->
+                                    Log.e("SYNC_DEBUG", "Erro ao remover item do Firebase", e));
                 }
-
-                firebaseHelper.getUserFinancesReference(userId)
-                        .child(String.valueOf(model.getId()))
-                        .removeValue()
-                        .addOnSuccessListener(aVoid ->
-                                Log.d("SYNC_DEBUG", "Item removido do Firebase: " + model.getId()))
-                        .addOnFailureListener(e ->
-                                Log.e("SYNC_DEBUG", "Erro ao remover item do Firebase", e));
             } catch (Exception e) {
                 Log.e("SYNC_DEBUG", "Erro geral ao remover item do Firebase", e);
             }
         });
     }
-    /**
-     * ORIGINAL
-     * public void delete(FinModal model) {
-     * executorService.execute(() -> dao.delete(model));
-     * }
-     **/
-    public void deleteallDesp() {
+
+    public void deleteAllDesp() {
         executorService.execute(dao::deleteallDesp);
     }
 
-    public LiveData<List<FinModal>> getallDesp() {
+    public LiveData<List<FinModal>> getAllDesp() {
         return allDesp;
     }
 
-    // NOVO MeTODO ADICIONADO //Listener no grafico
     public LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes) {
         return dao.buscarPorTipoAnoMes(tipo, ano, mes);
     }
 
-    //ver Dao.java é responsável pelo acesso a dados. repositório lida com a lógica de negócios e a agregação de dados
-    public LiveData<List<FinModal>> buscaDesp(
-            String valorDesp,
-            String tipoDesp,
-            String fontDesp,
-            String despDescr,
-            String dataDesp
-    ) {
-        return dao.buscaDesp(
-                valorDesp,
-                tipoDesp,
-                fontDesp,
-                despDescr,
-                dataDesp
-        );
+    public LiveData<List<FinModal>> buscaDesp(String valorDesp, String tipoDesp,
+                                              String fontDesp, String despDescr,
+                                              String dataDesp) {
+        return dao.buscaDesp(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
     }
 
-    // Adicionar este método para sincronização bidirecional
     public void bidirectionalSyncWithFirebase() {
         executorService.execute(() -> {
-            // 1. Sincronizar dados locais para o Firebase
             List<FinModal> localItems = dao.getAllItemsSync();
             if (firebaseHelper != null) {
                 firebaseHelper.syncAllItemsToFirebase(localItems);
             }
 
-            // 2. Sincronizar dados do Firebase para o local
             String userId = firebaseHelper.getCurrentUserId();
             if (userId != null) {
                 firebaseHelper.getUserFinancesReference(userId)
@@ -145,47 +133,38 @@ public class FinRepository {
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     FinModal remoteItem = snapshot.getValue(FinModal.class);
                                     if (remoteItem != null) {
-                                        syncFromFirebase(remoteItem); // Usa a resolução de conflito existente
+                                        syncFromFirebase(remoteItem);
                                     }
                                 }
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Log.e("SYNC_DEBUG", "Erro ao carregar dados do Firebase", databaseError.toException());
+                                Log.e("SYNC_DEBUG", "Erro ao carregar dados do Firebase",
+                                        databaseError.toException());
                             }
                         });
             }
         });
     }
 
-    // Atualizar o método forceSyncWithFirebase para usar o novo método
     public void forceSyncWithFirebase() {
         bidirectionalSyncWithFirebase();
     }
 
-
-
-
-    public void syncFromFirebase(FinModal remoteItem) {
+    private void syncFromFirebase(FinModal remoteItem) {
         executorService.execute(() -> {
             FinModal localItem = dao.getDespById(remoteItem.getId());
 
-            // Resolução de conflito baseada em lastUpdated
             if (localItem == null || remoteItem.getLastUpdated() > localItem.getLastUpdated()) {
-
-                // Se for um novo item (localItem == null), formata dataDesp se necessário
                 if (localItem == null && remoteItem.getDataDesp() == null) {
                     remoteItem.setDataDesp(formatLocalDate(new Date(remoteItem.getLastUpdated())));
                 }
-
-                // Atualiza o banco local
                 dao.update(remoteItem);
             }
         });
     }
 
-    // "%a. %Y-%m-%d" = "EEE yyyy-MM-dd"
     private String formatLocalDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.getDefault());
         return sdf.format(date);

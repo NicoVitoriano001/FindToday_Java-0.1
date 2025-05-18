@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private DatabaseBackupManager databaseBackupManager;
     private AppInfoDialogHelper appInfoDialogHelper;
+    private FinRepository repository;
 
 
     @Override
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         databaseBackupManager = new DatabaseBackupManager(this);
         appInfoDialogHelper = new AppInfoDialogHelper(this);
+        // Modifique a criação do repositório
+        repository = new FinRepository(getApplication());
 
         NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
 
@@ -247,6 +250,15 @@ public class MainActivity extends AppCompatActivity {
         repository.bidirectionalSyncWithFirebase();
         NotificationHelper.showSyncNotification(this);
         Toast.makeText(this, "Sincronização bidirecional iniciada", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (repository != null) {
+            repository.cleanup();
+        }
     }
 
 }
