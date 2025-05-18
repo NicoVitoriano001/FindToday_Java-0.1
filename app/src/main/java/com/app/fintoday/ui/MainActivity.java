@@ -245,8 +245,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void syncWithFirebase() {
         FinRepository repository = new FinRepository(getApplication());
-        repository.forceSyncWithFirebase();
-        NotificationHelper.showSyncNotification(this); // Mostrar notificação
-        Toast.makeText(this, "Sincronização com Firebase iniciada", Toast.LENGTH_SHORT).show();
+        repository.bidirectionalSyncWithFirebase();
+        NotificationHelper.showSyncNotification(this);
+        Toast.makeText(this, "Sincronização bidirecional iniciada", Toast.LENGTH_SHORT).show();
     }
+
 }

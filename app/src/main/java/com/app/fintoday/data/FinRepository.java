@@ -4,6 +4,10 @@ import android.app.Application;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -122,17 +126,46 @@ public class FinRepository {
         );
     }
 
-    // Metodo para sincronização manual, verificar
-    public void forceSyncWithFirebase() {
+    // Adicionar este método para sincronização bidirecional
+    public void bidirectionalSyncWithFirebase() {
         executorService.execute(() -> {
-            List<FinModal> allItems = dao.getAllItemsSync();
+            // 1. Sincronizar dados locais para o Firebase
+            List<FinModal> localItems = dao.getAllItemsSync();
             if (firebaseHelper != null) {
-                firebaseHelper.syncAllItemsToFirebase(allItems);
-            } else {
-                Log.e("FinRepository", "FirebaseHelper não inicializado");
+                firebaseHelper.syncAllItemsToFirebase(localItems);
+            }
+
+            // 2. Sincronizar dados do Firebase para o local
+            String userId = firebaseHelper.getCurrentUserId();
+            if (userId != null) {
+                firebaseHelper.getUserFinancesReference(userId)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    FinModal remoteItem = snapshot.getValue(FinModal.class);
+                                    if (remoteItem != null) {
+                                        syncFromFirebase(remoteItem); // Usa a resolução de conflito existente
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e("SYNC_DEBUG", "Erro ao carregar dados do Firebase", databaseError.toException());
+                            }
+                        });
             }
         });
     }
+
+    // Atualizar o método forceSyncWithFirebase para usar o novo método
+    public void forceSyncWithFirebase() {
+        bidirectionalSyncWithFirebase();
+    }
+
+
+
 
     public void syncFromFirebase(FinModal remoteItem) {
         executorService.execute(() -> {
