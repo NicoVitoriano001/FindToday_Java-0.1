@@ -1,10 +1,11 @@
 package com.app.fintoday;
-//Criado em 16.05.25 contexto Firebase
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+
+import androidx.core.app.NotificationCompat;
 
 public class NotificationHelper {
     public static final String CHANNEL_ID = "fintoday_channel";
@@ -23,5 +24,19 @@ public class NotificationHelper {
                     context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    // ✅ Novo método reutilizável
+    public static void showSyncNotification(Context context) {
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_menu) // Substitua por um ícone apropriado
+                .setContentTitle("Sincronização concluída")
+                .setContentText("O registro foi sincronizado com o Firebase")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        notificationManager.notify(1, builder.build());
     }
 }

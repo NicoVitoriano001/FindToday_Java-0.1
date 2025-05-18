@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,8 +37,7 @@ public class FinRepository {
 
             // 3. Sincroniza com Firebase APÓS ter o ID definitivo
             firebaseHelper.syncItemToFirebase(model);
-
-            Log.d("SYNC_DEBUG", "Novo item inserido. ID: " + insertedId);
+           // Log.d("SYNC_DEBUG", "Novo item inserido. ID: " + insertedId);
         });
     }
 
@@ -55,7 +53,6 @@ public class FinRepository {
             model.setLastUpdated(System.currentTimeMillis());// 1. Atualiza timestamp ANTES de enviar
             dao.update(model);  // 2. Persiste localmente
             firebaseHelper.syncItemToFirebase(model); // 3. Envia para Firebase (apenas campos relevantes)
-            //firebaseHelper.syncLocalDataWithFirebase(Collections.singletonList(model)); // Sincroniza com Firebase após edicao local
         });
     }
 
@@ -67,18 +64,16 @@ public class FinRepository {
      **/
     public void delete(FinModal model) {
         executorService.execute(() -> {
-            // 1. Remove do banco local
-            dao.delete(model);
+            dao.delete(model);// 1. Remove do banco local
 
             try {
                 // 2. Remove do Firebase
                 String userId = firebaseHelper.getCurrentUserId();
                 if (userId == null) {
-                    Log.e("SYNC_DEBUG", "Usuário não autenticado, não é possível excluir no Firebase");
+                   // Log.e("SYNC_DEBUG", "Usuário não autenticado, não é possível excluir no Firebase");
                     return;
                 }
 
-                // Usa a mesma estrutura que update/insert
                 firebaseHelper.getUserFinancesReference(userId)
                         .child(String.valueOf(model.getId()))
                         .removeValue()
@@ -91,8 +86,6 @@ public class FinRepository {
             }
         });
     }
-
-
     /**
      * ORIGINAL
      * public void delete(FinModal model) {

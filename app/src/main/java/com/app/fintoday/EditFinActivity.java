@@ -32,6 +32,7 @@ public class EditFinActivity extends AppCompatActivity {
     public static final String EXTRA_DURATION = "com.app.fintoday.EXTRA_DURATION";
     private FirebaseHelper firebaseHelper;
     private NotificationHelper notificationHelper;
+
     public String getDataHoraAtual() {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE yyyy-MM-dd");
@@ -54,7 +55,6 @@ public class EditFinActivity extends AppCompatActivity {
         despDescrEdt = findViewById(R.id.idEdtDespDescr);
         dataDespEdt = findViewById(R.id.idEdtDataDesp);
         FinBtnSave = findViewById(R.id.idBtnSaveDesp);
-     // FinBtnConsult = findViewById(R.id.idBtnConsultarResumo);
 
      // Configurando os Spinners
         setupSpinners();
@@ -101,21 +101,24 @@ public class EditFinActivity extends AppCompatActivity {
                 }
 
                 // Criar o objeto FinModal com os dados editados e o ID original
-                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Using fontDesp here
+                FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
                 finModal.setId(id); // Manter o ID original
                 finModal.setLastUpdated(System.currentTimeMillis());
 
-                // Atualizar no repositório (que cuidará da sincronização com Firebase)
+                // Atualizar no repositório/FinRepository (que cuidará da sincronização com Firebase)
                 FinRepository repository = new FinRepository(getApplication());
                 repository.update(finModal);
 
                 // Mostrar notificação e finalizar
-                showSyncNotification();
-                saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp); // Using fontDesp here
+                NotificationHelper.showSyncNotification(EditFinActivity.this);
+
+                // showSyncNotification();
+                saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
             }
         });
     }
 
+    /**
     private void showSyncNotification() {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -127,11 +130,10 @@ public class EditFinActivity extends AppCompatActivity {
                     .setContentTitle("Sincronização concluída")
                     .setContentText("O registro foi sincronizado com o Firebase")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
             notificationManager.notify(1, builder.build());
         }
     }
-
+**/
     private void setupSpinners() {
         String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposDespesa);

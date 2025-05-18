@@ -101,7 +101,8 @@ public class NewFinActivity extends AppCompatActivity {
                 repository.insert(finModal);
 
                 // Mostra notificação
-                showSyncNotification();
+                NotificationHelper.showSyncNotification(NewFinActivity.this);
+                //showSyncNotification();
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(EXTRA_VALOR_DESP, valorDesp);
@@ -112,14 +113,13 @@ public class NewFinActivity extends AppCompatActivity {
 
                 // Apenas indica sucesso e fecha a atividade
                 setResult(RESULT_OK, resultIntent);
-
                 Toast.makeText(NewFinActivity.this, "Registro salvo com sucesso.", Toast.LENGTH_SHORT).show();
                finish();
             }
         });
     }
 
-
+/**
     private void showSyncNotification() {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -135,6 +135,7 @@ public class NewFinActivity extends AppCompatActivity {
             notificationManager.notify(1, builder.build());
         }
     }
+**/
 
     private void setupSpinners() {
         String[] tiposDespesa = {"-","ALIM", "CRED", "D PUB","EDUC", "EMPRES", "INVEST","LAZER","OUTR", "TRANS","SAUD"};
