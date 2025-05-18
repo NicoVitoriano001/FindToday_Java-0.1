@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <!-- // 16.05.25 Firebase -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -10,19 +14,38 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.GFGRoomDatabase">
-        <activity android:name=".BuscarFinActivity" android:label="Buscar Fin"/>
-        <activity android:name=".EditFinActivity" android:label="Edit Fin"/>
-        <activity android:name=".NewFinActivity" android:label="Nova Fin"/>
-        <activity android:name=".ResultBuscaActivity" android:label="Resumo Fin"/>
-        <activity android:name=".ResumoDespGrafActivity" android:exported="false" />
-        <activity android:name=".ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
-        <activity android:name=".ResultBuscaGrafActivity" android:label="Resumo Graf Fin"/>
-        <activity android:name=".ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
-        <activity android:name=".MainActivity">
+   <!-- Meta-dados do Firebase -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="true" />
+
+        <activity android:name=".ui.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:hardwareAccelerated="true">
+        </activity>
+
+        <activity android:name=".ui.BuscarFinActivity" android:label="Buscar Fin"/>
+        <activity android:name=".ui.EditFinActivity" android:label="Edit Fin"/>
+        <activity android:name=".ui.NewFinActivity" android:label="Nova Fin"/>
+        <activity android:name=".ui.ResultBuscaActivity" android:label="Resumo Fin"/>
+        <activity android:name=".ui.ResumoDespGrafActivity" android:exported="false" />
+        <activity android:name=".ui.ResultBuscaCredActivity" android:label="Resumo Créditos Fin"/>
+        <activity android:name=".ui.ResultBuscaGrafActivity" android:label="Resumo Graf Fin"/>
+        <activity android:name=".ui.ResultBuscaDespActivity" android:label="Resumo Despesas Fin"/>
+
     </application>
 </manifest>

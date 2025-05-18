@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,12 +9,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.app.fintoday.R;
+import com.app.fintoday.data.FinDatabase;
+import com.app.fintoday.data.FinModal;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -27,6 +28,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.model.GradientColor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -104,7 +106,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
                 clearCharts();
             }
         });
-    } // fim on create
+    } // FIM ON CREATE
 
 
     private void updateChartVisibility() {
@@ -120,12 +122,14 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
     }
 
     private void generateCharts(List<FinModal> dados) {
+        Toast.makeText(getApplicationContext(),"generateCharts Metodo Chamado", Toast.LENGTH_SHORT).show();
+
         // Agrupar por tipoDesp e somar os valores
         Map<String, Float> valoresPorTipo = new HashMap<>();
         String[] tipos = {"ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
 
         for (String tipo : tipos) {
-            valoresPorTipo.put(tipo, 0f);
+            valoresPorTipo.put(tipo, 1f);
         }
 
         for (FinModal item : dados) {
@@ -151,7 +155,22 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
                 pieEntries.add(new PieEntry(entry.getValue(), entry.getKey()));
                 barEntries.add(new BarEntry(i, entry.getValue()));
                 lineEntries.add(new Entry(i, entry.getValue()));
-                labels.add(entry.getKey());
+                switch (entry.getKey()) {
+                    case "D PUB":
+                        labels.add("D PUB");
+                        break;
+                    case "INVEST":
+                        labels.add("INV");
+                        break;
+                    case "OUTR":
+                        labels.add("OUTR");
+                        break;
+                    default:
+                        labels.add(entry.getKey());
+                        break;
+                }
+                //labels.add(entry.getKey().replace(" ", "\n"));
+                //labels.add(entry.getKey());
                 i++;
             }
         }
@@ -161,7 +180,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         int green_200 = ContextCompat.getColor(this, R.color.green_200);
         int laranja = ContextCompat.getColor(this, R.color.laranja);
         int teal_150 = ContextCompat.getColor(this, R.color.teal_150);
-        int vermelho = ContextCompat.getColor(this, R.color.vermelho);
+        int vermelho = ContextCompat.getColor(this, R.color.red);
         int colorAccent = ContextCompat.getColor(this, R.color.colorAccent);
         int magenta = ContextCompat.getColor(this, R.color.magenta);
         int azulclaro = ContextCompat.getColor(this, R.color.azulclaro);
@@ -169,11 +188,10 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         int amarelo_canario = ContextCompat.getColor(this, R.color.amarelo_canario);
 
 
-
-// Configurar gráfico de Pizza
+        // Configurar gráfico de Pizza
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         //pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        pieDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
+        pieDataSet.setColors(new int[] {blue_500,vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
         pieDataSet.setValueTextSize(12f);
         pieDataSet.setValueFormatter(new PercentFormatter(pieChart));
         pieDataSet.setValueTextColor(Color.WHITE); // Cor do texto dos valores
@@ -181,26 +199,38 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         pieChart.setData(pieData);
 
 
-// Configurar gráfico de Barras
+        // Configurar gráfico de Barras
         BarDataSet barDataSet = new BarDataSet(barEntries, "");
         BarData barData = new BarData(barDataSet);
-        barDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta}); // Usando cores do colors.xml
-        //barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        List<GradientColor> gradientColors = new ArrayList<>();
+        gradientColors.add(new GradientColor(vermelho, Color.WHITE));
+        gradientColors.add(new GradientColor(azulescuro, Color.WHITE));
+        gradientColors.add(new GradientColor(amarelo_canario, Color.WHITE));
+        gradientColors.add(new GradientColor(green_200, Color.WHITE));
+        gradientColors.add(new GradientColor(laranja, Color.WHITE));
+        gradientColors.add(new GradientColor(teal_150, Color.WHITE));
+        gradientColors.add(new GradientColor(colorAccent, Color.WHITE));
+        gradientColors.add(new GradientColor(magenta, Color.WHITE));
+
+        barDataSet.setGradientColors(gradientColors);
         barDataSet.setValueTextSize(12f);
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
-// barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
+     // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
 
-// Configurar eixo X para barras
+     // Configurar eixo X para barras
         XAxis xAxisBar = barChart.getXAxis();
         xAxisBar.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisBar.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxisBar.setGranularity(1f);
-        xAxisBar.setDrawGridLines(true);
+        xAxisBar.setDrawGridLines(false);
         xAxisBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
-        xAxisBar.setTextSize(10f);
+        xAxisBar.setTextSize(11f);
+        xAxisBar.setLabelRotationAngle(-30f); // Gira os rótulos para melhor ajuste
+        xAxisBar.setLabelCount(labels.size());
+        xAxisBar.setAvoidFirstLastClipping(true);
 
-// Configurar eixo Y para barras
+     // Configurar eixo Y para barras
         YAxis yAxisLeftBar = barChart.getAxisLeft();
         yAxisLeftBar.setGranularity(1f);
         yAxisLeftBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
@@ -216,41 +246,67 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
 
 // Configurar gráfico de Linhas
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
-        lineDataSet.setColors(new int[] {vermelho, azulescuro,amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta});
-// Usando cores do colors.xml
-// lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        lineDataSet.setColors(new int[] {vermelho, azulescuro, amarelo_canario, green_200, laranja, teal_150, colorAccent, magenta});
         lineDataSet.setValueTextSize(12f);
-        lineDataSet.setValueTextColor(Color.WHITE); // Alterado para branco para melhor visibilidade
+        lineDataSet.setValueTextColor(Color.WHITE);
+        lineDataSet.setFillAlpha(120); // Valor entre 0 (transparente) e 255 (opaco)
+        lineDataSet.setLineWidth(3f);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Suaviza as curvas
+        //lineDataSet.enableDashedLine(10f, 5f, 0f); // (tamanho da linha, tamanho do espaço, fase)
+        //lineDataSet.setCubicIntensity(0.2f); // Intensidade da curva
+
+        lineChart.setExtraBottomOffset(30f); //espacamento
+
+// ADICIONE ESTAS LINHAS PARA O PREENCHIMENTO COM GRADIENTE:
+        lineDataSet.setDrawFilled(true);
+        lineDataSet.setFillDrawable(ContextCompat.getDrawable(this, R.drawable.gradient_fill));
+        lineDataSet.setFillAlpha(128); // Opacidade (0-255)
+
+// Configuração específica para o gráfico de linhas
+        Legend lineLegend = lineChart.getLegend();
+        lineLegend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        lineLegend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        lineLegend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        lineLegend.setDrawInside(false);
+        lineLegend.setTextColor(Color.WHITE);
+        lineLegend.setForm(Legend.LegendForm.CIRCLE);
+        lineLegend.setFormSize(10f);
+        lineLegend.setTextSize(12f);
+        lineLegend.setXEntrySpace(15f);  // Espaço horizontal entre itens
+        lineLegend.setYEntrySpace(5f);   // Espaço vertical entre linhas
+        lineLegend.setYOffset(25f);      // Distância do fundo do gráfico
+        lineLegend.setWordWrapEnabled(true); // Permite quebrar em múltiplas linhas
+        lineLegend.setMaxSizePercent(0.95f); // Usa 95% da largura disponível
 
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);
 
-// Configurar eixo X para linhas
+// Configurações do eixo X
         XAxis xAxisLine = lineChart.getXAxis();
         xAxisLine.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisLine.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxisLine.setGranularity(1f);
         xAxisLine.setDrawGridLines(false);
-        xAxisLine.setTextColor(Color.WHITE); // Cor do texto do eixo X
-        xAxisLine.setTextSize(10f); // Tamanho do texto do eixo X
+        xAxisLine.setTextColor(Color.WHITE);
+        xAxisLine.setTextSize(11f);
+        xAxisLine.setYOffset(15f); // Aumenta o espaço entre os rótulos e a legenda
 
-// Configurar eixo Y para linhas
+// Configurações do eixo Y
         YAxis yAxisLeftLine = lineChart.getAxisLeft();
         yAxisLeftLine.setGranularity(1f);
-        yAxisLeftLine.setTextColor(Color.WHITE); // Cor do texto do eixo Y
+        yAxisLeftLine.setTextColor(Color.WHITE);
 
-        lineChart.getAxisRight().setEnabled(false); // Desabilitar o eixo Y direito
-        lineChart.getDescription().setEnabled(false); // Desabilitar descrição
+        lineChart.getAxisRight().setEnabled(false);
+        lineChart.getDescription().setEnabled(false);
         lineChart.setTouchEnabled(true);
         lineChart.setDragDecelerationFrictionCoef(0.95f);
         lineChart.setScaleEnabled(true);
         lineChart.animateY(1000);
+        lineChart.setExtraBottomOffset(25f); // Aumenta espaço inferior
         lineChart.invalidate();
 
-
-
 // Configurações comuns para todos os gráficos
-        for (Chart chart : new Chart[]{pieChart, barChart, lineChart}) {
+        for (Chart chart : new Chart[]{pieChart, barChart}) {
             chart.getDescription().setEnabled(false);
             chart.setTouchEnabled(true);
             chart.setDragDecelerationFrictionCoef(0.95f);
@@ -261,9 +317,9 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(false);
             legend.setTextColor(Color.WHITE); // Cor da legenda
-            legend.setTextSize(12f);
-            legend.setFormSize(10f);
-
+         // legend.setTextSize(12f);
+            legend.setForm(Legend.LegendForm.CIRCLE); // Mais visível no tema escuro
+           // legend.setFormSize(10f);
         }
         updateChartVisibility();
 
@@ -335,4 +391,5 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
             showToast("Erro ao definir data atual: " + e.getMessage());
         }
     }
+
 }

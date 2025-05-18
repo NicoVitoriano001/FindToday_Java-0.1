@@ -1,15 +1,13 @@
-package com.app.fintoday;
+package com.app.fintoday.utils;
 
 import android.content.Context;
 import androidx.appcompat.app.AlertDialog;
 
 public class AppInfoDialogHelper {
     private Context context;
-
     public AppInfoDialogHelper(Context context) {
         this.context = context;
     }
-
     public void showAboutDialog() {
         new AlertDialog.Builder(context)
                 .setTitle("Sobre o App FinToday")
@@ -17,12 +15,11 @@ public class AppInfoDialogHelper {
                         "Um aplicativo para gerenciamento de finanças pessoais.\n\n" +
                         "Desenvolvido por: nicovitoriano@gmail.com\n" +
                         "Adaptado para Anabelle\n" +
-                   //     "Versão: 1.0\n" +
+                   //   "Versão: 1.0\n" +
                         "Maio 2025")
                 .setPositiveButton("OK", null)
                 .show();
     }
-
     public void openHelpScreen() {
         new AlertDialog.Builder(context)
                 .setTitle("Ajuda")

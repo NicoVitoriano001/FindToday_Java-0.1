@@ -10,6 +10,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#E2DFDF</color>
     <color name="vermelho">#ED8484</color>  # 24.03.25 fonte prnicipal valor negativo
+    <color name="vermelho_escuro">#F83504</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>

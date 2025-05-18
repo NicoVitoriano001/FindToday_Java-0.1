@@ -14,7 +14,7 @@
 
     <group android:checkableBehavior="single">
     <item
-        android:id="@+id/nav_resumo_desp"
+        android:id="@+id/nav_resumo_desp_graf"
         android:title="Resumo de Gráficos"
         android:icon="@drawable/overview"/>
 
@@ -34,7 +34,13 @@
     <item
         android:id="@+id/nav_restoreDB"
         android:title="Restore Backup"
-        android:icon="@drawable/sinc"/>
+        android:icon="@drawable/sync"/>
+
+        <!-- Adicione este novo item para sincronização com Firebase -->
+        <item
+            android:id="@+id/nav_sync_firebase"
+            android:title="Sincronizar com Firebase"
+            android:icon="@drawable/sync"/>
     </group>
 
 

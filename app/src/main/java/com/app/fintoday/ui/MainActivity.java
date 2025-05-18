@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,13 +13,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.app.fintoday.R;
+import com.app.fintoday.data.DatabaseBackupManager;
+import com.app.fintoday.data.FinModal;
+import com.app.fintoday.data.FinRVAdapter;
+import com.app.fintoday.data.FinRepository;
+import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.AppInfoDialogHelper;
+import com.app.fintoday.utils.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
-//import com.app.fintoday.DatabaseBackupManager;
+//import com.app.fintoday.data.DatabaseBackupManager;
 
 public class MainActivity extends AppCompatActivity {
     private ViewModal viewmodal;
@@ -27,22 +39,30 @@ public class MainActivity extends AppCompatActivity {
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
     private DrawerLayout drawerLayout;
-    private com.app.fintoday.DatabaseBackupManager databaseBackupManager;
-    private com.app.fintoday.AppInfoDialogHelper appInfoDialogHelper;
+    private DatabaseBackupManager databaseBackupManager;
+    private AppInfoDialogHelper appInfoDialogHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
+        Log.d("MainActivity", "setContentView concluído");
+       // Toast.makeText(getApplicationContext(),"onCreate Metodo Chamado", Toast.LENGTH_SHORT).show();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // Inicialize o databaseBackupManager
-        databaseBackupManager = new com.app.fintoday.DatabaseBackupManager(this);
-        // Inicialize o appInfoDialogHelper
+        databaseBackupManager = new DatabaseBackupManager(this);
         appInfoDialogHelper = new AppInfoDialogHelper(this);
+
+        NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -52,17 +72,22 @@ public class MainActivity extends AppCompatActivity {
         // Configurando o listener de clique no item do NavigationView
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
-                case R.id.nav_resumo_desp:
+                case R.id.nav_resumo_desp_graf:
                     startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
+                    overridePendingTransition(0, 0); // Desativa animação
                     break;
                 case R.id.nav_nova_desp:
                     startActivity(new Intent(this, NewFinActivity.class));
+                    overridePendingTransition(0, 0); // Desativa animação
                     break;
                 case R.id.nav_fazer_bkp:
                     databaseBackupManager.performBackup();
                     break;
                 case R.id.nav_restoreDB:
                     databaseBackupManager.performRestore();
+                    break;
+                case R.id.nav_sync_firebase:
+                    syncWithFirebase();
                     break;
                 case R.id.nav_about:
                     appInfoDialogHelper.showAboutDialog();
@@ -83,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NewFinActivity.class);
                 startActivityForResult(intent, ADD_DESP_REQUEST);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -93,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, BuscarFinActivity.class);
                 startActivityForResult(intent, SEARCH_DESP_REQUEST);
+                overridePendingTransition(0, 0);
             }
         });
-
 
        // Configurando o RecyclerView
         RecyclerView FinRV = findViewById(R.id.idRVFin);
@@ -131,12 +157,15 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Sim", (dialog, which) -> {
                             viewmodal.delete(itemToDelete);
                             Toast.makeText(MainActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
+                            // Mostrar notificação reutilizavel
+                            NotificationHelper.showSyncNotification(MainActivity.this);
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
                             adapter.notifyItemChanged(position);
                             Toast.makeText(MainActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
                         })
                         .show();
+
             }
         }).attachToRecyclerView(FinRV);
         // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
@@ -154,14 +183,20 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(NewFinActivity.EXTRA_DESCR_DESP, model.getDespDescr());
                 intent.putExtra(NewFinActivity.EXTRA_DURATION, model.getDataDesp());
                 startActivityForResult(intent, EDIT_DESP_REQUEST);
+                overridePendingTransition(0, 0); // Desativa animação
             }
         });
-    } // fim onCreate
-
+    } // FIM ON CREATE
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
+
+        if (data == null) {
+            Toast.makeText(this, "Sem dados retornados.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
@@ -171,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+           // viewmodal.insert(model);  // salvando novamente
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
         } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
@@ -198,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -205,5 +241,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void syncWithFirebase() {
+        FinRepository repository = new FinRepository(getApplication());
+        repository.forceSyncWithFirebase();
+        NotificationHelper.showSyncNotification(this); // Mostrar notificação
+        Toast.makeText(this, "Sincronização com Firebase iniciada", Toast.LENGTH_SHORT).show();
     }
 }

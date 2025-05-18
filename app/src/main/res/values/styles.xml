@@ -2,6 +2,7 @@
     <!-- Seu tema principal (provavelmente já existe) -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Configurações do tema principal -->
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 
     <!-- Adicione este novo estilo para o diálogo -->
@@ -11,6 +12,9 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
+
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
 
            <!-- Personalizações adicionais -->
         <item name="colorPrimary">@color/colorPrimary</item>

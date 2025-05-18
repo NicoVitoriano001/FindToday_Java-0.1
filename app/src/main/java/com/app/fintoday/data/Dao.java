@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Delete;
@@ -16,8 +16,10 @@ public interface Dao {
     @RawQuery(observedEntities = FinModal.class)
   LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
 
+
     @Insert
-    void insert(FinModal model);
+    long insert(FinModal model); // Altere o retorno de void para long
+    //@Insert //void insert(FinModal model);
 
     @Update
     void update(FinModal model);
@@ -28,8 +30,8 @@ public interface Dao {
     @Query("DELETE FROM fin_table")
     void deleteallDesp();
 
-
- @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+ //@Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%2025%' ORDER BY " +
+ @Query("SELECT * FROM fin_table WHERE dataDesp LIKE '%' || strftime('%Y-%m', 'now') || '%' ORDER BY " +
             "CASE SUBSTR(dataDesp, 1, 3) " +
             "   WHEN 'Sun' THEN 1 " +
             "   WHEN 'Mon' THEN 2 " +
@@ -39,7 +41,7 @@ public interface Dao {
             "   WHEN 'Fri' THEN 6 " +
             "   ELSE 7 " +
             "END ASC, " +
-            "SUBSTR(dataDesp, 6) DESC, tipoDesp ASC")
+            "SUBSTR(dataDesp, 6) DESC, despDescr ASC")
     LiveData<List<FinModal>> getallDesp();
 // dataDesp não está formato ISO 8601 (YYYY-MM-DD), SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1): Esta parte da consulta extrai a substring depois do espaço
 
@@ -77,9 +79,15 @@ public interface Dao {
     //Listener no grafico data "qui. YYYY-MM-DD"
     @Query("SELECT * FROM fin_table WHERE tipoDesp = :tipo AND " +
             "SUBSTR(dataDesp, 6, 4) = :ano AND " +    // Extrai o ano (posições 6-9)
-            "SUBSTR(dataDesp, 11, 2) = :mes")          // Extrai o mês (posições 11-12)
+            "SUBSTR(dataDesp, 11, 2) = :mes " +       // Extrai o mês (posições 11-12)
+            "ORDER BY dataDesp DESC")                  // Ordena pela data de forma decrescente
     LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes);
 
+    @Query("SELECT * FROM fin_table")
+    List<FinModal> getAllItemsSync(); //16.05.25 Firebase
+
+    @Query("SELECT * FROM fin_table WHERE id = :id")
+    FinModal getDespById(int id);
 }
 
 

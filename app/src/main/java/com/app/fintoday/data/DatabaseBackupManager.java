@@ -1,4 +1,4 @@
-package com.app.fintoday;
+package com.app.fintoday.data;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.app.fintoday.ui.MainActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +29,7 @@ import java.util.Locale;
 public class DatabaseBackupManager {
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1001;
     private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1002;
+    private final FirebaseHelper firebaseHelper;
     private Context context;
     private static final String DB_NAME = "finDB.db";
     private static final String BACKUP_FOLDER = "FIN_TODAY";
@@ -33,6 +37,7 @@ public class DatabaseBackupManager {
             Environment.DIRECTORY_DOWNLOADS), BACKUP_FOLDER);
     public DatabaseBackupManager(Context context) {
         this.context = context;
+        this.firebaseHelper = FirebaseHelper.getInstance(context); // Inicialização no construtor
     }
 
 
@@ -111,7 +116,7 @@ public class DatabaseBackupManager {
 
     private boolean copyDatabaseFile(File backupFile) {
         try {
-            File srcFile = new File(BACKUP_DIR, DB_NAME); // Origem no diretório especificado
+            File srcFile = new File(BACKUP_DIR, DB_NAME);
 
             if (!srcFile.exists()) {
                 throw new IOException("Arquivo original não encontrado");
@@ -127,7 +132,7 @@ public class DatabaseBackupManager {
             return false;
         }
     }
-    //FIM BLOCO BACKUP
+    // FIM BLOCO BACKUP
 
 
     // INICIO BLOCO DE RESTORE
@@ -223,17 +228,6 @@ public class DatabaseBackupManager {
         }
     }
 
-    public void handlePermissionResult(int requestCode, int[] grantResults) {
-        if (requestCode == REQUEST_CODE_WRITE_EXTERNAL_STORAGE &&
-                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            performBackup();
-        } else if (requestCode == REQUEST_CODE_READ_EXTERNAL_STORAGE &&
-                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            performRestore();
-        } else {
-            showToast("Permissão negada - operação cancelada", Toast.LENGTH_SHORT);
-        }
-    }
     // FIM BLOCO DE RESTORE
 
     private void showBackupConfirmationDialog() {
@@ -249,6 +243,21 @@ public class DatabaseBackupManager {
                         "Nome: " + nomeArquivoBKP)
                 .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
                 .setNegativeButton("Não", null)
+                .show();
+
+        // Adicionar nova opção para backup no Firebase
+        new AlertDialog.Builder(context)
+                .setTitle("Escolha o tipo de backup")
+                .setItems(new String[]{"Backup Local", "Backup no Firebase"}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Backup local
+                        executeBackup(backupFile);
+                    } else {
+                        // Backup no Firebase
+                        firebaseHelper.backupDatabaseToFirebase(context);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
                 .show();
     }
 

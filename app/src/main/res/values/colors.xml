@@ -22,6 +22,7 @@
 
     <!-- 2025.05.11 arcoiris -->
     <color name="red">#FFFF0000</color> <!-- Vermelho -->
+
     <color name="orange">#FFFFA500</color> <!-- Laranja -->
     <color name="yellow">#FFFFFF00</color> <!-- Amarelo -->
     <color name="green">#FF008000</color> <!-- Verde -->
