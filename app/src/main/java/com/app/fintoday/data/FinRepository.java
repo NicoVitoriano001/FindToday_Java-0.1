@@ -99,6 +99,22 @@ public class FinRepository {
         });
     }
 
+    /**
+     * ORIGINAL
+     * public void delete(FinModal model) {
+     * executorService.execute(() -> dao.delete(model));
+     * }
+     **/
+    public void deleteallDesp() {
+        executorService.execute(dao::deleteallDesp);
+    }
+
+    public LiveData<List<FinModal>> getallDesp() {
+        return allDesp;
+    }
+
+
+
     public void deleteAllDesp() {
         executorService.execute(dao::deleteallDesp);
     }
@@ -107,6 +123,8 @@ public class FinRepository {
         return allDesp;
     }
 
+
+    // NOVO MeTODO ADICIONADO //Listener no grafico
     public LiveData<List<FinModal>> buscarPorTipoAnoMes(String tipo, String ano, String mes) {
         return dao.buscarPorTipoAnoMes(tipo, ano, mes);
     }

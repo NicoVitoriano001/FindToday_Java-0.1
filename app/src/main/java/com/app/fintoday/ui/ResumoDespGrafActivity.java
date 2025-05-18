@@ -160,7 +160,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
                         labels.add("D PUB");
                         break;
                     case "INVEST":
-                        labels.add("INV");
+                        labels.add("INVEST");
                         break;
                     case "OUTR":
                         labels.add("OUTR");
