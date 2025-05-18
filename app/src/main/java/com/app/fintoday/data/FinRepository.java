@@ -152,7 +152,7 @@ public class FinRepository {
         });
     }
 
-    // Método auxiliar para formatar data local
+    // "%a. %Y-%m-%d" = "EEE yyyy-MM-dd"
     private String formatLocalDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.getDefault());
         return sdf.format(date);
