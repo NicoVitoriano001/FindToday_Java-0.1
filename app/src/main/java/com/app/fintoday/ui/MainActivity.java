@@ -52,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         setContentView(R.layout.activity_main);
-        Log.d("MainActivity", "setContentView concluído");
-       // Toast.makeText(getApplicationContext(),"onCreate Metodo Chamado", Toast.LENGTH_SHORT).show();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);

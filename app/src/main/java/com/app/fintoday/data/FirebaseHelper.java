@@ -53,34 +53,37 @@ public class FirebaseHelper {
         return instance;
     }
     public String getCurrentUserId() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        return user != null ? user.getUid() : null;
+        // Retorna um UID fixo para todos os dispositivos
+        return "pavyBQFB3oXKe2HpNgqZvPYcwTo1";
     }
 
     // Metodo para sincronizar dados locais com o Firebase
+// Remova o método syncLocalDataWithFirebase ou atualize-o para usar o mesmo caminho
     public void syncLocalDataWithFirebase(List<FinModal> finModals) {
         executorService.execute(() -> {
             try {
-                String userId = firebaseAuth.getCurrentUser() != null ?
-                        firebaseAuth.getCurrentUser().getUid() : "anonymous";
+                String userId = getCurrentUserId();
+                if (userId == null) {
+                    Log.e(TAG, "Usuário não autenticado");
+                    return;
+                }
 
-                DatabaseReference userRef = databaseReference.child("users").child(userId).child("finances");
+                DatabaseReference userRef = databaseReference.child("finances").child(userId);
 
                 for (FinModal modal : finModals) {
                     String key = String.valueOf(modal.getId());
                     userRef.child(key).setValue(modal)
                             .addOnSuccessListener(aVoid ->
                                     Log.d(TAG, "Dados sincronizados com sucesso: " + key))
-                                     .addOnFailureListener(e ->
+                            .addOnFailureListener(e ->
                                     Log.e(TAG, "Erro ao sincronizar dados: " + key, e));
                 }
             } catch (Exception e) {
-              //  Log.e(TAG, "Erro geral na sincronização", e);
+                Log.e(TAG, "Erro geral na sincronização", e);
             }
         });
     }
 
-    // Atualizar o método syncAllItemsToFirebase para melhor tratamento
     public void syncAllItemsToFirebase(List<FinModal> items) {
         if (items == null || items.isEmpty()) return;
 
@@ -192,5 +195,43 @@ public class FirebaseHelper {
                 .child("finances")
                 .child(userId);
     }
+
+
+
+
+
+
+    // Modifique a interface para usar Boolean ao invés de boolean primitivo
+    public interface OnAuthCompleteListener {
+        void onComplete(Boolean success);
+    }
+
+    // Atualize o método ensureAuthentication
+    public void ensureAuthentication(Context context) {
+        if (firebaseAuth.getCurrentUser() != null) {
+            return;
+        }
+
+        // Autenticação anônima
+        firebaseAuth.signInAnonymously()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e(TAG, "Falha na autenticação", task.getException());
+                    }
+                });
+    }
+
+    private void createSharedUser() {
+        firebaseAuth.createUserWithEmailAndPassword("shared@user.com", "fixedPassword123")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Usuário compartilhado criado com sucesso");
+                    } else {
+                        Log.e(TAG, "Erro ao criar usuário compartilhado", task.getException());
+                    }
+                });
+    }
+
+
 
 }
