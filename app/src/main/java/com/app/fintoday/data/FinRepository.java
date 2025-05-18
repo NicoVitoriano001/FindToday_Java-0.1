@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import com.app.fintoday.data.OnDataUpdateListener;
 
 public class FinRepository {
     private final FirebaseHelper firebaseHelper;
@@ -112,8 +111,6 @@ public class FinRepository {
     public LiveData<List<FinModal>> getallDesp() {
         return allDesp;
     }
-
-
 
     public void deleteAllDesp() {
         executorService.execute(dao::deleteallDesp);
