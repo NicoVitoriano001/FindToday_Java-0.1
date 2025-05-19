@@ -18,6 +18,7 @@ public class FinModal implements Parcelable {
     public FinModal() {
         this.lastUpdated = System.currentTimeMillis();
     }
+
     //construtor
     public FinModal(String valorDesp, String tipoDesp, String fontDesp,  String despDescr, String dataDesp) {
         this.valorDesp = valorDesp;

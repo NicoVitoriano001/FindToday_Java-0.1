@@ -16,7 +16,6 @@ public interface Dao {
     @RawQuery(observedEntities = FinModal.class)
   LiveData<List<FinModal>> buscaDesp(SupportSQLiteQuery query);
 
-
     @Insert
     long insert(FinModal model); // Altere o retorno de void para long
     //@Insert //void insert(FinModal model);
@@ -88,6 +87,12 @@ public interface Dao {
 
     @Query("SELECT * FROM fin_table WHERE id = :id")
     FinModal getDespById(int id);
+
+
+@Query("SELECT * FROM fin_table WHERE lastUpdated > :lastSyncTime")
+List<FinModal> getModifiedItems(long lastSyncTime);
+
+
 }
 
 

@@ -183,7 +183,7 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
+            // viewmodal.insert(model);  // salvando novamente
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
             // Atualiza o total

@@ -185,15 +185,9 @@ public class ResultBuscaCredActivity extends AppCompatActivity {
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewModal.insert(model);
+            //viewmodal.insert(model);  // salvando novamente
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
-           /**
-            FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-            viewmodal.insert(model);
-            Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
-            adapter.addItem(model);
-            **/
             // Atualiza o total
             double total = calcularTotal(adapter.getCurrentList());
             DecimalFormat df = new DecimalFormat("#,##0.00");

@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     databaseBackupManager.performRestore();
                     break;
                 case R.id.nav_sync_firebase:
-                    syncWithFirebase();
+                    MainSyncWithFirebase();
                     break;
                 case R.id.nav_about:
                     appInfoDialogHelper.showAboutDialog();
@@ -242,9 +242,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void syncWithFirebase() {
+    private void MainSyncWithFirebase() {
         FinRepository repository = new FinRepository(getApplication());
-        repository.bidirectionalSyncWithFirebase();
+        repository.bidirectionalMainSyncWithFirebase();
         NotificationHelper.showSyncNotification(this);
         Toast.makeText(this, "Sincronização bidirecional iniciada", Toast.LENGTH_SHORT).show();
     }

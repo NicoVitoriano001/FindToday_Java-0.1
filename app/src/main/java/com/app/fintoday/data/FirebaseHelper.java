@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,7 +36,7 @@ public class FirebaseHelper {
 
         try {
             FirebaseApp.initializeApp(context);
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true); // Habilita persistência offline do Firebase
+            FirebaseDatabase.getInstance().setPersistenceEnabled(false); // Habilita persistência offline do Firebase
             databaseReference = FirebaseDatabase.getInstance().getReference();
             firebaseAuth = FirebaseAuth.getInstance();
             storageReference = FirebaseStorage.getInstance().getReference();
@@ -52,13 +51,14 @@ public class FirebaseHelper {
         }
         return instance;
     }
+
     public String getCurrentUserId() {
         // Retorna um UID fixo para todos os dispositivos
         return "pavyBQFB3oXKe2HpNgqZvPYcwTo1";
     }
 
-    // Metodo para sincronizar dados locais com o Firebase
-// Remova o método syncLocalDataWithFirebase ou atualize-o para usar o mesmo caminho
+
+// Remova o metodo syncLocalDataWithFirebase ou atualize-o para usar o mesmo caminho
     public void syncLocalDataWithFirebase(List<FinModal> finModals) {
         executorService.execute(() -> {
             try {
@@ -147,11 +147,11 @@ public class FirebaseHelper {
 
                     @Override
                     public void onCancelled(DatabaseError error) {
-                        Log.e(TAG, "Erro ao verificar item remoto", error.toException());
+                       // Log.e(TAG, "Erro ao verificar item remoto", error.toException());
                     }
                 });
             } catch (Exception e) {
-                Log.e(TAG, "Erro geral", e);
+               // Log.e(TAG, "Erro geral", e);
             }
         });
     }
@@ -195,43 +195,6 @@ public class FirebaseHelper {
                 .child("finances")
                 .child(userId);
     }
-
-
-
-
-
-
-    // Modifique a interface para usar Boolean ao invés de boolean primitivo
-    public interface OnAuthCompleteListener {
-        void onComplete(Boolean success);
-    }
-
-    // Atualize o método ensureAuthentication
-    public void ensureAuthentication(Context context) {
-        if (firebaseAuth.getCurrentUser() != null) {
-            return;
-        }
-
-        // Autenticação anônima
-        firebaseAuth.signInAnonymously()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.e(TAG, "Falha na autenticação", task.getException());
-                    }
-                });
-    }
-
-    private void createSharedUser() {
-        firebaseAuth.createUserWithEmailAndPassword("shared@user.com", "fixedPassword123")
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Usuário compartilhado criado com sucesso");
-                    } else {
-                        Log.e(TAG, "Erro ao criar usuário compartilhado", task.getException());
-                    }
-                });
-    }
-
 
 
 }
