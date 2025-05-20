@@ -27,10 +27,14 @@ import com.app.fintoday.utils.AppInfoDialogHelper;
 import com.app.fintoday.utils.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 import java.util.List;
+import java.util.logging.Handler;
 //import com.app.fintoday.data.DatabaseBackupManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private DatabaseBackupManager databaseBackupManager;
     private AppInfoDialogHelper appInfoDialogHelper;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
+   // private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +66,25 @@ public class MainActivity extends AppCompatActivity {
         databaseBackupManager = new DatabaseBackupManager(this);
         appInfoDialogHelper = new AppInfoDialogHelper(this);
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                MainSyncWithFirebase();
+            }
+        });
+        /** / Adicione isso após inicializar o swipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark,
+                R.color.colorAccent
+        );
+      **/
         NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
+
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -87,12 +110,15 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_sync_firebase:
                     MainSyncWithFirebase();
+                    overridePendingTransition(0, 0); // Desativa animação
                     break;
                 case R.id.nav_about:
                     appInfoDialogHelper.showAboutDialog();
+                    overridePendingTransition(0, 0); // Desativa animação
                     break;
                 case R.id.nav_help:
                     appInfoDialogHelper.openHelpScreen();
+                    overridePendingTransition(0, 0); // Desativa animação
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -136,6 +162,13 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(List<FinModal> models) {
                 adapter.submitList(models);
             }
+        });
+
+        // Configurar o SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            MainSyncWithFirebase();
+            // Desativar o ícone de refresh quando a operação terminar. Isso será feito no callback da sincronização
         });
 
         // CONFIRMA EXCLUSÃO
@@ -247,6 +280,17 @@ public class MainActivity extends AppCompatActivity {
         repository.bidirectionalMainSyncWithFirebase();
         NotificationHelper.showSyncNotification(this);
         Toast.makeText(this, "Sincronização bidirecional iniciada", Toast.LENGTH_SHORT).show();
+
+        // Desativa o refresh após a sincronização (simulação)
+        swipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+               // Toast.makeText(MainActivity.this, "Sincronização concluída", Toast.LENGTH_SHORT).show();
+            }
+        }, 2000); // Ajuste este tempo conforme necessário
     }
 
 }

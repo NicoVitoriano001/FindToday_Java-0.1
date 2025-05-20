@@ -74,13 +74,12 @@ public class FinRepository {
             dao.delete(model);// 1. Remove do banco local
 
             try {
-                // 2. Remove do Firebase
                 String userId = firebaseHelper.getCurrentUserId();
                 if (userId == null) {
                    // Log.e("SYNC_DEBUG", "Usuário não autenticado, não é possível excluir no Firebase");
                     return;
                 }
-
+                // 2. Remove do Firebase
                 firebaseHelper.getUserFinancesReference(userId)
                         .child(String.valueOf(model.getId()))
                         .removeValue()
@@ -132,7 +131,7 @@ public class FinRepository {
     // Adicionar este método para sincronização bidirecional
     public void bidirectionalMainSyncWithFirebase() {
         executorService.execute(() -> {
-            // 1. Obter o timestamp da última sincronização
+            // 1. Obter o timestamp da última sincronização. é por sincronização e não por item
             long lastSyncTime = sharedPreferences.getLong(PREF_LAST_SYNC_TIME, 0);
 
             // 2. Sincronizar dados locais modificados para o Firebase
@@ -179,11 +178,6 @@ public class FinRepository {
     }
 
     //
-    /** Atualizar o método forceMainSyncWithFirebase para usar o novo método
-    public void forceMainSyncWithFirebase() {
-        bidirectionalMainSyncWithFirebase();
-    }
-**/
 
     public void syncFromFirebase(FinModal remoteItem) {
         executorService.execute(() -> {

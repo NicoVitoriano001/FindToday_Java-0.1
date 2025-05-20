@@ -84,6 +84,7 @@ public class BuscarFinActivity extends AppCompatActivity {
                                     Intent intent = new Intent(BuscarFinActivity.this, ResultBuscaActivity.class);
                                     intent.putExtra("resultados", new ArrayList<>(finModals));
                                     startActivity(intent);
+                                    overridePendingTransition(0, 0);
                                 }
                                 // Remover o observador após a primeira chamada
                                 dao.buscaDesp(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp)
@@ -98,6 +99,7 @@ public class BuscarFinActivity extends AppCompatActivity {
         fabNewFin.setOnClickListener(v -> {
             Intent intent = new Intent(BuscarFinActivity.this, NewFinActivity.class);
             startActivityForResult(intent, ADD_DESP_REQUEST);
+            overridePendingTransition(0, 0);
         });
         // lambida do botao fabNewFin
         FloatingActionButton fabhome = findViewById(R.id.idFABBuscarHome);
@@ -107,7 +109,8 @@ public class BuscarFinActivity extends AppCompatActivity {
                 Intent intent = new Intent(BuscarFinActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                finish(); // Opcional: encerra a atividade atual se necessário
+                overridePendingTransition(0, 0);
+               // finish(); // Opcional: encerra a atividade atual se necessário
             }
         });
     } // FIM ON CREATE
