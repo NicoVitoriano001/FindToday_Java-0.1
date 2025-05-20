@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -46,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseBackupManager databaseBackupManager;
     private AppInfoDialogHelper appInfoDialogHelper;
     private SwipeRefreshLayout swipeRefreshLayout;
-   // private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -58,17 +57,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_main);
-
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         databaseBackupManager = new DatabaseBackupManager(this);
         appInfoDialogHelper = new AppInfoDialogHelper(this);
 
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
-
+        NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 R.color.colorAccent
         );
       **/
-        NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
-
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -168,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             MainSyncWithFirebase();
-            // Desativar o ícone de refresh quando a operação terminar. Isso será feito no callback da sincronização
         });
 
         // CONFIRMA EXCLUSÃO
@@ -218,12 +211,13 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0); // Desativa animação
             }
         });
+
     } // FIM ON CREATE
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
 
         if (data == null) {
             Toast.makeText(this, "Sem dados retornados.", Toast.LENGTH_SHORT).show();
@@ -279,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         FinRepository repository = new FinRepository(getApplication());
         repository.bidirectionalMainSyncWithFirebase();
         NotificationHelper.showSyncNotification(this);
-        Toast.makeText(this, "Sincronização bidirecional iniciada", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Sincronização Bidirecional Iniciada", Toast.LENGTH_SHORT).show();
 
         // Desativa o refresh após a sincronização (simulação)
         swipeRefreshLayout.postDelayed(new Runnable() {

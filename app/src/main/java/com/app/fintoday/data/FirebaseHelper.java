@@ -58,7 +58,7 @@ public class FirebaseHelper {
     }
 
 
-// Remova o metodo syncLocalDataWithFirebase ou atualize-o para usar o mesmo caminho
+    /**
     public void syncLocalDataWithFirebase(List<FinModal> finModals) {
         executorService.execute(() -> {
             try {
@@ -83,6 +83,7 @@ public class FirebaseHelper {
             }
         });
     }
+**/
 
     public void syncAllItemsToFirebase(List<FinModal> items) {
         if (items == null || items.isEmpty()) return;
@@ -118,7 +119,6 @@ public class FirebaseHelper {
         }
     }
 
-    // Atualizar o método syncItemToFirebase para verificação similar
     public void syncItemToFirebase(FinModal item) {
         executorService.execute(() -> {
             try {
@@ -156,7 +156,6 @@ public class FirebaseHelper {
         });
     }
 
-    // Metodo para fazer backup do banco de dados SQLite para o Firebase Storage
     public void backupDatabaseToFirebase(Context context) {
         executorService.execute(() -> {
             try {
@@ -195,6 +194,5 @@ public class FirebaseHelper {
                 .child("finances")
                 .child(userId);
     }
-
 
 }
