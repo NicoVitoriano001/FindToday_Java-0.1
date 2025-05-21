@@ -22,6 +22,7 @@ import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
 import com.app.fintoday.utils.AppInfoDialogHelper;
 import com.app.fintoday.utils.NotificationHelper;
+import com.app.fintoday.utils.SwipeToDeleteUtil;
 import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -117,36 +118,21 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             }
         });
 
-        // CONFIRMA EXCLUSÃO
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        // Incio Classe utilitária ItemTouchHelper e Swipe
+        SwipeToDeleteUtil.setupSwipeToDelete(FinRV, this, new SwipeToDeleteUtil.OnItemDeletedListener() {
             @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+            public void onItemDeleted(int position) {
                 FinModal itemToDelete = adapter.getDespAt(position);
-
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Confirmar Exclusão")
-                        .setMessage("Você tem certeza que deseja deletar este registro?")
-                        .setPositiveButton("Sim", (dialog, which) -> {
-                            viewmodal.delete(itemToDelete);
-                            Toast.makeText(MainActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
-                            // Mostrar notificação reutilizavel
-                            NotificationHelper.showSyncNotification(MainActivity.this);
-                        })
-                        .setNegativeButton("Não", (dialog, which) -> {
-                            adapter.notifyItemChanged(position);
-                            Toast.makeText(MainActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
-                        })
-                        .show();
-
+                viewmodal.delete(itemToDelete);
+                NotificationHelper.showSyncNotification(MainActivity.this);
             }
-        }).attachToRecyclerView(FinRV);
-        // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
+
+            @Override
+            public void onDeleteCancelled(int position) {
+                adapter.notifyItemChanged(position);
+            }
+        });
+        // Fim Classe utilitária ItemTouchHelper e Swipe
 
         // Configurando o listener de clique no item do RecyclerView
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {

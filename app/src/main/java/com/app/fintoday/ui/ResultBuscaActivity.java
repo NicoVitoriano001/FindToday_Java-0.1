@@ -1,14 +1,16 @@
 package com.app.fintoday.ui;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.app.AlertDialog;
+import com.app.fintoday.utils.AppInfoDialogHelper;
+import com.app.fintoday.utils.NotificationHelper;
+import com.app.fintoday.utils.SwipeToDeleteUtil;
+import com.app.fintoday.utils.SyncUtils;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -18,17 +20,19 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import com.app.fintoday.R;
+import com.app.fintoday.data.DatabaseBackupManager;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.DrawerUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultBuscaActivity extends AppCompatActivity {
+public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil.DrawerItemSelectedListener
+{
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
@@ -38,6 +42,8 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
     private DrawerLayout drawerLayout;
+    private DatabaseBackupManager databaseBackupManager;
+    private AppInfoDialogHelper appInfoDialogHelper;
 
 
     @Override
@@ -45,15 +51,19 @@ public class ResultBuscaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_busca_rv);
 
+        // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        databaseBackupManager = new DatabaseBackupManager(this);
+        appInfoDialogHelper = new AppInfoDialogHelper(this);
 
         // Inicializar os TextViews
         creditoTextView = findViewById(R.id.tvCred_ResultBuscaActivity);
         despesaTextView = findViewById(R.id.tvDesp_ResultBuscaActivity);
         saldoTextView = findViewById(R.id.tvSal_ResultBuscaActivity);
-
-
 
         // Inicializar RecyclerView
         RecyclerView idRVRetorno = findViewById(R.id.idRVRetorno);
@@ -61,6 +71,9 @@ public class ResultBuscaActivity extends AppCompatActivity {
         idRVRetorno.setLayoutManager(new LinearLayoutManager(this));
         idRVRetorno.setAdapter(adapter);
         viewmodal = new ViewModelProvider(this).get(ViewModal.class); // Inicializar viewmodal
+
+        // Observando os dados do ViewModel
+        viewmodal.getallDesp().observe(this, models -> adapter.submitList(models));
 
         ArrayList<Parcelable> parcelableList = getIntent().getParcelableArrayListExtra("resultados");
 
@@ -176,43 +189,62 @@ public class ResultBuscaActivity extends AppCompatActivity {
         });
 
 
-       // Configurar o ItemTouchHelper para swipe (exclusão)
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                0, // Não suporta drag-and-drop
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Suporta swipe para ambos os lados
-        ) {
+        // Incio Classe utilitária ItemTouchHelper e Swipe
+        SwipeToDeleteUtil.setupSwipeToDelete(idRVRetorno, this, new SwipeToDeleteUtil.OnItemDeletedListener() {
             @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false; // Não permite reordenar itens
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+            public void onItemDeleted(int position) {
                 FinModal itemToDelete = adapter.getDespAt(position);
-
-                // Diálogo de confirmação
-                new AlertDialog.Builder(ResultBuscaActivity.this)
-                        .setTitle("Confirmar Exclusão")
-                        .setMessage("Você tem certeza que deseja deletar este registro?")
-                        .setPositiveButton("Sim", (dialog, which) -> {
-                            viewmodal.delete(itemToDelete);
-                            Toast.makeText(ResultBuscaActivity.this, "Registro Deletado", Toast.LENGTH_SHORT).show();
-                            // Atualiza a lista após exclusão (opcional)
-                            resultados.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            recalculateTotals(); // Recalcular os valores de resumo após a atualização 30.04.2025
-                        })
-                        .setNegativeButton("Não", (dialog, which) -> {
-                            adapter.notifyItemChanged(position); // Cancela o swipe
-                            Toast.makeText(ResultBuscaActivity.this, "Exclusão Cancelada", Toast.LENGTH_SHORT).show();
-                        })
-                        .show();
-
+                viewmodal.delete(itemToDelete);
+                NotificationHelper.showSyncNotification(ResultBuscaActivity.this);
             }
-        }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
+
+            @Override
+            public void onDeleteCancelled(int position) {
+                adapter.notifyItemChanged(position);
+            }
+        });
+        // Fim Classe utilitária ItemTouchHelper e Swipe
+
    } // Fim ON CREATE
 
+    // Usar drawerer nas outras UI 3/3
+    @Override
+    public boolean onDrawerItemSelected(android.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                startActivity(new Intent(ResultBuscaActivity.this, MainActivity.class));
+                overridePendingTransition(0, 0);
+                break;
+            case R.id.nav_resumo_desp_graf:
+                startActivity(new Intent(ResultBuscaActivity.this, ResumoDespGrafActivity.class));
+                overridePendingTransition(0, 0);
+                break;
+            case R.id.nav_nova_desp:
+                startActivity(new Intent(this, NewFinActivity.class));
+                overridePendingTransition(0, 0);
+                break;
+            case R.id.nav_fazer_bkp:
+                databaseBackupManager.performBackup();
+                break;
+            case R.id.nav_restoreDB:
+                databaseBackupManager.performRestore();
+                break;
+            case R.id.nav_sync_firebase:
+                SyncUtils.MainSyncWithFirebaseUtils(this);
+                overridePendingTransition(0, 0);
+                break;
+            case R.id.nav_about:
+                appInfoDialogHelper.showAboutDialog();
+                overridePendingTransition(0, 0);
+                break;
+            case R.id.nav_help:
+                appInfoDialogHelper.openHelpScreen();
+                overridePendingTransition(0, 0);
+                break;
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
 
     private void setupFabMovement(FloatingActionButton fab) {

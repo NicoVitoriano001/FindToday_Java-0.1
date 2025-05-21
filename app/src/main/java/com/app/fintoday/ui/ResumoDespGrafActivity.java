@@ -128,18 +128,24 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         Map<String, Float> valoresPorTipo = new HashMap<>();
         String[] tipos = {"ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
 
-        for (String tipo : tipos) {
-            valoresPorTipo.put(tipo, 1f);
-        }
+        //for (String tipo : tipos) {
+        //    valoresPorTipo.put(tipo, 1f);
+        //}
 
         for (FinModal item : dados) {
             String tipo = item.getTipoDesp();
-            float valor = Float.parseFloat(item.getValorDesp());
+            // Adiciona esta verificação para filtrar "-"
+            if (tipo != null && !tipo.equals("-")) {
+                float valor = Float.parseFloat(item.getValorDesp());
+                valoresPorTipo.put(tipo, valoresPorTipo.containsKey(tipo) ?
+                        valoresPorTipo.get(tipo) + valor : valor);
+            }
+        }
 
-            if (valoresPorTipo.containsKey(tipo)) {
-                valoresPorTipo.put(tipo, valoresPorTipo.get(tipo) + valor);
-            } else {
-                valoresPorTipo.put(tipo, valor);
+        // Depois adiciona os tipos que não apareceram com valor 0
+        for (String tipo : tipos) {
+            if (!valoresPorTipo.containsKey(tipo)) {
+                valoresPorTipo.put(tipo, 0f);
             }
         }
 

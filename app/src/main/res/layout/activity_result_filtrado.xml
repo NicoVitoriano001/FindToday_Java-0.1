@@ -1,53 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ResultBuscaCredActivity"> <!-- Pode ser genérico -->
+    tools:context=".ui.ResultBuscaCredActivity">
 
-    <!-- Total -->
-    <TextView
-        android:id="@+id/idTVTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Créditos: $ 0.00"
-        android:textColor="@color/white"
-        android:textSize="16sp"/>
-
-    <!-- Lista de Itens -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/idRVRetorno"
+    <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Total -->
+        <TextView
+            android:id="@+id/idTVTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="Créditos: $ 0.00"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+
+        <!-- Lista de Itens -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/idRVRetorno"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/idTVTotal"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Botões flutuantes -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/idFABresultadoConsultNewsFIN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:tint="@color/white"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/idFABresultadoConsultReturnHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_home"
+            app:tint="@color/white"/>
+    </RelativeLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_below="@id/idTVTotal"
-        android:layout_marginTop="16dp"/>
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"/>
 
-    <!-- Botões flutuantes (mantidos como no original) -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/idFABresultadoConsultNewsFIN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@android:drawable/ic_input_add"
-        app:tint="@color/white"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/idFABresultadoConsultReturnHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_home"
-        app:tint="@color/white"/>
-
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
