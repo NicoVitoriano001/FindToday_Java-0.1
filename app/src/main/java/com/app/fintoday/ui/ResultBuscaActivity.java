@@ -3,6 +3,7 @@ package com.app.fintoday.ui;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +22,8 @@ import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private float initialTouchX, initialTouchY;
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
+    private DrawerLayout drawerLayout;
 
 
     @Override
@@ -41,10 +45,15 @@ public class ResultBuscaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_busca_rv);
 
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
         // Inicializar os TextViews
         creditoTextView = findViewById(R.id.tvCred_ResultBuscaActivity);
         despesaTextView = findViewById(R.id.tvDesp_ResultBuscaActivity);
         saldoTextView = findViewById(R.id.tvSal_ResultBuscaActivity);
+
+
 
         // Inicializar RecyclerView
         RecyclerView idRVRetorno = findViewById(R.id.idRVRetorno);

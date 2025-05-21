@@ -129,6 +129,59 @@ public class FinRepository {
     }
 
     // Adicionar este método para sincronização bidirecional
+
+
+/**
+    public void bidirectionalMainSyncWithFirebase() {
+        executorService.execute(() -> {
+            // 1. Obter o timestamp da última sincronização
+            long lastSyncTime = sharedPreferences.getLong(PREF_LAST_SYNC_TIME, 0);
+
+            // 2. Sincronizar dados locais modificados para o Firebase
+            List<FinModal> modifiedLocalItems = dao.getModifiedItems(lastSyncTime);
+            if (firebaseHelper != null && modifiedLocalItems != null && !modifiedLocalItems.isEmpty()) {
+                firebaseHelper.syncAllItemsToFirebase(modifiedLocalItems);
+            }
+
+            // 3. Sincronizar dados do Firebase para o local
+            String userId = firebaseHelper.getCurrentUserId();
+            if (userId != null) {
+                firebaseHelper.getUserFinancesReference(userId)
+                        .orderByChild("lastUpdated")
+                        .startAt(lastSyncTime + 1) // Busca apenas itens mais recentes que a última sincronização
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                long newSyncTime = System.currentTimeMillis();
+                                boolean hasUpdates = false;
+
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    FinModal remoteItem = snapshot.getValue(FinModal.class);
+                                    if (remoteItem != null) {
+                                        syncFromFirebase(remoteItem);
+                                        hasUpdates = true;
+                                    }
+                                }
+
+                                // Atualiza o timestamp apenas se houver atualizações
+                                if (hasUpdates) {
+                                    sharedPreferences.edit()
+                                            .putLong(PREF_LAST_SYNC_TIME, newSyncTime)
+                                            .apply();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e("SYNC_DEBUG", "Erro ao carregar dados do Firebase", databaseError.toException());
+                            }
+                        });
+            }
+        });
+    }
+**/
+
+
     public void bidirectionalMainSyncWithFirebase() {
         executorService.execute(() -> {
             // 1. Obter o timestamp da última sincronização. é por sincronização e não por item
@@ -176,6 +229,8 @@ public class FinRepository {
             }
         });
     }
+
+
 
     //
 

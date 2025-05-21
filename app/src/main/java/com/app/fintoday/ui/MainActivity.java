@@ -1,5 +1,7 @@
 package com.app.fintoday.ui;
 
+import static com.app.fintoday.utils.SyncUtils.MainSyncWithFirebaseUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,10 +22,10 @@ import com.app.fintoday.R;
 import com.app.fintoday.data.DatabaseBackupManager;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
-import com.app.fintoday.data.FinRepository;
 import com.app.fintoday.data.ViewModal;
 import com.app.fintoday.utils.AppInfoDialogHelper;
 import com.app.fintoday.utils.NotificationHelper;
+import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -41,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
-    private DrawerLayout drawerLayout;
     private DatabaseBackupManager databaseBackupManager;
     private AppInfoDialogHelper appInfoDialogHelper;
+    private DrawerLayout drawerLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -68,17 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh() {
-                MainSyncWithFirebase();
-            }
+            public void onRefresh() { MainSyncWithFirebase(); }
         });
-        /** / Adicione isso após inicializar o swipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeResources(
-                R.color.colorPrimary,
-                R.color.colorPrimaryDark,
-                R.color.colorAccent
-        );
-      **/
+
+        // Configurar o SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> { MainSyncWithFirebase();
+        });
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     databaseBackupManager.performRestore();
                     break;
                 case R.id.nav_sync_firebase:
-                    MainSyncWithFirebase();
+                    SyncUtils.MainSyncWithFirebaseUtils(this);
                     overridePendingTransition(0, 0); // Desativa animação
                     break;
                 case R.id.nav_about:
@@ -158,11 +156,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Configurar o SwipeRefreshLayout
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            MainSyncWithFirebase();
-        });
+
 
         // CONFIRMA EXCLUSÃO
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -194,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(FinRV);
         // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
-
 
         // Configurando o listener de clique no item do RecyclerView
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
@@ -270,6 +263,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void MainSyncWithFirebase() {
+        SyncUtils.syncBidirecionalWithRefresh(this, swipeRefreshLayout);
+    }
+    /**
+    private void MainSyncWithFirebase() {
         FinRepository repository = new FinRepository(getApplication());
         repository.bidirectionalMainSyncWithFirebase();
         NotificationHelper.showSyncNotification(this);
@@ -286,5 +283,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 2000); // Ajuste este tempo conforme necessário
     }
+**/
 
 }
