@@ -18,17 +18,22 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import com.app.fintoday.R;
+import com.app.fintoday.data.DatabaseBackupManager;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.AppInfoDialogHelper;
+import com.app.fintoday.utils.DrawerUtil;
+import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.app.fintoday.utils.DrawerUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultBuscaActivity extends AppCompatActivity {
+public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil.DrawerActions {
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
@@ -37,6 +42,8 @@ public class ResultBuscaActivity extends AppCompatActivity {
     private float initialTouchX, initialTouchY;
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
+    private DatabaseBackupManager databaseBackupManager;
+    private AppInfoDialogHelper appInfoDialogHelper;
     private DrawerLayout drawerLayout;
 
 
@@ -45,8 +52,17 @@ public class ResultBuscaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_busca_rv);
 
+        // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
+
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        databaseBackupManager = new DatabaseBackupManager(this);
+        appInfoDialogHelper = new AppInfoDialogHelper(this); // // INICIALIZE PRIMEIRO  MOVER PARA ANTES DO setupDrawer
+        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,  // DEPOIS CONFIGURE O DRAWER
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close,
+                this, // DrawerActions
+                appInfoDialogHelper); // ← AGORA NÃO SERÁ MAIS NULL
 
         // Inicializar os TextViews
         creditoTextView = findViewById(R.id.tvCred_ResultBuscaActivity);
@@ -213,7 +229,10 @@ public class ResultBuscaActivity extends AppCompatActivity {
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
    } // Fim ON CREATE
 
-
+    // Implementação dos métodos da interface DrawerActions   // Usar drawerer nas outras UI 3/3
+    @Override public void onBackupRequested() { databaseBackupManager.performBackup();}
+    @Override public void onRestoreRequested() {databaseBackupManager.performRestore();}
+    @Override  public void onSyncRequested() { SyncUtils.MainSyncWithFirebaseUtils(this); }
 
     private void setupFabMovement(FloatingActionButton fab) {
         fab.setOnTouchListener(new View.OnTouchListener() {
