@@ -46,19 +46,21 @@ public interface Dao {
 
 
 // Adiciona % inicio e final da string para usar no LIKE - 29.04.2025
-    @Query("SELECT * FROM fin_table WHERE " +
-            "REPLACE(despDescr, ' ', '%') LIKE '%' || REPLACE(:despDescr, ' ', '%') || '%' " + // Adicionado '%' no início e no final
-            "AND valorDesp LIKE '%' || :valorDesp || '%' " +
-            "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
-            "AND fontDesp LIKE '%' || :fontDesp || '%' " +
-            "AND dataDesp LIKE '%' || :dataDesp || '%' " +
-            "ORDER BY SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1) DESC")
-    LiveData<List<FinModal>> buscaDesp(
-            String valorDesp,
-            String tipoDesp,
-            String fontDesp,
-            String despDescr,
-            String dataDesp);
+@Query("SELECT * FROM fin_table WHERE " +
+        "(:despDescr = '' OR " +
+        "(REPLACE(despDescr, ' ', '%') LIKE '%' || REPLACE(SUBSTR(:despDescr, 1, CASE WHEN INSTR(:despDescr, '-') > 0 THEN INSTR(:despDescr, '-')-1 ELSE LENGTH(:despDescr) END), ' ', '%') || '%' " +
+        "AND (INSTR(:despDescr, '-') = 0 OR despDescr NOT LIKE '%' || SUBSTR(:despDescr, INSTR(:despDescr, '-')+1) || '%'))) " +
+        "AND valorDesp LIKE '%' || :valorDesp || '%' " +
+        "AND tipoDesp LIKE '%' || :tipoDesp || '%' " +
+        "AND fontDesp LIKE '%' || :fontDesp || '%' " +
+        "AND dataDesp LIKE '%' || :dataDesp || '%' " +
+        "ORDER BY SUBSTR(dataDesp, INSTR(dataDesp, ' ') + 1) DESC")
+LiveData<List<FinModal>> buscaDesp(
+        String valorDesp,
+        String tipoDesp,
+        String fontDesp,
+        String despDescr,
+        String dataDesp);
 
     @Query("SELECT * FROM fin_table " +
             "WHERE SUBSTR(dataDesp, 6, 4) = :ano " +       // Ano (posições 6-9)
@@ -92,7 +94,24 @@ public interface Dao {
 @Query("SELECT * FROM fin_table WHERE lastUpdated > :lastSyncTime")
 List<FinModal> getModifiedItems(long lastSyncTime);
 
+default String[] processarDespDescr(String despDescr) {
+    if (despDescr == null || despDescr.isEmpty()) {
+        return new String[]{"%%", ""};
+    }
+
+    String[] parts = despDescr.split("-", 2);
+    String part1 = parts[0].trim();
+    String part2 = parts.length > 1 ? parts[1].trim() : "";
+
+    return new String[]{
+            "%" + part1.replace(" ", "%") + "%",
+            part2.isEmpty() ? "" : "%" + part2 + "%"
+    };
+  }
 
 }
+
+
+
 
 
