@@ -26,14 +26,13 @@ import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 import com.app.fintoday.utils.DrawerUtil;
 
-public class MainActivity extends AppCompatActivity implements DrawerUtil.DrawerItemSelectedListener
-{ // Usar drawerer nas outras UI 1/3 - adicione implements DrawerUtil.DrawerItemSelectedListener
+public class MainActivity extends AppCompatActivity implements DrawerUtil.DrawerActions {
+    // Usar drawerer nas outras UI 1/3 - adicione implements DrawerUtil.DrawerItemSelectedListener
     private ViewModal viewmodal;
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
@@ -55,17 +54,18 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
         }
 
         // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
+
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,
+        databaseBackupManager = new DatabaseBackupManager(this);
+        appInfoDialogHelper = new AppInfoDialogHelper(this); // // INICIALIZE PRIMEIRO  MOVER PARA ANTES DO setupDrawer
+        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,  // DEPOIS CONFIGURE O DRAWER
                 R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
+                R.string.navigation_drawer_close,
+                this, // DrawerActions
+                appInfoDialogHelper); // ← AGORA NÃO SERÁ MAIS NULL
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
-        databaseBackupManager = new DatabaseBackupManager(this);
-
-        appInfoDialogHelper = new AppInfoDialogHelper(this);
 
         NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
 
@@ -166,40 +166,11 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
 
     } // FIM ON CREATE
 
-    // Usar drawerer nas outras UI 3/3
-    @Override
-    public boolean onDrawerItemSelected(android.view.MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_resumo_desp_graf:
-                startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
-                overridePendingTransition(0, 0);
-                break;
-            case R.id.nav_nova_desp:
-                startActivity(new Intent(this, NewFinActivity.class));
-                overridePendingTransition(0, 0);
-                break;
-            case R.id.nav_fazer_bkp:
-                databaseBackupManager.performBackup();
-                break;
-            case R.id.nav_restoreDB:
-                databaseBackupManager.performRestore();
-                break;
-            case R.id.nav_sync_firebase:
-                SyncUtils.MainSyncWithFirebaseUtils(this);
-                overridePendingTransition(0, 0);
-                break;
-            case R.id.nav_about:
-                appInfoDialogHelper.showAboutDialog();
-                overridePendingTransition(0, 0);
-                break;
-            case R.id.nav_help:
-                appInfoDialogHelper.openHelpScreen();
-                overridePendingTransition(0, 0);
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
+
+    // Implementação dos métodos da interface DrawerActions   // Usar drawerer nas outras UI 3/3
+    @Override public void onBackupRequested() { databaseBackupManager.performBackup();}
+    @Override public void onRestoreRequested() {databaseBackupManager.performRestore();}
+    @Override  public void onSyncRequested() { SyncUtils.MainSyncWithFirebaseUtils(this); }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
