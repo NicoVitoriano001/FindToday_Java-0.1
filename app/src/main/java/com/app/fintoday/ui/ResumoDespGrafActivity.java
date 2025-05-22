@@ -128,18 +128,24 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         Map<String, Float> valoresPorTipo = new HashMap<>();
         String[] tipos = {"ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
 
-        for (String tipo : tipos) {
-            valoresPorTipo.put(tipo, 1f);
-        }
+        //for (String tipo : tipos) {
+        //    valoresPorTipo.put(tipo, 1f);
+        //}
 
         for (FinModal item : dados) {
             String tipo = item.getTipoDesp();
-            float valor = Float.parseFloat(item.getValorDesp());
+            // Adiciona esta verificação para filtrar "-"
+            if (tipo != null && !tipo.equals("-")) {
+                float valor = Float.parseFloat(item.getValorDesp());
+                valoresPorTipo.put(tipo, valoresPorTipo.containsKey(tipo) ?
+                        valoresPorTipo.get(tipo) + valor : valor);
+            }
+        }
 
-            if (valoresPorTipo.containsKey(tipo)) {
-                valoresPorTipo.put(tipo, valoresPorTipo.get(tipo) + valor);
-            } else {
-                valoresPorTipo.put(tipo, valor);
+        // Depois adiciona os tipos que não apareceram com valor 0
+        for (String tipo : tipos) {
+            if (!valoresPorTipo.containsKey(tipo)) {
+                valoresPorTipo.put(tipo, 0f);
             }
         }
 
@@ -216,9 +222,9 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         barDataSet.setValueTextSize(12f);
         barDataSet.setValueTextColor(Color.WHITE); //OK
         barChart.setData(barData);
-     // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
+        // barChart.setExtraOffsets(20f, 20f, 20f, 20f); // Espaço para eixos
 
-     // Configurar eixo X para barras
+        // Configurar eixo X para barras
         XAxis xAxisBar = barChart.getXAxis();
         xAxisBar.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxisBar.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -230,7 +236,7 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         xAxisBar.setLabelCount(labels.size());
         xAxisBar.setAvoidFirstLastClipping(true);
 
-     // Configurar eixo Y para barras
+        // Configurar eixo Y para barras
         YAxis yAxisLeftBar = barChart.getAxisLeft();
         yAxisLeftBar.setGranularity(1f);
         yAxisLeftBar.setTextColor(Color.WHITE); // Cor do texto do eixo X
@@ -317,9 +323,9 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(false);
             legend.setTextColor(Color.WHITE); // Cor da legenda
-         // legend.setTextSize(12f);
+            // legend.setTextSize(12f);
             legend.setForm(Legend.LegendForm.CIRCLE); // Mais visível no tema escuro
-           // legend.setFormSize(10f);
+            // legend.setFormSize(10f);
         }
         updateChartVisibility();
 
