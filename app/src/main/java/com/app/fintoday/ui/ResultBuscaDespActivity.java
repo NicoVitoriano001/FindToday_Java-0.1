@@ -19,6 +19,7 @@ import com.app.fintoday.R;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.FabMovementUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -80,19 +81,27 @@ public class ResultBuscaDespActivity extends AppCompatActivity {
             }
         });
 
-        //botao flutuante newsfin com expressao lambda
-        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
-        fabNewFin.setOnClickListener(v -> {
-            startActivity(new Intent(this, NewFinActivity.class));
+// botão flutuantes adiconar
+        FloatingActionButton fab = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        FabMovementUtil.setupFabMovement(fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ResultBuscaDespActivity.this, NewFinActivity.class);
+                startActivityForResult(intent, ADD_DESP_REQUEST);
+                overridePendingTransition(0, 0);
+            }
         });
 
-        //botao flutuante retornar para home
-        FloatingActionButton fabReturnHome = findViewById(R.id.idFABresultadoConsultReturnHome);
-        fabReturnHome.setOnClickListener(new View.OnClickListener() {
+        // botao flutuante buscar
+        FloatingActionButton fab2 = findViewById(R.id.idFABresultadoConsultReturnHome);
+        FabMovementUtil.setupFabMovement(fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ResultBuscaDespActivity.this, MainActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
 

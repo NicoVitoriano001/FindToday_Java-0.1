@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.app.fintoday.R;
 import com.app.fintoday.data.DatabaseBackupManager;
+import com.app.fintoday.utils.FabMovementUtil;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
         }
 
         // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
-
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         databaseBackupManager = new DatabaseBackupManager(this);
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close,
                 this, // DrawerActions
-                appInfoDialogHelper); // ← AGORA NÃO SERÁ MAIS NULL
+                appInfoDialogHelper);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
@@ -79,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
         swipeRefreshLayout.setOnRefreshListener(() -> { MainSyncWithFirebase();
         });
 
-        // Configurando o botão de ação flutuante para adicionar
+        // botão adiconar
         FloatingActionButton fab = findViewById(R.id.idFABAdd);
+        FabMovementUtil.setupFabMovement(fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +91,9 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             }
         });
 
-        // Configurando o segundo botão de ação flutuante para buscar
+    // botao flutuante buscar
         FloatingActionButton fab2 = findViewById(R.id.idFABbuscar);
+        FabMovementUtil.setupFabMovement(fab2);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
