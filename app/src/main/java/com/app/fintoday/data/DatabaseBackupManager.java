@@ -40,7 +40,6 @@ public class DatabaseBackupManager {
         this.firebaseHelper = FirebaseHelper.getInstance(context); // Inicialização no construtor
     }
 
-
     //INICIO BLOCO BACKUP
     public void performBackup() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -262,10 +261,7 @@ public class DatabaseBackupManager {
             return false;
         }
     }
-
     // FIM BLOCO DE RESTORE
-
-
 
     private void showToast(String message, int duration) {
         new Handler(Looper.getMainLooper()).post(() ->

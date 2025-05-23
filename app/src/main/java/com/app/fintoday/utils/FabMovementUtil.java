@@ -2,16 +2,11 @@ package com.app.fintoday.utils;
 
 import android.view.MotionEvent;
 import android.view.View;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-
-
 /**
  * Classe utilitária para configurar movimento arrastável em FloatingActionButtons.
  * Permite que FABs sejam movidos pela tela mantendo sua funcionalidade de clique.
  */
 public class FabMovementUtil {
-
     public static void setupFabMovement(com.google.android.material.floatingactionbutton.FloatingActionButton fab) {
         if (fab == null || fab.getParent() == null) {
             return;

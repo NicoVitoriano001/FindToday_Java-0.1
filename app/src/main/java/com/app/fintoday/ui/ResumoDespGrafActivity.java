@@ -128,10 +128,6 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
         Map<String, Float> valoresPorTipo = new HashMap<>();
         String[] tipos = {"ALIM", "CRED", "D PUB", "EDUC", "EMPRES", "INVEST", "LAZER", "OUTR", "TRANS", "SAUD"};
 
-        //for (String tipo : tipos) {
-        //    valoresPorTipo.put(tipo, 1f);
-        //}
-
         for (FinModal item : dados) {
             String tipo = item.getTipoDesp();
             // Adiciona esta verificação para filtrar "-"
@@ -175,8 +171,6 @@ public class ResumoDespGrafActivity extends AppCompatActivity {
                         labels.add(entry.getKey());
                         break;
                 }
-                //labels.add(entry.getKey().replace(" ", "\n"));
-                //labels.add(entry.getKey());
                 i++;
             }
         }

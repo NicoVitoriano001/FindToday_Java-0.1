@@ -57,7 +57,6 @@ public class FirebaseHelper {
         return "pavyBQFB3oXKe2HpNgqZvPYcwTo1";
     }
 
-
     /**
     public void syncLocalDataWithFirebase(List<FinModal> finModals) {
         executorService.execute(() -> {

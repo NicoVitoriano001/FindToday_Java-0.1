@@ -12,7 +12,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-
     private FirebaseAuth mAuth;
 
     @Override
@@ -34,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.btn_login);
         loginButton.setOnClickListener(v -> {
             // Implemente sua lógica de login aqui
-            // Exemplo simplificado:
             mAuth.signInAnonymously()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

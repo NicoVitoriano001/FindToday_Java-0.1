@@ -128,9 +128,6 @@ public class FinRepository {
         );
     }
 
-    // Adicionar este método para sincronização bidirecional
-
-
 /**
     public void bidirectionalMainSyncWithFirebase() {
         executorService.execute(() -> {
@@ -229,10 +226,6 @@ public class FinRepository {
             }
         });
     }
-
-
-
-    //
 
     public void syncFromFirebase(FinModal remoteItem) {
         executorService.execute(() -> {

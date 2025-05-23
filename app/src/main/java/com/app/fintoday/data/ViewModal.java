@@ -8,8 +8,6 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class ViewModal extends AndroidViewModel {
-
-    // Variável para o repositório
     private final FinRepository repository;
     private final LiveData<List<FinModal>> allDesp;
 

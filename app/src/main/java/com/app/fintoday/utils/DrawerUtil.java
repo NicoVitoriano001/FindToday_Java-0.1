@@ -7,7 +7,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Intent;
 
 import com.app.fintoday.R;
-import com.app.fintoday.utils.AppInfoDialogHelper;
 import com.app.fintoday.ui.MainActivity;
 import com.app.fintoday.ui.NewFinActivity;
 import com.app.fintoday.ui.ResumoDespGrafActivity;

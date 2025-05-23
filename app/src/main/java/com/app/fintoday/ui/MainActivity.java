@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
 
     } // FIM ON CREATE
 
-
     // Implementação dos métodos da interface DrawerActions   // Usar drawerer nas outras UI 3/3
     @Override public void onBackupRequested() { databaseBackupManager.performBackup();}
     @Override public void onRestoreRequested() {databaseBackupManager.performRestore();}
@@ -178,12 +177,10 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
-
         if (data == null) {
             Toast.makeText(this, "Sem dados retornados.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
             String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
@@ -218,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public void onBackPressed() {
