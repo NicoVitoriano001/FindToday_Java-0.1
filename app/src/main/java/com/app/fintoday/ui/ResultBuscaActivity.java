@@ -124,6 +124,7 @@ public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil
             intent.putExtra(NewFinActivity.EXTRA_DESCR_DESP, model.getDespDescr());
             intent.putExtra(NewFinActivity.EXTRA_DURATION, model.getDataDesp());
             startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
+            overridePendingTransition(0, 0); // Desativa animação
         });
 
 
@@ -132,6 +133,7 @@ public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil
         fabNewFin.setOnClickListener(v -> {
             Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
             startActivityForResult(intent, ADD_DESP_REQUEST);
+            overridePendingTransition(0, 0); // Desativa animação
         });
         /** // tradicional do botao fabNewFin
          FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
@@ -151,6 +153,7 @@ public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil
             public void onClick(View v) {
                 Intent intent = new Intent(ResultBuscaActivity.this, MainActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); // Desativa animação
             }
         });
 
@@ -164,6 +167,7 @@ public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil
                     Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaCredActivity.class);
                     intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
                 startActivity(intent);
+                overridePendingTransition(0, 0); // Desativa animação
             } else {
                 Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
             }
@@ -175,6 +179,7 @@ public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil
                 Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaDespActivity.class);
                 intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
                 startActivity(intent);
+                overridePendingTransition(0, 0); // Desativa animação
             } else {
                 Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
             }

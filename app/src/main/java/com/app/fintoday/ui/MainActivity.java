@@ -32,6 +32,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import com.app.fintoday.utils.DrawerUtil;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView creditoTextView, despesaTextView, saldoTextView;
     private DecimalFormat df = new DecimalFormat("#,##0.00");
+    private List<FinModal> currentModels = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
         creditoTextView = findViewById(R.id.tvCred_MainActivity);
         despesaTextView = findViewById(R.id.tvDesp_MainActivity);
         saldoTextView = findViewById(R.id.tvSal_MainActivity);
-
-
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -127,9 +127,37 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             @Override
             public void onChanged(List<FinModal> models) {
                 adapter.submitList(models);
-                calculateTotals(models); // Adicione esta linha para calcular os totais
+                calculateTotals(models);
             }
         });
+
+
+
+        creditoTextView.setOnClickListener(v -> {
+            List<FinModal> listaFiltrada = filtrarCreditos();
+            if (!listaFiltrada.isEmpty()) {
+                Intent intent = new Intent(MainActivity.this, ResultBuscaCredActivity.class);
+                intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
+                startActivity(intent);
+                overridePendingTransition(0, 0); // Desativa animação
+            } else {
+                Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        despesaTextView.setOnClickListener(v -> {
+            List<FinModal> listaFiltrada = filtrarDespesas();
+            if (!listaFiltrada.isEmpty()) {
+                Intent intent = new Intent(MainActivity.this, ResultBuscaDespActivity.class);
+                intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
+                startActivity(intent);
+                overridePendingTransition(0, 0); // Desativa animação
+            } else {
+                Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
         // CONFIRMA EXCLUSÃO
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -238,6 +266,32 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
     }
 
 
+    private List<FinModal> filtrarCreditos() {
+        List<FinModal> filtrada = new ArrayList<>();
+        List<FinModal> currentModels = viewmodal.getallDesp().getValue(); // Obtém a lista atual
+        if (currentModels != null) {
+            for (FinModal item : currentModels) {
+                if ("CRED".equals(item.getTipoDesp())) {
+                    filtrada.add(item);
+                }
+            }
+        }
+        return filtrada;
+    }
+
+    private List<FinModal> filtrarDespesas() {
+        List<FinModal> filtrada = new ArrayList<>();
+        List<FinModal> currentModels = viewmodal.getallDesp().getValue(); // Obtém a lista atual
+        if (currentModels != null) {
+            for (FinModal item : currentModels) {
+                String tipo = item.getTipoDesp();
+                if (tipo != null && !tipo.equals("CRED") && !tipo.equals("-")) {
+                    filtrada.add(item);
+                }
+            }
+        }
+        return filtrada;
+    }
     private void calculateTotals(List<FinModal> models) {
         double totalCredito = 0;
         double totalDespesa = 0;
