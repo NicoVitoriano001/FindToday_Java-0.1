@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.fintoday.R;
@@ -29,6 +30,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.text.DecimalFormat;
 import java.util.List;
 import com.app.fintoday.utils.DrawerUtil;
 
@@ -42,11 +45,19 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
     private AppInfoDialogHelper appInfoDialogHelper;
     private DrawerLayout drawerLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView creditoTextView, despesaTextView, saldoTextView;
+    private DecimalFormat df = new DecimalFormat("#,##0.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        creditoTextView = findViewById(R.id.tvCred_MainActivity);
+        despesaTextView = findViewById(R.id.tvDesp_MainActivity);
+        saldoTextView = findViewById(R.id.tvSal_MainActivity);
+
+
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             @Override
             public void onChanged(List<FinModal> models) {
                 adapter.submitList(models);
+                calculateTotals(models); // Adicione esta linha para calcular os totais
             }
         });
 
@@ -189,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             String dataDesp = data.getStringExtra(NewFinActivity.EXTRA_DURATION);
 
             FinModal model = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
-           // viewmodal.insert(model);  // salvando novamente
+            viewmodal.insert(model);
             Toast.makeText(this, "Registro salvo.", Toast.LENGTH_LONG).show();
 
         } else if (requestCode == EDIT_DESP_REQUEST && resultCode == RESULT_OK) {
@@ -224,6 +236,31 @@ public class MainActivity extends AppCompatActivity implements DrawerUtil.Drawer
             super.onBackPressed();
         }
     }
+
+
+    private void calculateTotals(List<FinModal> models) {
+        double totalCredito = 0;
+        double totalDespesa = 0;
+
+        for (FinModal item : models) {
+            double valor = Double.parseDouble(item.getValorDesp());
+
+            if ("-".equals(item.getTipoDesp())) continue;
+
+            if ("CRED".equals(item.getTipoDesp())) {
+                totalCredito += valor;
+            } else {
+                totalDespesa += valor;
+            }
+        }
+
+        double saldo = totalCredito - totalDespesa;
+
+        creditoTextView.setText("Créditos: $ " + df.format(totalCredito));
+        despesaTextView.setText("Despesas: $ " + df.format(totalDespesa));
+        saldoTextView.setText("Saldo: $ " + df.format(saldo));
+    }
+
 
     private void MainSyncWithFirebase() {
         SyncUtils.syncBidirecionalWithRefresh(this, swipeRefreshLayout);
