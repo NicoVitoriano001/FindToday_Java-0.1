@@ -1,5 +1,6 @@
 package com.app.fintoday.ui;
 // Criado em 30.04.2025
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -105,16 +106,14 @@ public class EditFinActivity extends AppCompatActivity {
                 // Criar o objeto FinModal com os dados editados e o ID original
                 FinModal finModal = new FinModal(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
                 finModal.setId(id); // Manter o ID original
-                finModal.setLastUpdated(System.currentTimeMillis());
+                finModal.setLastUpdated(System.currentTimeMillis()); //atualiza timestamp
 
                 // Atualizar no repositório/FinRepository (que cuidará da sincronização com Firebase)
                 FinRepository repository = new FinRepository(getApplication());
                 repository.update(finModal);
 
-                // Mostrar notificação reutilizavel
                 NotificationHelper.showSyncNotification(EditFinActivity.this);
 
-                // showSyncNotification();
                 saveFin(valorDesp, tipoDesp, fontDesp, despDescr, dataDesp);
             }
         });

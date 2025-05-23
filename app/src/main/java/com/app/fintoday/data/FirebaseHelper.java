@@ -6,10 +6,12 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -34,7 +36,7 @@ public class FirebaseHelper {
 
         try {
             FirebaseApp.initializeApp(context);
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true); // Habilita persistência offline do Firebase
+            FirebaseDatabase.getInstance().setPersistenceEnabled(false); // Habilita persistência offline do Firebase
             databaseReference = FirebaseDatabase.getInstance().getReference();
             firebaseAuth = FirebaseAuth.getInstance();
             storageReference = FirebaseStorage.getInstance().getReference();
@@ -49,36 +51,14 @@ public class FirebaseHelper {
         }
         return instance;
     }
+
     public String getCurrentUserId() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        return user != null ? user.getUid() : null;
+        // Retorna um UID fixo para todos os dispositivos
+        return "pavyBQFB3oXKe2HpNgqZvPYcwTo1";
     }
 
-    // Metodo para sincronizar dados locais com o Firebase
+    /**
     public void syncLocalDataWithFirebase(List<FinModal> finModals) {
-        executorService.execute(() -> {
-            try {
-                String userId = firebaseAuth.getCurrentUser() != null ?
-                        firebaseAuth.getCurrentUser().getUid() : "anonymous";
-
-                DatabaseReference userRef = databaseReference.child("users").child(userId).child("finances");
-
-                for (FinModal modal : finModals) {
-                    String key = String.valueOf(modal.getId());
-                    userRef.child(key).setValue(modal)
-                            .addOnSuccessListener(aVoid ->
-                                    Log.d(TAG, "Dados sincronizados com sucesso: " + key))
-                                     .addOnFailureListener(e ->
-                                    Log.e(TAG, "Erro ao sincronizar dados: " + key, e));
-                }
-            } catch (Exception e) {
-              //  Log.e(TAG, "Erro geral na sincronização", e);
-            }
-        });
-    }
-
-    // Metodo para sincronizar um único item, verificar
-    public void syncItemToFirebase(FinModal item) {
         executorService.execute(() -> {
             try {
                 String userId = getCurrentUserId();
@@ -87,22 +67,23 @@ public class FirebaseHelper {
                     return;
                 }
 
-                item.setLastUpdated(System.currentTimeMillis());
+                DatabaseReference userRef = databaseReference.child("finances").child(userId);
 
-                // Usando o mesmo caminho que syncAllItemsToFirebase
-                databaseReference.child("finances")
-                        .child(userId)
-                        .child(String.valueOf(item.getId()))
-                        .setValue(item)
-                        .addOnSuccessListener(aVoid ->
-                                Log.d(TAG, "Item sincronizado: " + item.getId()))
-                        .addOnFailureListener(e ->
-                                Log.e(TAG, "Erro ao sincronizar item", e));
+                for (FinModal modal : finModals) {
+                    String key = String.valueOf(modal.getId());
+                    userRef.child(key).setValue(modal)
+                            .addOnSuccessListener(aVoid ->
+                                    Log.d(TAG, "Dados sincronizados com sucesso: " + key))
+                            .addOnFailureListener(e ->
+                                    Log.e(TAG, "Erro ao sincronizar dados: " + key, e));
+                }
             } catch (Exception e) {
-                Log.e(TAG, "Erro geral", e);
+                Log.e(TAG, "Erro geral na sincronização", e);
             }
         });
     }
+**/
+
     public void syncAllItemsToFirebase(List<FinModal> items) {
         if (items == null || items.isEmpty()) return;
 
@@ -115,14 +96,65 @@ public class FirebaseHelper {
         DatabaseReference userRef = databaseReference.child("finances").child(userId);
 
         for (FinModal item : items) {
+            // Verificar se o item remoto é mais recente antes de sobrescrever
             userRef.child(String.valueOf(item.getId()))
-                    .setValue(item)
-                    .addOnFailureListener(e ->
-                            Log.e("FirebaseSync", "Erro ao sincronizar item " + item.getId(), e));
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            FinModal remoteItem = snapshot.getValue(FinModal.class);
+                            if (remoteItem == null || item.getLastUpdated() > remoteItem.getLastUpdated()) {
+                                userRef.child(String.valueOf(item.getId()))
+                                        .setValue(item)
+                                        .addOnFailureListener(e ->
+                                                Log.e("FirebaseSync", "Erro ao sincronizar item " + item.getId(), e));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e("FirebaseSync", "Erro ao verificar item remoto", error.toException());
+                        }
+                    });
         }
     }
 
-    // Metodo para fazer backup do banco de dados SQLite para o Firebase Storage
+    public void syncItemToFirebase(FinModal item) {
+        executorService.execute(() -> {
+            try {
+                String userId = getCurrentUserId();
+                if (userId == null) {
+                    Log.e(TAG, "Usuário não autenticado");
+                    return;
+                }
+
+                DatabaseReference itemRef = databaseReference.child("finances")
+                        .child(userId)
+                        .child(String.valueOf(item.getId()));
+
+                itemRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        FinModal remoteItem = snapshot.getValue(FinModal.class);
+                        if (remoteItem == null || item.getLastUpdated() > remoteItem.getLastUpdated()) {
+                            itemRef.setValue(item)
+                                    .addOnSuccessListener(aVoid ->
+                                            Log.d(TAG, "Item sincronizado: " + item.getId()))
+                                    .addOnFailureListener(e ->
+                                            Log.e(TAG, "Erro ao sincronizar item", e));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                       // Log.e(TAG, "Erro ao verificar item remoto", error.toException());
+                    }
+                });
+            } catch (Exception e) {
+               // Log.e(TAG, "Erro geral", e);
+            }
+        });
+    }
+
     public void backupDatabaseToFirebase(Context context) {
         executorService.execute(() -> {
             try {
@@ -156,54 +188,10 @@ public class FirebaseHelper {
         });
     }
 
-    // Métodos adicionais para autenticação, etc.
-    // No FirebaseHelper
     public DatabaseReference getUserFinancesReference(String userId) {
         return databaseReference
                 .child("finances")
                 .child(userId);
     }
-/**
-    public FirebaseAuth getFirebaseAuth() {
-        return firebaseAuth;
-    }
-
-    public StorageReference getStorageReference() {
-        return storageReference;
-    }
-
-    public void setupFirebaseListener(FinRepository repository) {
-        DatabaseReference userFinancesRef = getUserFinancesReference();
-        if (userFinancesRef != null) {
-            userFinancesRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    // Atualizar SQLite com dados do Firebase
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        FinModal modal = dataSnapshot.getValue(FinModal.class);
-                        if (modal != null) {
-                            repository.syncFromFirebase(modal);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, "Firebase listener cancelled", error.toException());
-                }
-            });
-        }
-    }
-
-    public DatabaseReference getUserFinancesReference() {
-        String userId = getCurrentUserId();
-        if (userId == null) {
-            Log.e(TAG, "Usuário não autenticado");
-            return null;
-        }
-        return getUserFinancesReference(userId);
-    }
-**/
-
 
 }

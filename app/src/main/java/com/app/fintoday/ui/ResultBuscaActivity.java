@@ -3,6 +3,7 @@ package com.app.fintoday.ui;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,35 +12,57 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
 
 import com.app.fintoday.R;
+import com.app.fintoday.data.DatabaseBackupManager;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
 import com.app.fintoday.data.ViewModal;
+import com.app.fintoday.utils.AppInfoDialogHelper;
+import com.app.fintoday.utils.DrawerUtil;
+import com.app.fintoday.utils.FabMovementUtil;
+import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultBuscaActivity extends AppCompatActivity {
+public class ResultBuscaActivity extends AppCompatActivity implements DrawerUtil.DrawerActions {
     private FinRVAdapter adapter;
     private ViewModal viewmodal;
     private TextView creditoTextView, despesaTextView, saldoTextView;
     private List<FinModal> resultados;
-    private int initialX, initialY;
-    private float initialTouchX, initialTouchY;
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
+    private DatabaseBackupManager databaseBackupManager;
+    private AppInfoDialogHelper appInfoDialogHelper;
+    private DrawerLayout drawerLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_busca_rv);
+
+        //floatinmovimento fab 1/3
+        FloatingActionButton fab = findViewById(R.id.idFABresultadoConsultReturnHome);
+        FabMovementUtil.setupFabMovement(fab);
+
+        // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        databaseBackupManager = new DatabaseBackupManager(this);
+        appInfoDialogHelper = new AppInfoDialogHelper(this); // // INICIALIZE PRIMEIRO  MOVER PARA ANTES DO setupDrawer
+        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,  // DEPOIS CONFIGURE O DRAWER
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close,
+                this, // DrawerActions
+                appInfoDialogHelper); // ← AGORA NÃO SERÁ MAIS NULL
 
         // Inicializar os TextViews
         creditoTextView = findViewById(R.id.tvCred_ResultBuscaActivity);
@@ -103,12 +126,13 @@ public class ResultBuscaActivity extends AppCompatActivity {
             startActivityForResult(intent, MainActivity.EDIT_DESP_REQUEST);
         });
 
+
        // lambida do botao fabNewFin
-         FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
-         fabNewFin.setOnClickListener(v -> {
-         Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
-         startActivityForResult(intent, ADD_DESP_REQUEST);
-         });
+        FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
+        fabNewFin.setOnClickListener(v -> {
+            Intent intent = new Intent(ResultBuscaActivity.this, NewFinActivity.class);
+            startActivityForResult(intent, ADD_DESP_REQUEST);
+        });
         /** // tradicional do botao fabNewFin
          FloatingActionButton fabNewFin = findViewById(R.id.idFABresultadoConsultNewsFIN);
          fabNewFin.setOnClickListener(new View.OnClickListener() {
@@ -130,28 +154,18 @@ public class ResultBuscaActivity extends AppCompatActivity {
             }
         });
 
-        // Configurar movimento para os FABs
-        setupFabMovement(fabNewFin);
-        setupFabMovement(fabReturnHome);
+        // //floatinmovimento fab 2/3
+        FabMovementUtil.setupFabMovement(fabNewFin);
+        FabMovementUtil.setupFabMovement(fabReturnHome);
 
         creditoTextView.setOnClickListener(v -> {
             List<FinModal> listaFiltrada = filtrarCreditos();
             if (!listaFiltrada.isEmpty()) {
-                try {
                     Intent intent = new Intent(ResultBuscaActivity.this, ResultBuscaCredActivity.class);
                     intent.putParcelableArrayListExtra("resultadosFiltrados", new ArrayList<>(listaFiltrada));
-
-                    // Adicione logs para depuração
-                       for (FinModal item : listaFiltrada) {
-                    }
-                   startActivityForResult(intent, 1001); // ou qualquer código
-                   //startActivity(intent);
-                } catch (Exception e) {
-
-                    Toast.makeText(this, "Erro ao exibir créditos", Toast.LENGTH_SHORT).show();
-                }
+                startActivity(intent);
             } else {
-                Toast.makeText(this, "Nenhum crédito encontrado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nenhuma despesa encontrada", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -204,49 +218,11 @@ public class ResultBuscaActivity extends AppCompatActivity {
         }).attachToRecyclerView(idRVRetorno); // Vincula ao RecyclerView
    } // Fim ON CREATE
 
+    // Implementação dos métodos da interface DrawerActions   // Usar drawerer nas outras UI 3/3
+    @Override public void onBackupRequested() { databaseBackupManager.performBackup();}
+    @Override public void onRestoreRequested() {databaseBackupManager.performRestore();}
+    @Override  public void onSyncRequested() { SyncUtils.MainSyncWithFirebaseUtils(this); }
 
-
-    private void setupFabMovement(FloatingActionButton fab) {
-        fab.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialX = (int) fab.getX();
-                        initialY = (int) fab.getY();
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        int x = initialX + (int) (event.getRawX() - initialTouchX);
-                        int y = initialY + (int) (event.getRawY() - initialTouchY);
-
-                        // Limitar os movimentos para dentro da tela
-                        int maxX = ((View) fab.getParent()).getWidth() - fab.getWidth();
-                        int maxY = ((View) fab.getParent()).getHeight() - fab.getHeight();
-
-                        x = Math.min(Math.max(x, 0), maxX);
-                        y = Math.min(Math.max(y, 0), maxY);
-
-                        fab.setX(x);
-                        fab.setY(y);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // Verificar se foi um clique ou arrasto
-                        if (Math.abs(event.getRawX() - initialTouchX) < 10 &&
-                                Math.abs(event.getRawY() - initialTouchY) < 10) {
-                            // This ensures accessibility services can perform the click
-                            fab.performClick();
-                            return true;
-                        }
-                        return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    // Métodos auxiliares para filtrar, métodos de filtro (fora do onCreate):
     private List<FinModal> filtrarCreditos() {
         List<FinModal> filtrada = new ArrayList<>();
         for (FinModal item : resultados) {
@@ -293,6 +269,7 @@ public class ResultBuscaActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) return;
 
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);

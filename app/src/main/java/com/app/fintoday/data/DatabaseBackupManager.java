@@ -40,7 +40,6 @@ public class DatabaseBackupManager {
         this.firebaseHelper = FirebaseHelper.getInstance(context); // Inicialização no construtor
     }
 
-
     //INICIO BLOCO BACKUP
     public void performBackup() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -51,6 +50,41 @@ public class DatabaseBackupManager {
         } else {
             showBackupConfirmationDialog();
         }
+    }
+    private void showBackupConfirmationDialog() {
+        String dataHora = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String nomeArquivoBKP = "finDB_" + dataHora + ".db";
+        File backupFile = new File(BACKUP_DIR, nomeArquivoBKP);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Escolha o tipo de backup")
+                .setItems(new String[]{"Backup Local", "Backup no Firebase"}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Backup local
+                        new AlertDialog.Builder(context)
+                                .setTitle("Confirmar Backup")
+                                .setMessage("Deseja fazer backup do banco de dados?\n\n" +
+                                        "Local: " + BACKUP_DIR.getAbsolutePath() + "\n" +
+                                        "Nome: " + nomeArquivoBKP)
+                                .setPositiveButton("Sim", (dialog1, which1) -> executeBackup(backupFile))
+                                .setNegativeButton("Não", null)
+                                .show();
+                    } else {
+                        // Backup no Firebase
+                        new AlertDialog.Builder(context)
+                                .setTitle("Confirmar Backup")
+                                .setMessage("Deseja fazer backup do banco de dados no Firebase?")
+                                .setPositiveButton("Sim", (dialog12, which12) -> {
+                                    firebaseHelper.backupDatabaseToFirebase(context);
+                                    showToast("Backup no Firebase iniciado.", Toast.LENGTH_LONG);
+                                })
+                                .setNegativeButton("Não", null)
+                                .show();
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void executeBackup(File backupFile) {
@@ -227,39 +261,7 @@ public class DatabaseBackupManager {
             return false;
         }
     }
-
     // FIM BLOCO DE RESTORE
-
-    private void showBackupConfirmationDialog() {
-        String dataHora = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String nomeArquivoBKP = "finDB_" + dataHora + ".db";
-        File backupFile = new File(BACKUP_DIR, nomeArquivoBKP);
-
-        new AlertDialog.Builder(context)
-                .setTitle("Confirmar Backup")
-                .setMessage("Deseja fazer backup do banco de dados?\n\n" +
-                        "Local: " + BACKUP_DIR.getAbsolutePath() + "\n" +
-                        "Nome: " + nomeArquivoBKP)
-                .setPositiveButton("Sim", (dialog, which) -> executeBackup(backupFile))
-                .setNegativeButton("Não", null)
-                .show();
-
-        // Adicionar nova opção para backup no Firebase
-        new AlertDialog.Builder(context)
-                .setTitle("Escolha o tipo de backup")
-                .setItems(new String[]{"Backup Local", "Backup no Firebase"}, (dialog, which) -> {
-                    if (which == 0) {
-                        // Backup local
-                        executeBackup(backupFile);
-                    } else {
-                        // Backup no Firebase
-                        firebaseHelper.backupDatabaseToFirebase(context);
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
 
     private void showToast(String message, int duration) {
         new Handler(Looper.getMainLooper()).post(() ->

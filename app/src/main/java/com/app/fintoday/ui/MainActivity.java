@@ -2,7 +2,6 @@ package com.app.fintoday.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -13,96 +12,76 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.app.fintoday.R;
 import com.app.fintoday.data.DatabaseBackupManager;
+import com.app.fintoday.utils.FabMovementUtil;
 import com.app.fintoday.data.FinModal;
 import com.app.fintoday.data.FinRVAdapter;
-import com.app.fintoday.data.FinRepository;
 import com.app.fintoday.data.ViewModal;
 import com.app.fintoday.utils.AppInfoDialogHelper;
 import com.app.fintoday.utils.NotificationHelper;
+import com.app.fintoday.utils.SyncUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.List;
-//import com.app.fintoday.data.DatabaseBackupManager;
+import com.app.fintoday.utils.DrawerUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DrawerUtil.DrawerActions {
+    // Usar drawerer nas outras UI 1/3 - adicione implements DrawerUtil.DrawerItemSelectedListener
     private ViewModal viewmodal;
     private static final int ADD_DESP_REQUEST = 1;
     public static final int EDIT_DESP_REQUEST = 2;
     private static final int SEARCH_DESP_REQUEST = 3;
-    private DrawerLayout drawerLayout;
     private DatabaseBackupManager databaseBackupManager;
     private AppInfoDialogHelper appInfoDialogHelper;
-
+    private DrawerLayout drawerLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-        setContentView(R.layout.activity_main);
-        Log.d("MainActivity", "setContentView concluído");
-       // Toast.makeText(getApplicationContext(),"onCreate Metodo Chamado", Toast.LENGTH_SHORT).show();
 
+        // Usar drawerer nas outras UI 2/3 - os layouts têm que ter os mesmo drawer_layout e nav_view
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-
         databaseBackupManager = new DatabaseBackupManager(this);
-        appInfoDialogHelper = new AppInfoDialogHelper(this);
+        appInfoDialogHelper = new AppInfoDialogHelper(this); // // INICIALIZE PRIMEIRO  MOVER PARA ANTES DO setupDrawer
+        DrawerUtil.setupDrawer(this, drawerLayout, navigationView,  // DEPOIS CONFIGURE O DRAWER
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close,
+                this, // DrawerActions
+                appInfoDialogHelper);
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         NotificationHelper.createNotificationChannel(this); // Criar canal de notificação
 
-        // Configuração do ActionBarDrawerToggle
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // Configurando o listener de clique no item do NavigationView
-        navigationView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.nav_resumo_desp_graf:
-                    startActivity(new Intent(MainActivity.this, ResumoDespGrafActivity.class));
-                    overridePendingTransition(0, 0); // Desativa animação
-                    break;
-                case R.id.nav_nova_desp:
-                    startActivity(new Intent(this, NewFinActivity.class));
-                    overridePendingTransition(0, 0); // Desativa animação
-                    break;
-                case R.id.nav_fazer_bkp:
-                    databaseBackupManager.performBackup();
-                    break;
-                case R.id.nav_restoreDB:
-                    databaseBackupManager.performRestore();
-                    break;
-                case R.id.nav_sync_firebase:
-                    syncWithFirebase();
-                    break;
-                case R.id.nav_about:
-                    appInfoDialogHelper.showAboutDialog();
-                    break;
-                case R.id.nav_help:
-                    appInfoDialogHelper.openHelpScreen();
-                    break;
-            }
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return true;
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() { MainSyncWithFirebase(); }
         });
 
+        // Configurar o SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> { MainSyncWithFirebase();
+        });
 
-        // Configurando o botão de ação flutuante para adicionar
+        // botão adiconar
         FloatingActionButton fab = findViewById(R.id.idFABAdd);
+        FabMovementUtil.setupFabMovement(fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,8 +91,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Configurando o segundo botão de ação flutuante para buscar
+    // botao flutuante buscar
         FloatingActionButton fab2 = findViewById(R.id.idFABbuscar);
+        FabMovementUtil.setupFabMovement(fab2);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(FinRV);
         // FIM ItemTouchHelper CONFIRMA EXCLUSÃO
 
-
         // Configurando o listener de clique no item do RecyclerView
         adapter.setOnItemClickListener(new FinRVAdapter.OnItemClickListener() {
             @Override
@@ -186,18 +165,22 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0); // Desativa animação
             }
         });
+
     } // FIM ON CREATE
+
+    // Implementação dos métodos da interface DrawerActions   // Usar drawerer nas outras UI 3/3
+    @Override public void onBackupRequested() { databaseBackupManager.performBackup();}
+    @Override public void onRestoreRequested() {databaseBackupManager.performRestore();}
+    @Override  public void onSyncRequested() { SyncUtils.MainSyncWithFirebaseUtils(this); }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
-
+        //Toast.makeText(getApplicationContext(),"onActivityResult Metodo Chamado", Toast.LENGTH_SHORT).show();
         if (data == null) {
             Toast.makeText(this, "Sem dados retornados.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (requestCode == ADD_DESP_REQUEST && resultCode == RESULT_OK) {
             String valorDesp = data.getStringExtra(NewFinActivity.EXTRA_VALOR_DESP);
             String tipoDesp = data.getStringExtra(NewFinActivity.EXTRA_TIPO_DESP);
@@ -233,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -243,10 +225,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void syncWithFirebase() {
-        FinRepository repository = new FinRepository(getApplication());
-        repository.forceSyncWithFirebase();
-        NotificationHelper.showSyncNotification(this); // Mostrar notificação
-        Toast.makeText(this, "Sincronização com Firebase iniciada", Toast.LENGTH_SHORT).show();
+    private void MainSyncWithFirebase() {
+        SyncUtils.syncBidirecionalWithRefresh(this, swipeRefreshLayout);
     }
+    /**
+    private void MainSyncWithFirebase() {
+        FinRepository repository = new FinRepository(getApplication());
+        repository.bidirectionalMainSyncWithFirebase();
+        NotificationHelper.showSyncNotification(this);
+        Toast.makeText(this, "Sincronização Bidirecional Iniciada", Toast.LENGTH_SHORT).show();
+
+        // Desativa o refresh após a sincronização (simulação)
+        swipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+               // Toast.makeText(MainActivity.this, "Sincronização concluída", Toast.LENGTH_SHORT).show();
+            }
+        }, 2000); // Ajuste este tempo conforme necessário
+    }
+**/
+
 }
